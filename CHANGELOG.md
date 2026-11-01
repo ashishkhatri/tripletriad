@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.2.2 — 2026-11-01
+### Fixed
+- `update` failed with git's "dubious ownership" error when run through `pct exec`; the updater and installer now mark `/opt/triad` as safe system-wide.
+
 ## v1.2.1 — 2026-11-01
 ### Fixed
 - `pct exec <CTID> -- update` failed with "No such file or directory": the updater now installs to `/usr/bin/update`.

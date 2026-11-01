@@ -140,6 +140,7 @@ apt-get install -y -qq curl ca-certificates git nodejs >/dev/null
 id triad &>/dev/null || useradd --system --home /opt/triad --shell /usr/sbin/nologin triad
 rm -rf /opt/triad
 git clone -q --depth 1 --branch "$BRANCH" "https://github.com/$REPO.git" /opt/triad
+git config --system --add safe.directory /opt/triad
 chown -R triad:triad /opt/triad
 sed -e "s/^Environment=PORT=.*/Environment=PORT=$PORT/" /opt/triad/triad.service > /etc/systemd/system/triad.service
 systemctl daemon-reload
