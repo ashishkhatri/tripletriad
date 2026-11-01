@@ -14,7 +14,27 @@ after=$(git rev-parse --short HEAD); vafter=$(ver)
 chown -R triad:triad /opt/triad
 install -m 0755 /opt/triad/ct/update.sh /usr/bin/update
 rm -f /usr/local/bin/update
-if [[ "$before" == "$after" ]]; then
+
+# Refresh the systemd unit from the repo, keeping the port this container was set up with.
+UNIT=/etc/systemd/system/triad.service
+port=$(sed -n 's/^Environment=PORT=//p' "$UNIT" 2>/dev/null | head -n1); port=${port:-8080}
+new_unit=$(sed -e "s/^Environment=PORT=.*/Environment=PORT=$port/" /opt/triad/triad.service)
+unit_changed=0
+if [[ "$new_unit" != "$(cat "$UNIT" 2>/dev/null)" ]]; then
+  printf '%s\n' "$new_unit" > "$UNIT"
+  systemctl daemon-reload
+  unit_changed=1
+fi
+
+# Back up player data before restarting (keeps the last 10 backups).
+DATA=/var/lib/triad
+if [[ -f "$DATA/triad.json" ]]; then
+  mkdir -p "$DATA/backups"
+  cp -p "$DATA/triad.json" "$DATA/backups/triad-$(date +%Y%m%d-%H%M%S)-v$vbefore.json"
+  ls -1t "$DATA/backups"/triad-*.json 2>/dev/null | tail -n +11 | xargs -r rm -f
+fi
+
+if [[ "$before" == "$after" && $unit_changed == 0 ]]; then
   echo "Triad is already up to date (v$vafter)."
 else
   systemctl restart triad

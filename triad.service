@@ -7,6 +7,9 @@ Type=simple
 User=triad
 WorkingDirectory=/opt/triad
 Environment=PORT=8080
+Environment=DATA_DIR=/var/lib/triad
+# Player accounts and collections live here, outside the code, so updates never touch them.
+StateDirectory=triad
 ExecStart=/usr/bin/node /opt/triad/server.js
 Restart=on-failure
 NoNewPrivileges=true

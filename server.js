@@ -5,11 +5,18 @@ const path = require('path');
 const crypto = require('crypto');
 const { WebSocketServer } = require('./wslite');
 const TT = require('./public/game.js');
+const db = require('./lib/db');
+const auth = require('./lib/auth');
+const col = require('./lib/collection');
 
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
 const VERSION = require('./package.json').version;
+const AI_LEVELS = ['easy', 'normal', 'hard'];
+
+db.load();
+console.log(`Data: ${db.FILE}`);
 
 // Load every deck listed in public/decks/index.json.
 const DECK_DIR = path.join(PUBLIC, 'decks');
@@ -28,14 +35,69 @@ const MIME = {
   '.webp': 'image/webp', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json', '.mp3': 'audio/mpeg', '.ico': 'image/x-icon',
 };
 
+// ---------- HTTP ----------
+function json(res, code, obj, headers = {}) {
+  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers });
+  res.end(JSON.stringify(obj));
+}
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0; const chunks = [];
+    req.on('data', (c) => { size += c.length; if (size > 8192) { reject(new Error('Too large')); req.destroy(); } else chunks.push(c); });
+    req.on('end', () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch { reject(new Error('Bad JSON')); } });
+    req.on('error', reject);
+  });
+}
+const me = (a) => ({ name: a.user.name });
+
+async function api(req, res, url) {
+  const route = `${req.method} ${url.pathname}`;
+  // Only accept JSON POSTs: browsers can't send these cross-site without a CORS preflight, which we never allow.
+  if (req.method === 'POST' && !String(req.headers['content-type'] || '').startsWith('application/json')) return json(res, 415, { error: 'Expected JSON.' });
+  try {
+    if (route === 'POST /api/register' || route === 'POST /api/login') {
+      const body = await readBody(req);
+      const r = route.endsWith('register') ? auth.register(body.name, body.password) : auth.login(body.name, body.password);
+      return json(res, 200, { name: db.get().users[r.key].name }, { 'Set-Cookie': auth.cookieHeader(req, r.token) });
+    }
+    if (route === 'POST /api/logout') {
+      const a = auth.fromRequest(req);
+      if (a) auth.logout(a.token);
+      return json(res, 200, { ok: true }, { 'Set-Cookie': auth.cookieHeader(req, '', true) });
+    }
+    const a = auth.fromRequest(req);
+    if (route === 'GET /api/me') return a ? json(res, 200, me(a)) : json(res, 200, { guest: true });
+    if (!a) return json(res, 401, { error: 'Sign in first.' });
+    if (route === 'GET /api/collection') {
+      const deck = DECKS.get(url.searchParams.get('deck'));
+      if (!deck) return json(res, 404, { error: 'Unknown set.' });
+      return json(res, 200, col.summary(a.user, deck));
+    }
+    if (route === 'GET /api/collections') {
+      const out = {};
+      for (const d of DECKS.values()) { const s = a.user.sets && a.user.sets[d.id]; if (s) out[d.id] = col.summary(a.user, d); }
+      return json(res, 200, out);
+    }
+    if (route === 'POST /api/packs/open') {
+      const body = await readBody(req);
+      const deck = DECKS.get(body.deck);
+      if (!deck) return json(res, 404, { error: 'Unknown set.' });
+      const cards = col.openPack(a.user, deck);
+      return json(res, 200, { cards, summary: col.summary(a.user, deck) });
+    }
+    return json(res, 404, { error: 'Not found.' });
+  } catch (e) {
+    return json(res, 400, { error: e.message });
+  }
+}
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
   if (url.pathname === '/healthz') { res.writeHead(200); return res.end('ok'); }
-  if (url.pathname === '/version') {
-    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
-    return res.end(JSON.stringify({ version: VERSION }));
-  }
-  let p = decodeURIComponent(url.pathname);
+  if (url.pathname === '/version') return json(res, 200, { version: VERSION });
+  if (url.pathname.startsWith('/api/')) return api(req, res, url);
+  let p;
+  try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400); return res.end(); }
   if (p === '/') p = '/index.html';
   const file = path.normalize(path.join(PUBLIC, p));
   if (!file.startsWith(PUBLIC + path.sep)) { res.writeHead(403); return res.end(); }
@@ -56,82 +118,239 @@ function newCode() {
 }
 const send = (ws, obj) => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); };
 const cleanName = (n) => String(n || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').trim().slice(0, 16) || 'Player';
+const userOf = (pl) => (pl && pl.user ? db.get().users[pl.user] : null);
+const usesCollections = (rules) => rules.handMode !== 'balanced';
 
 function names(room) { return room.players.map((p) => (p ? p.name : null)); }
-function connected(room) { return room.players.map((p) => !!(p && p.ws && p.ws.readyState === 1)); }
+function connected(room) { return room.players.map((p) => !!(p && (p.ai || (p.ws && p.ws.readyState === 1)))); }
+function humans(room) { return room.players.map((p, seat) => ({ p, seat })).filter((x) => x.p && !x.p.ai); }
 
 function pushState(room, events) {
   room.lastActive = Date.now();
-  room.players.forEach((pl, seat) => {
-    if (!pl) return;
-    send(pl.ws, { t: 'state', you: seat, state: TT.redact(room.state, seat), events: events || [], names: names(room), connected: connected(room) });
-  });
+  for (const { p, seat } of humans(room)) {
+    send(p.ws, { t: 'state', you: seat, state: TT.redact(room.state, seat), events: events || [], names: names(room), connected: connected(room), vsAI: room.vsAI });
+  }
 }
 function pushPresence(room) {
-  room.players.forEach((pl) => pl && send(pl.ws, { t: 'presence', names: names(room), connected: connected(room) }));
+  for (const { p } of humans(room)) send(p.ws, { t: 'presence', names: names(room), connected: connected(room) });
 }
 
-function startGame(room) {
-  room.state = TT.newGame(room.rules, undefined, DECKS.get(room.deck));
-  room.rematch = [false, false];
+function sendChoose(room, seat) {
+  const pl = room.players[seat];
+  const deck = DECKS.get(room.deck);
+  send(pl.ws, {
+    t: 'choose', mode: room.rules.handMode, budget: col.BUDGET, deck: room.deck,
+    cards: col.ensureSet(userOf(pl), deck).cards, done: !!room.hands[seat], names: names(room),
+  });
+}
+
+// Starts a round: deals or asks for hands depending on the Hands rule.
+function beginRound(room) {
+  const deck = DECKS.get(room.deck);
+  room.state = null; room.hands = [null, null]; room.rematch = [false, false];
+  room.wager = null; room.results = [null, null]; room.finished = false;
+  clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer);
+  const mode = room.rules.handMode;
+  if (mode === 'balanced') return startGame(room, null);
+  if (mode === 'random') {
+    for (const { p, seat } of humans(room)) room.hands[seat] = col.randomHand(userOf(p), deck);
+    return fillAIAndStart(room);
+  }
+  room.phase = 'choosing';
+  for (const { seat } of humans(room)) sendChoose(room, seat);
+}
+
+function fillAIAndStart(room) {
+  const deck = DECKS.get(room.deck);
+  const humanHands = humans(room).map(({ seat }) => room.hands[seat]).filter(Boolean);
+  const target = humanHands.length ? col.handLevel(deck, humanHands[0]) : 15;
+  room.players.forEach((p, seat) => { if (p && p.ai) room.hands[seat] = col.cpuHand(deck, room.rules.handMode === 'budget' ? Math.min(target, col.BUDGET) : target); });
+  startGame(room, room.hands);
+}
+
+function startGame(room, hands) {
+  room.state = TT.newGame(room.rules, undefined, DECKS.get(room.deck), hands || undefined);
+  room.phase = 'playing';
   pushState(room, [{ type: 'start' }]);
+  scheduleAI(room);
+}
+
+function scheduleAI(room) {
+  const s = room.state;
+  if (!s || s.over) return;
+  const pl = room.players[s.turn];
+  if (!pl || !pl.ai) return;
+  clearTimeout(room.aiTimer);
+  room.aiTimer = setTimeout(() => {
+    if (room.state !== s || !rooms.has(room.code)) return;
+    try {
+      const m = TT.chooseMove(s, pl.level);
+      applyMove(room, s.turn, m.hand, m.cell);
+    } catch (e) { console.error('AI move failed:', e); }
+  }, s.board.every((x) => !x) ? 1400 : 900);
+}
+
+function applyMove(room, seat, hand, cell) {
+  const { state, events } = TT.applyMove(room.state, seat, hand, cell);
+  room.state = state;
+  pushState(room, events);
+  if (state.over) finish(room); else scheduleAI(room);
+}
+
+// End of a match: XP for signed-in players, then the wager (if on).
+function finish(room) {
+  if (room.finished) return;
+  room.finished = true;
+  room.phase = 'over';
+  const deck = DECKS.get(room.deck);
+  const w = room.state.winner;
+  room.players.forEach((p, seat) => {
+    const u = userOf(p);
+    if (!u) return;
+    const result = w === 'draw' ? 'draw' : w === seat ? 'win' : 'loss';
+    room.results[seat] = { rewards: col.award(u, deck, result) };
+  });
+  if (room.rules.wager && w !== 'draw') {
+    const loser = 1 - w;
+    room.wager = { winner: w, loser, options: room.state.startHands[loser] };
+    if (room.players[w].ai) {
+      // The computer takes the loser's highest-level card.
+      const pick = room.wager.options.reduce((best, id) => (TT.cardById(deck, id).level > TT.cardById(deck, best).level ? id : best));
+      return settleWager(room, pick);
+    }
+    room.phase = 'wager';
+    sendWagerPrompt(room);
+    room.wagerTimer = setTimeout(() => {   // winner never picked: take the best card for them
+      if (room.phase !== 'wager') return;
+      const pick = room.wager.options.reduce((best, id) => (TT.cardById(deck, id).level > TT.cardById(deck, best).level ? id : best));
+      settleWager(room, pick);
+    }, 90_000);
+    return;
+  }
+  sendResults(room);
+}
+
+function sendWagerPrompt(room) {
+  const { winner, loser, options } = room.wager;
+  send(room.players[winner].ws, { t: 'wager_pick', options });
+  if (!room.players[loser].ai) send(room.players[loser].ws, { t: 'wager_wait', options });
+}
+
+function settleWager(room, id) {
+  const deck = DECKS.get(room.deck);
+  const { winner, loser } = room.wager;
+  clearTimeout(room.wagerTimer);
+  const wu = userOf(room.players[winner]), lu = userOf(room.players[loser]);
+  let refill = [];
+  if (lu) refill = col.removeCard(lu, deck, id);
+  if (wu) col.addCard(wu, deck, id);
+  room.wager.taken = id;
+  if (room.results[winner]) room.results[winner].wager = { won: id };
+  if (room.results[loser]) room.results[loser].wager = { lost: id, refill };
+  room.phase = 'over';
+  sendResults(room);
+}
+
+function sendResults(room) {
+  const deck = DECKS.get(room.deck);
+  for (const { p, seat } of humans(room)) {
+    const r = room.results[seat];
+    const u = userOf(p);
+    send(p.ws, { t: 'result', you: seat, rewards: r ? r.rewards : null, wager: r ? r.wager || null : null, taken: room.wager ? room.wager.taken : null, collection: u ? col.summary(u, deck) : null });
+  }
 }
 
 function handle(ws, msg) {
   const room = ws.room ? rooms.get(ws.room) : null;
+  const a = auth.fromRequest(ws.req);
   switch (msg.t) {
     case 'create': {
+      const rules = TT.normalizeRules(msg.rules);
+      if (usesCollections(rules) && !a) return send(ws, { t: 'error', msg: 'Sign in to play with collection hands.' });
       const code = newCode();
       const token = crypto.randomBytes(16).toString('hex');
       const deck = DECKS.has(msg.deck) ? msg.deck : DEFAULT_DECK;
-      const r = { code, deck, rules: TT.normalizeRules(msg.rules), players: [{ name: cleanName(msg.name), token, ws }, null], state: null, rematch: [false, false], lastActive: Date.now() };
+      const vsAI = msg.vs === 'ai';
+      const level = AI_LEVELS.includes(msg.level) ? msg.level : 'normal';
+      const host = { name: a ? a.user.name : cleanName(msg.name), user: a ? a.key : null, token, ws };
+      const r = { code, deck, rules, vsAI, players: [host, vsAI ? { ai: true, level, name: `CPU (${level})` } : null], state: null, phase: 'waiting', hands: [null, null], rematch: [false, false], results: [null, null], lastActive: Date.now() };
       rooms.set(code, r);
       ws.room = code; ws.seat = 0;
-      return send(ws, { t: 'room', code, you: 0, token, rules: r.rules });
+      send(ws, { t: 'room', code, you: 0, token, rules, vsAI, deck });
+      if (vsAI) beginRound(r);
+      return;
     }
     case 'join': {
       const code = String(msg.code || '').toUpperCase().trim();
       const r = rooms.get(code);
-      if (!r) return send(ws, { t: 'error', msg: 'Room not found.' });
+      if (!r || r.vsAI) return send(ws, { t: 'error', msg: 'Room not found.' });
       if (r.players[1]) return send(ws, { t: 'error', msg: 'That room is full.' });
+      if (usesCollections(r.rules) && !a) return send(ws, { t: 'error', msg: 'This room uses collection hands — sign in to join.' });
       const token = crypto.randomBytes(16).toString('hex');
-      r.players[1] = { name: cleanName(msg.name), token, ws };
+      r.players[1] = { name: a ? a.user.name : cleanName(msg.name), user: a ? a.key : null, token, ws };
       ws.room = code; ws.seat = 1;
-      send(ws, { t: 'room', code, you: 1, token, rules: r.rules });
-      return startGame(r);
+      send(ws, { t: 'room', code, you: 1, token, rules: r.rules, vsAI: false, deck: r.deck });
+      pushPresence(r);
+      return beginRound(r);
     }
     case 'resume': {
       const r = rooms.get(String(msg.code || '').toUpperCase());
-      const seat = r ? r.players.findIndex((p) => p && p.token === msg.token) : -1;
+      const seat = r ? r.players.findIndex((p) => p && !p.ai && p.token === msg.token) : -1;
       if (seat < 0) return send(ws, { t: 'error', msg: 'Could not rejoin that room.', fatal: true });
-      if (r.players[seat].ws && r.players[seat].ws !== ws) r.players[seat].ws.close();
-      r.players[seat].ws = ws; ws.room = r.code; ws.seat = seat;
-      send(ws, { t: 'room', code: r.code, you: seat, token: msg.token, rules: r.rules });
-      if (r.state) pushState(r, []); else pushPresence(r);
+      const pl = r.players[seat];
+      if (pl.ws && pl.ws !== ws) pl.ws.close();
+      pl.ws = ws; ws.room = r.code; ws.seat = seat;
+      send(ws, { t: 'room', code: r.code, you: seat, token: msg.token, rules: r.rules, vsAI: r.vsAI, deck: r.deck, resumed: true });
+      if (r.phase === 'choosing') sendChoose(r, seat);
+      else if (r.state) {
+        send(ws, { t: 'state', you: seat, state: TT.redact(r.state, seat), events: [], names: names(r), connected: connected(r), vsAI: r.vsAI });
+        if (r.phase === 'wager' && r.wager.winner === seat) send(ws, { t: 'wager_pick', options: r.wager.options });
+        else if (r.phase === 'wager') send(ws, { t: 'wager_wait', options: r.wager.options });
+        else if (r.phase === 'over') sendResults(r);
+      }
       return pushPresence(r);
     }
-    case 'move': {
-      if (!room || !room.state) return;
+    case 'hand': {
+      if (!room || room.phase !== 'choosing' || room.hands[ws.seat]) return;
+      const u = userOf(room.players[ws.seat]);
       try {
-        const { state, events } = TT.applyMove(room.state, ws.seat, Number(msg.hand), Number(msg.cell));
-        room.state = state;
-        pushState(room, events);
-      } catch (e) {
-        send(ws, { t: 'error', msg: e.message });
-      }
+        room.hands[ws.seat] = col.validateHand(u, DECKS.get(room.deck), msg.cards, room.rules.handMode);
+      } catch (e) { return send(ws, { t: 'error', msg: e.message }); }
+      send(ws, { t: 'hand_ok' });
+      for (const { p, seat } of humans(room)) if (seat !== ws.seat) send(p.ws, { t: 'opponent_ready' });
+      if (humans(room).every(({ seat }) => room.hands[seat]) && room.players.every(Boolean)) fillAIAndStart(room);
       return;
     }
+    case 'move': {
+      if (!room || !room.state || room.phase !== 'playing') return;
+      try { applyMove(room, ws.seat, Number(msg.hand), Number(msg.cell)); }
+      catch (e) { send(ws, { t: 'error', msg: e.message }); }
+      return;
+    }
+    case 'wager': {
+      if (!room || room.phase !== 'wager' || room.wager.winner !== ws.seat) return;
+      const id = Number(msg.card);
+      if (!room.wager.options.includes(id)) return send(ws, { t: 'error', msg: 'Pick one of the cards they played.' });
+      return settleWager(room, id);
+    }
     case 'rematch': {
-      if (!room || !room.state || !room.state.over) return;
+      if (!room || room.phase !== 'over') return;
+      if (room.vsAI) return beginRound(room);
       room.rematch[ws.seat] = true;
-      if (room.rematch[0] && room.rematch[1]) return startGame(room);
+      if (room.rematch[0] && room.rematch[1]) return beginRound(room);
       const other = room.players[1 - ws.seat];
       return other && send(other.ws, { t: 'rematch_requested' });
     }
     case 'leave': {
       if (!room) return;
       const other = room.players[1 - ws.seat];
-      if (other) send(other.ws, { t: 'opponent_left' });
+      if (other && !other.ai) send(other.ws, { t: 'opponent_left' });
+      // Leaving mid-wager settles it so the winner still gets their card.
+      if (room.phase === 'wager') {
+        const deck = DECKS.get(room.deck);
+        settleWager(room, room.wager.options.reduce((b, id) => (TT.cardById(deck, id).level > TT.cardById(deck, b).level ? id : b)));
+      }
+      clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer);
       rooms.delete(room.code);
       ws.room = null;
       return;
@@ -140,13 +359,16 @@ function handle(ws, msg) {
 }
 
 const wss = new WebSocketServer({ server, path: '/ws', maxPayload: 4096 });
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+  ws.req = req;
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
   ws.on('message', (raw) => {
     let msg;
     try { msg = JSON.parse(raw); } catch { return; }
-    if (msg && typeof msg.t === 'string') handle(ws, msg);
+    if (msg && typeof msg.t === 'string') {
+      try { handle(ws, msg); } catch (e) { console.error('Message failed:', e); send(ws, { t: 'error', msg: 'Something went wrong.' }); }
+    }
   });
   ws.on('close', () => {
     const r = ws.room && rooms.get(ws.room);
@@ -154,7 +376,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Heartbeat + cleanup of idle rooms.
+// Heartbeat, idle-room cleanup, expired sessions.
 setInterval(() => {
   for (const ws of wss.clients) {
     if (!ws.isAlive) { ws.terminate(); continue; }
@@ -162,9 +384,13 @@ setInterval(() => {
   }
   const now = Date.now();
   for (const [code, r] of rooms) {
-    const anyone = connected(r).some(Boolean);
-    if (!anyone && now - r.lastActive > 30 * 60 * 1000) rooms.delete(code);
+    const anyone = humans(r).some(({ p }) => p.ws && p.ws.readyState === 1);
+    if (!anyone && now - r.lastActive > 30 * 60 * 1000) {
+      if (r.phase === 'wager') { try { const deck = DECKS.get(r.deck); settleWager(r, r.wager.options.reduce((b, id) => (TT.cardById(deck, id).level > TT.cardById(deck, b).level ? id : b))); } catch { /* ignore */ } }
+      clearTimeout(r.aiTimer); clearTimeout(r.wagerTimer); rooms.delete(code);
+    }
   }
+  auth.pruneSessions();
 }, 30000).unref();
 
 server.listen(PORT, HOST, () => console.log(`Triad v${VERSION} on http://${HOST}:${PORT}`));

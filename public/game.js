@@ -54,12 +54,21 @@
     return hands;
   }
 
+  const HAND_MODES = ['balanced', 'random', 'build', 'budget'];
+  const LEVEL_BUDGET = 15;
   function normalizeRules(r) {
     r = r || {};
-    return { open: r.open !== false, same: !!r.same, plus: !!r.plus, elemental: !!r.elemental };
+    const handMode = HAND_MODES.includes(r.handMode) ? r.handMode : 'balanced';
+    return {
+      open: r.open !== false, same: !!r.same, plus: !!r.plus, elemental: !!r.elemental,
+      handMode, wager: handMode !== 'balanced' && !!r.wager,
+    };
   }
+  function cardById(deck, id) { return (deck || DECK).cards.find((c) => c.id === id) || null; }
+  function handLevel(deck, ids) { return ids.reduce((n, id) => n + ((cardById(deck, id) || {}).level || 0), 0); }
 
-  function newGame(rules, rng, deck) {
+  // presetHands: optional [[cardId x5], [cardId x5]] chosen from collections.
+  function newGame(rules, rng, deck, presetHands) {
     rng = rng || Math.random;
     deck = deck || DECK;
     rules = normalizeRules(rules);
@@ -70,11 +79,13 @@
       const cells = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8], rng).slice(0, n);
       for (const c of cells) elements[c] = elKeys[Math.floor(rng() * elKeys.length)];
     }
+    const hands = presetHands ? presetHands.map((ids) => ids.map((id) => toPlayCard(cardById(deck, id)))) : dealHands(rng, deck);
     return {
       rules,
+      startHands: hands.map((h) => h.map((c) => c.id)),
       board: Array(9).fill(null),
       elements,
-      hands: dealHands(rng, deck),
+      hands,
       deck: { id: deck.id || null, name: deck.name || '' },
       glyphs: deck.elements || {},
       turn: rng() < 0.5 ? 0 : 1,
@@ -186,6 +197,7 @@
   function redact(s, viewer) {
     const r = clone(s);
     if (!r.rules.open && !r.over) r.hands[1 - viewer] = r.hands[1 - viewer].map(() => ({ hidden: true }));
+    if (!r.rules.open && !r.over && r.startHands) r.startHands[1 - viewer] = null;
     return r;
   }
 
@@ -231,5 +243,5 @@
     return bestMoves[Math.floor(rng() * bestMoves.length)];
   }
 
-  return { setDeck, getDeck, newGame, applyMove, legalMoves, score, redact, chooseMove, normalizeRules, value, neighbor };
+  return { HAND_MODES, LEVEL_BUDGET, cardById, handLevel, setDeck, getDeck, newGame, applyMove, legalMoves, score, redact, chooseMove, normalizeRules, value, neighbor };
 });

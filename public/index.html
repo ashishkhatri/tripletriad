@@ -21,18 +21,35 @@
   <section id="menu" class="screen active">
     <h1 class="logo">TRIAD</h1>
     <p class="tag">A Four-Sided Card Duel</p>
+    <div id="account" class="account">
+      <span id="acct-guest">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> to collect cards</span>
+      <span id="acct-user" hidden>Signed in as <b id="acct-name"></b> · <button id="btn-collection" class="link">Collection</button> · <button id="btn-signout" class="link">Sign out</button></span>
+    </div>
 
     <div class="panel">
-      <label class="field">Your name <input id="name" maxlength="16" placeholder="Player"></label>
+      <label class="field" id="name-field">Your name <input id="name" maxlength="16" placeholder="Player"></label>
 
       <label class="field">Card set <select id="deck"></select></label>
       <p id="deck-desc" class="muted deck-desc"></p>
+      <div id="set-progress" class="set-progress" hidden>
+        <div class="xpbar"><span id="menu-xp-fill"></span></div>
+        <div class="set-progress-text"><span id="menu-xp-text"></span> <button id="btn-packs" class="link" hidden></button></div>
+      </div>
       <fieldset class="rules">
         <legend>Rules</legend>
         <label class="rule" data-tip="Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands."><input type="checkbox" id="r-open" checked> Open<button type="button" class="rule-info" aria-label="About the Open rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands.</span></label>
         <label class="rule" data-tip="When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you."><input type="checkbox" id="r-same"> Same<button type="button" class="rule-info" aria-label="About the Same rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you.</span></label>
         <label class="rule" data-tip="When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you."><input type="checkbox" id="r-plus"> Plus<button type="button" class="rule-info" aria-label="About the Plus rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you.</span></label>
         <label class="rule" data-tip="Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1."><input type="checkbox" id="r-elemental"> Elemental<button type="button" class="rule-info" aria-label="About the Elemental rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1.</span></label>
+        <label class="rule rule-wide" data-tip="Balanced: everyone is dealt a fair random hand (no account needed). Random: 5 random cards from your collection. Build: choose any 5 cards you own. Budget: choose 5 you own whose levels add up to 15 or less.">Hands
+          <select id="r-hands">
+            <option value="balanced">Balanced</option>
+            <option value="random">Random from collection</option>
+            <option value="build">Build from collection</option>
+            <option value="budget">Build — level budget 15</option>
+          </select><button type="button" class="rule-info" aria-label="About the Hands rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Balanced: everyone is dealt a fair random hand (no account needed). Random: 5 random cards from your collection. Build: choose any 5 cards you own. Budget: choose 5 you own whose levels add up to 15 or less.</span></label>
+        <label class="rule" data-tip="The winner takes one card of their choice from the loser's hand into their collection. Needs a collection Hands option."><input type="checkbox" id="r-wager"> Wager<button type="button" class="rule-info" aria-label="About the Wager rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">The winner takes one card of their choice from the loser's hand into their collection. Needs a collection Hands option.</span></label>
+        <p id="rules-note" class="rules-note"></p>
       </fieldset>
 
       <div class="row">
@@ -93,14 +110,87 @@
       <div class="panel center">
         <h2 id="result-title"></h2>
         <p id="result-score" class="muted"></p>
+        <div id="result-xp" class="result-xp" hidden>
+          <div class="xpbar"><span id="result-xp-fill"></span></div>
+          <p id="result-xp-text"></p>
+        </div>
+        <div id="result-wager" class="result-wager" hidden>
+          <p id="result-wager-text"></p>
+          <div id="result-wager-cards" class="wager-cards"></div>
+        </div>
         <p id="result-note" class="muted"></p>
         <div class="row">
           <button id="btn-rematch" class="primary">Rematch</button>
+          <button id="btn-result-packs" hidden>Open packs</button>
           <button id="btn-menu" class="ghost">Menu</button>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- COLLECTION -->
+  <section id="collection" class="screen">
+    <header class="col-head">
+      <button id="btn-col-back" class="small">← Menu</button>
+      <h2>Collection</h2>
+      <select id="col-deck"></select>
+    </header>
+    <div class="col-stats">
+      <div class="xpbar big"><span id="col-xp-fill"></span></div>
+      <div class="col-stats-row">
+        <span id="col-xp-text"></span>
+        <span id="col-owned"></span>
+        <span id="col-record"></span>
+        <button id="btn-open-pack" class="primary">Open pack</button>
+      </div>
+    </div>
+    <div id="col-grid" class="card-grid"></div>
+  </section>
+
+  <!-- HAND BUILDER -->
+  <section id="builder" class="screen">
+    <header class="col-head">
+      <button id="btn-build-quit" class="small">← Leave</button>
+      <h2>Choose your hand</h2>
+      <span id="build-budget" class="budget"></span>
+    </header>
+    <div id="build-tray" class="tray"></div>
+    <div class="build-actions">
+      <span id="build-status" class="muted"></span>
+      <button id="btn-build-auto" class="small">Auto-pick</button>
+      <button id="btn-build-ready" class="primary" disabled>Ready</button>
+    </div>
+    <div id="build-grid" class="card-grid"></div>
+  </section>
+
+  <!-- SIGN IN -->
+  <div id="auth" class="overlay">
+    <form class="panel" id="auth-form" autocomplete="on">
+      <h2>Your account</h2>
+      <p class="muted">Your collections and XP are saved on this server, so you can sign in from any device.</p>
+      <label class="field">Name <input id="auth-name" name="username" autocomplete="username" maxlength="16" required></label>
+      <label class="field">Password <input id="auth-pass" name="password" type="password" autocomplete="current-password" minlength="6" required></label>
+      <p id="auth-error" class="error"></p>
+      <div class="row">
+        <button type="submit" id="btn-auth-login" class="primary">Sign in</button>
+        <button type="button" id="btn-auth-register">Create account</button>
+      </div>
+      <button type="button" id="btn-auth-cancel" class="ghost">Cancel</button>
+    </form>
+  </div>
+
+  <!-- PACK OPENING -->
+  <div id="pack" class="overlay">
+    <div class="pack-stage">
+      <h2>A new pack!</h2>
+      <div id="pack-cards" class="pack-cards"></div>
+      <p class="muted" id="pack-hint">Tap each card to reveal it</p>
+      <div class="row pack-actions">
+        <button id="btn-pack-again" class="primary" hidden>Open another</button>
+        <button id="btn-pack-done">Done</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast" class="toast"></div>
   <script src="game.js"></script>
