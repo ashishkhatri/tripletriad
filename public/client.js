@@ -565,9 +565,15 @@
       if (!open) b.blur();
     });
   });
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.rule-info')) document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
-  });
+  // any click or tap outside an (i) button closes open tips, including clicks on checkboxes and dropdowns
+  const closeTips = (e) => {
+    if (e.target.closest && e.target.closest('.rule-info')) return;
+    document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
+    const f = document.activeElement;
+    if (f && f.classList && f.classList.contains('rule-info')) f.blur();
+  };
+  document.addEventListener('pointerdown', closeTips, true);
+  document.addEventListener('click', closeTips);
   ['#r-open', '#r-same', '#r-plus', '#r-elemental', '#r-hands', '#r-wager'].forEach((s) => $(s).addEventListener('change', syncRuleOptions));
 
   $('#btn-ai').onclick = () => startMatch('ai');

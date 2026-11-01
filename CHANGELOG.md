@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.0.1 — 2026-11-01
+### Fixed
+- Rule tooltips stayed open after clicking a checkbox or the Hands dropdown until you clicked again.
+  They now close on the first click or tap; keyboard users still see a tip while tabbing to its ⓘ.
+
 ## v2.0.0 — 2026-11-01
 ### Added
 - Accounts: sign up / sign in with a name and password; progress is stored on the server.

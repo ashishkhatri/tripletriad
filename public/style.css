@@ -357,7 +357,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   .rules label.rule:hover .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); }
 }
 .rules label.rule.tip-open .rule-tip,
-.rules label.rule:focus-within .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); }
+.rules label.rule:has(.rule-info:focus-visible) .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); }
 @media (max-width: 640px) {
   .rules { position: relative; }
   .rules label.rule { position: static; }
@@ -365,7 +365,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   .rules label.rule:nth-child(odd) .rule-tip,
   .rules label.rule:nth-child(even) .rule-tip { left: 0; right: 0; width: auto; transform: translate(0, 4px); }
   .rules label.rule.tip-open .rule-tip,
-  .rules label.rule:focus-within .rule-tip { transform: translate(0, 0); }
+  .rules label.rule:has(.rule-info:focus-visible) .rule-tip { transform: translate(0, 0); }
   .rule-tip::after { display: none; }
 }
 @media (max-width: 640px) {
