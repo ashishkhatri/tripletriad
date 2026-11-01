@@ -27,7 +27,7 @@ PORT=3000 node server.js  # different port
 Run this in the **Proxmox host** shell (Datacenter → your node → Shell):
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/__REPO__/main/ct/triad.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ashishkhatri/tripletriad/main/ct/triad.sh)"
 ```
 
 It asks **Default** or **Advanced**, then creates an unprivileged Debian 12 LXC
@@ -38,7 +38,7 @@ Skip the prompts by setting options up front:
 
 ```bash
 UNATTENDED=1 CTID=150 IP=192.168.1.50/24 GATEWAY=192.168.1.1 \
-  bash -c "$(curl -fsSL https://raw.githubusercontent.com/__REPO__/main/ct/triad.sh)"
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/ashishkhatri/tripletriad/main/ct/triad.sh)"
 ```
 
 Options: `CTID HOSTNAME_CT CORES RAM DISK BRIDGE IP GATEWAY VLAN STORAGE TEMPLATE_STORAGE PORT BRANCH`.
@@ -52,7 +52,7 @@ It pulls the latest code from GitHub and restarts the service.
 
 ```bash
 apt update && apt install -y nodejs git
-git clone https://github.com/__REPO__.git /opt/triad
+git clone https://github.com/ashishkhatri/tripletriad.git /opt/triad
 useradd --system --home /opt/triad --shell /usr/sbin/nologin triad
 chown -R triad:triad /opt/triad
 cp /opt/triad/triad.service /etc/systemd/system/

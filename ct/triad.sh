@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Triad — Proxmox VE LXC installer
 # Run on the Proxmox host as root:
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/__REPO__/main/ct/triad.sh)"
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/ashishkhatri/tripletriad/main/ct/triad.sh)"
 #
 # Non-interactive: set any of these first, e.g.  CTID=150 RAM=1024 bash -c "$(curl ...)"
 #   CTID HOSTNAME_CT CORES RAM DISK BRIDGE IP(dhcp|10.0.0.50/24) GATEWAY VLAN STORAGE TEMPLATE_STORAGE PORT BRANCH UNATTENDED=1
 
 set -Eeuo pipefail
 
-REPO="${TRIAD_REPO:-__REPO__}"
+REPO="${TRIAD_REPO:-ashishkhatri/tripletriad}"
 BRANCH="${BRANCH:-main}"
 APP="Triad"
 
@@ -35,7 +35,7 @@ EOF
 # ---------- checks ----------
 [[ $EUID -eq 0 ]] || die "Run this as root on the Proxmox host."
 command -v pct >/dev/null && command -v pveam >/dev/null || die "This must run on a Proxmox VE host (pct/pveam not found)."
-[[ "$REPO" != *__REPO__* ]] || die "Repository not set. Set TRIAD_REPO=owner/name."
+[[ "$REPO" != *ashishkhatri/tripletriad* ]] || die "Repository not set. Set TRIAD_REPO=owner/name."
 
 header
 
