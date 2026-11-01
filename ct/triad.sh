@@ -166,7 +166,8 @@ CT_IP=$(pct exec "$CTID" -- hostname -I | awk '{print $1}')
 msg_ok "$APP is running"
 
 echo
-echo "  ${GN}${APP} is ready.${CL}"
+APP_VER=$(pct exec "$CTID" -- sh -c "curl -fsS http://127.0.0.1:$PORT/version" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+echo "  ${GN}${APP} v${APP_VER} is ready.${CL}"
 echo "  Open:   ${BL}http://${CT_IP}:${PORT}${CL}"
 echo "  Update: ${BLD}pct exec $CTID -- update${CL}   (or run 'update' inside the container)"
 echo

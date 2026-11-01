@@ -9,6 +9,7 @@ const TT = require('./public/game.js');
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
+const VERSION = require('./package.json').version;
 
 // Load every deck listed in public/decks/index.json.
 const DECK_DIR = path.join(PUBLIC, 'decks');
@@ -30,6 +31,10 @@ const MIME = {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
   if (url.pathname === '/healthz') { res.writeHead(200); return res.end('ok'); }
+  if (url.pathname === '/version') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+    return res.end(JSON.stringify({ version: VERSION }));
+  }
   let p = decodeURIComponent(url.pathname);
   if (p === '/') p = '/index.html';
   const file = path.normalize(path.join(PUBLIC, p));
@@ -162,4 +167,4 @@ setInterval(() => {
   }
 }, 30000).unref();
 
-server.listen(PORT, HOST, () => console.log(`Triple Triad server on http://${HOST}:${PORT}`));
+server.listen(PORT, HOST, () => console.log(`Triad v${VERSION} on http://${HOST}:${PORT}`));

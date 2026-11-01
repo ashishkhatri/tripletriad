@@ -141,3 +141,6 @@ input, select { background: #0c1220; border: 1px solid var(--line); border-radiu
 }
 
 .deck-desc { margin: -6px 0 0; font-size: 12px; }
+.version { margin-top: 18px; font-size: 12px; }
+.version a { color: var(--muted); text-decoration: none; letter-spacing: .05em; }
+.version a:hover { color: var(--gold); }

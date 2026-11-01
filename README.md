@@ -146,6 +146,12 @@ Available forms: `blob`, `quad`, `bird`, `serpent`, `insect`, `golem`, `crab`, `
 To use your own picture for a card, set its `image` to a file outside `art/<set>/`
 (for example `art/custom/my-card.png`) — the generator never overwrites those.
 
+## Versions and releases
+
+The running version is shown at the bottom of the main menu and at `/version`.
+Each change gets a version bump and a [GitHub release](https://github.com/ashishkhatri/tripletriad/releases);
+see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
+
 ## Files
 
 | File | What it is |
@@ -160,3 +166,5 @@ To use your own picture for a card, set its `image` to a file outside `art/<set>
 | `ct/triad.sh` | Proxmox LXC installer (run on the host) |
 | `ct/update.sh` | In-container updater (`update`) |
 | `triad.service` | systemd unit |
+| `CHANGELOG.md` | Release notes |
+| `tools/release.sh` | Tags and publishes a release |

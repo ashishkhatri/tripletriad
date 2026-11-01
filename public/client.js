@@ -290,6 +290,8 @@
     desc();
   }
 
+  fetch('version').then((r) => r.json()).then((v) => { $('#version').textContent = 'v' + v.version; }).catch(() => {});
+
   loadDecks().then(() => {
     try { $('#name').value = localStorage.getItem('triad-name') || ''; } catch (e) { /* ignore */ }
     const room = new URLSearchParams(location.search).get('room');
