@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.1.1 — 2026-11-01
+### Fixed
+- Installer no longer prints perl/locale warnings inside the new container.
+### Changed
+- Releases are now tagged and published automatically by GitHub Actions when the version changes.
+
 ## v1.1.0 — 2026-11-01
 ### Added
 - Version number shown on the main menu (links to the releases page).

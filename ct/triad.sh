@@ -132,7 +132,7 @@ msg_ok "Container is online"
 
 # ---------- install inside ----------
 msg_info "Installing $APP (this takes a minute)"
-pct exec "$CTID" -- env REPO="$REPO" BRANCH="$BRANCH" PORT="$PORT" bash -c "$(cat <<'INNER'
+pct exec "$CTID" -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 LANGUAGE= REPO="$REPO" BRANCH="$BRANCH" PORT="$PORT" bash -c "$(cat <<'INNER'
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
