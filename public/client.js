@@ -309,6 +309,20 @@
   }
 
   // ---------- wiring ----------
+  // rule tooltips: the (i) button toggles its tip (for touch screens); tapping elsewhere closes it
+  document.querySelectorAll('.rule-info').forEach((b) => {
+    b.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const lab = b.closest('.rule'), open = !lab.classList.contains('tip-open');
+      document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
+      lab.classList.toggle('tip-open', open);
+      if (!open) b.blur();
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.rule-info')) document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
+  });
+
   $('#btn-ai').onclick = startAI;
   $('#btn-create').onclick = () => {
     $('#menu-error').textContent = '';

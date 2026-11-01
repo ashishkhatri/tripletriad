@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.5.0 — 2026-11-01
+### Added
+- Tooltips for each rule in the Rules box: hover on desktop, or tap the ⓘ on phones.
+### Changed
+- Rule explanations moved out of "How to play" and into the tooltips.
+- Tagline no longer wraps on narrow phones.
+
 ## v1.4.0 — 2026-11-01
 ### Added
 - Drag and drop: drag a card from your hand onto the board (mouse or touch). Click/tap to select then place still works.

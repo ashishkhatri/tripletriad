@@ -29,10 +29,10 @@
       <p id="deck-desc" class="muted deck-desc"></p>
       <fieldset class="rules">
         <legend>Rules</legend>
-        <label><input type="checkbox" id="r-open" checked> Open</label>
-        <label><input type="checkbox" id="r-same"> Same</label>
-        <label><input type="checkbox" id="r-plus"> Plus</label>
-        <label><input type="checkbox" id="r-elemental"> Elemental</label>
+        <label class="rule" data-tip="Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands."><input type="checkbox" id="r-open" checked> Open<button type="button" class="rule-info" aria-label="About the Open rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands.</span></label>
+        <label class="rule" data-tip="When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you."><input type="checkbox" id="r-same"> Same<button type="button" class="rule-info" aria-label="About the Same rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you.</span></label>
+        <label class="rule" data-tip="When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you."><input type="checkbox" id="r-plus"> Plus<button type="button" class="rule-info" aria-label="About the Plus rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you.</span></label>
+        <label class="rule" data-tip="Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1."><input type="checkbox" id="r-elemental"> Elemental<button type="button" class="rule-info" aria-label="About the Elemental rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1.</span></label>
       </fieldset>
 
       <div class="row">
@@ -55,7 +55,7 @@
     <details class="howto">
       <summary>How to play</summary>
       <p>Take turns placing cards on the 3×3 board. When your card's side beats the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards (counting the one left in hand) wins.</p>
-      <p><b>Same:</b> if 2+ sides you touch have equal numbers, those cards flip. <b>Plus:</b> if 2+ touching pairs add to the same total, those cards flip. Cards flipped by Same or Plus can chain-capture (<b>Combo</b>). <b>Elemental:</b> marked squares give +1 to a matching element and −1 to everything else. <b>Open:</b> both hands are visible.</p>
+      <p>Hover over (or tap the <b>i</b> beside) each rule in the Rules box to see what it does.</p>
     </details>
     <footer class="version"><a id="version" href="https://github.com/ashishkhatri/tripletriad/releases" target="_blank" rel="noopener"></a></footer>
   </section>
