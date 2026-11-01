@@ -11,6 +11,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
 - Online rooms with 4-letter codes and invite links, server-authoritative moves, reconnect on refresh, rematches
 - Six card sets with illustrated art, chosen from the menu (the room host's choice applies to both players):
   Wilds, Arcane Order, Starfall, Tidebound, Bloomwild, Hollow Lanterns
+- Accounts, per-set card collections, XP and card packs (see below)
 - Works on phones
 
 ## Run it
@@ -145,6 +146,35 @@ Available forms: `blob`, `quad`, `bird`, `serpent`, `insect`, `golem`, `crab`, `
 
 To use your own picture for a card, set its `image` to a file outside `art/<set>/`
 (for example `art/custom/my-card.png`) — the generator never overwrites those.
+
+## Accounts, collections and packs
+
+Players can create an account (name + password) from the menu. Accounts live on your server, so
+progress follows a player to any device. Guests can still play with the **Balanced** hands rule.
+
+- **Starter collection:** the first time you use a set you get 7 of its cards (four level-1, two level-2, one level-3).
+- **XP is per set:** 10 XP for playing, +25 for a win (+5 for a draw). Matches against the computer count.
+- **Packs:** every 100 XP in a set unlocks a 3-card pack from that set. Higher levels are rarer
+  (L1 40%, L2 30%, L3 18%, L4 9%, L5 3%). Open them from the menu, the Collection screen or the result screen.
+- **Hands rule** (in the Rules box; the room host's choice applies to both players):
+  - *Balanced* — everyone is dealt a fair random hand; no account needed.
+  - *Random from collection* — 5 random cards you own.
+  - *Build from collection* — choose any 5 cards you own.
+  - *Build — level budget 15* — choose 5 you own whose levels add up to 15 or less.
+  The computer gets a hand of about the same total level as yours.
+- **Wager rule:** the winner takes one card of their choice from the loser's hand into their collection
+  (the computer always takes your highest-level card). Nobody can drop below 5 cards in a set —
+  a spare level-1 card is added if needed.
+
+All matches, including against the computer, are played on the server, so XP, packs and wagers
+can't be edited in the browser.
+
+### Where the data lives
+
+`/var/lib/triad/triad.json` in the container (set by `DATA_DIR`; Docker uses the `/data` volume).
+It's separate from the code, so `update` never touches it, and `update` keeps the last 10 backups in
+`/var/lib/triad/backups/` before each restart. To back up the whole thing, copy that folder
+(or snapshot the container in Proxmox).
 
 ## Music
 

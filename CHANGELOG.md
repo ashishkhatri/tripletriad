@@ -3,6 +3,23 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.0.0 — 2026-11-01
+### Added
+- Accounts: sign up / sign in with a name and password; progress is stored on the server.
+- Card collections per set, with a 7-card starter collection.
+- XP per set (10 per game, +25 for a win, +5 for a draw) and a 3-card pack for every 100 XP,
+  with level-weighted rarity. Pack opening with card-flip reveals.
+- Collection screen: every card in a set, which you own (and how many), XP and win record.
+- **Hands** rule: Balanced, Random from collection, Build from collection, Build with a level budget of 15.
+  Hand builder screen with auto-pick.
+- **Wager** rule: the winner takes one of the loser's cards.
+- XP, unlocked packs and wager results on the result screen.
+### Changed
+- Games against the computer now run on the server (needed so XP and wagers can't be faked).
+- Player data is stored in `/var/lib/triad`; `update` refreshes the service file and backs up the data before restarting.
+### Notes
+- Upgrading from 1.x: just run `update`. Existing games keep working; accounts start empty.
+
 ## v1.5.0 — 2026-11-01
 ### Added
 - Tooltips for each rule in the Rules box: hover on desktop, or tap the ⓘ on phones.
