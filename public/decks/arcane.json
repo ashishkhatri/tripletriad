@@ -2,6 +2,11 @@
  "id": "arcane",
  "name": "Arcane Order",
  "description": "Wizards, knights and wanderers of an invented realm",
+ "music": {
+  "file": "music/arcane.mp3",
+  "title": "The Archmage’s Court",
+  "loop": 49.2308
+ },
  "elements": {
   "fire": "🔥",
   "ice": "❄️",

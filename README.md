@@ -146,6 +146,35 @@ Available forms: `blob`, `quad`, `bird`, `serpent`, `insect`, `golem`, `crab`, `
 To use your own picture for a card, set its `image` to a file outside `art/<set>/`
 (for example `art/custom/my-card.png`) — the generator never overwrites those.
 
+## Music
+
+Each card set has its own original background theme in `public/music/` (MP3, 128 kbps, ~0.5–1 MB each),
+played as a seamless loop. The menu plays the selected set's theme; a game plays its set's theme.
+The ♫ button and slider in the corner mute it and set the volume, remembered per browser.
+Browsers only allow sound after the first click or tap, so music starts then.
+
+| Set | Theme |
+|---|---|
+| Wilds | Over the Wild Ridge |
+| Arcane Order | The Archmage's Court |
+| Starfall | Lights Beyond the Sky |
+| Tidebound | Song of the Tidewaters |
+| Bloomwild | Dance of the Greenwood |
+| Hollow Lanterns | Lanterns in the Hollow |
+
+The tracks are composed and synthesized by `tools/genmusic.py` (needs `numpy`, `scipy`, `ffmpeg`):
+
+```bash
+python3 tools/genmusic.py            # re-render all
+python3 tools/genmusic.py tidebound  # one
+```
+
+To give a set different music, put any MP3 in `public/music/` and point the set's `music` field at it:
+
+```json
+"music": { "file": "music/my-theme.mp3", "title": "My Theme" }
+```
+
 ## Versions and releases
 
 The running version is shown at the bottom of the main menu and at `/version`.
@@ -163,6 +192,9 @@ see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
 | `public/decks/` | Card sets |
 | `public/art/` | Card art (generated SVGs) |
 | `tools/genart.js` | Art generator |
+| `public/music/` | Set themes (MP3) |
+| `public/music.js` | Music player |
+| `tools/genmusic.py` | Music composer/renderer |
 | `ct/triad.sh` | Proxmox LXC installer (run on the host) |
 | `ct/update.sh` | In-container updater (`update`) |
 | `triad.service` | systemd unit |

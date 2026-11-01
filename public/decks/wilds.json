@@ -2,6 +2,11 @@
  "id": "wilds",
  "name": "Wilds",
  "description": "Beasts and monsters (the original set)",
+ "music": {
+  "file": "music/wilds.mp3",
+  "title": "Over the Wild Ridge",
+  "loop": 38.4
+ },
  "elements": {
   "fire": "🔥",
   "ice": "❄️",

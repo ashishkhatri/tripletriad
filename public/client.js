@@ -18,7 +18,9 @@
   const glyph = (el) => (state && state.glyphs && state.glyphs[el]) || '';
 
   // ---------- screens & helpers ----------
+  function musicFor(deckId) { const d = decks.get(deckId); return d && d.music ? { ...d.music, file: d.music.file } : null; }
   function show(id) {
+    if (id === 'menu' && typeof Music !== 'undefined') Music.play(musicFor($('#deck').value));
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     $('#result').classList.remove('show');
   }
@@ -68,6 +70,7 @@
 
   function render() {
     if (!state) return;
+    if (typeof Music !== 'undefined' && state.deck) Music.play(musicFor(state.deck.id));
     const opp = 1 - me;
     const sc = TT.score(state);
     $('#score-mine').textContent = sc[me];
@@ -286,8 +289,9 @@
     }
     try { const saved = localStorage.getItem('triad-deck'); if (saved && decks.has(saved)) sel.value = saved; } catch (e) { /* ignore */ }
     const desc = () => { $('#deck-desc').textContent = (decks.get(sel.value) || {}).description || ''; };
-    sel.onchange = () => { desc(); try { localStorage.setItem('triad-deck', sel.value); } catch (e) { /* ignore */ } };
+    sel.onchange = () => { desc(); if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value)); try { localStorage.setItem('triad-deck', sel.value); } catch (e) { /* ignore */ } };
     desc();
+    if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value));
   }
 
   fetch('version').then((r) => r.json()).then((v) => { $('#version').textContent = 'v' + v.version; }).catch(() => {});

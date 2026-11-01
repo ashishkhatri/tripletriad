@@ -2,6 +2,11 @@
  "id": "hollow",
  "name": "Hollow Lanterns",
  "description": "Lantern spirits, masks and wandering ghosts",
+ "music": {
+  "file": "music/hollow.mp3",
+  "title": "Lanterns in the Hollow",
+  "loop": 60.0
+ },
  "elements": {
   "fire": "🔥",
   "ice": "❄️",

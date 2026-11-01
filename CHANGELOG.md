@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.3.0 — 2026-11-01
+### Added
+- Background music: an original theme for every card set, stored as MP3 files in `public/music/`
+  (Over the Wild Ridge, The Archmage's Court, Lights Beyond the Sky, Song of the Tidewaters,
+  Dance of the Greenwood, Lanterns in the Hollow). Gapless looping and crossfades between sets.
+- Music control in the corner: mute and volume, remembered per browser.
+- `music` field on card sets so custom sets can use their own track.
+- `tools/genmusic.py`, which composes and renders the themes.
+- Site icon.
+
 ## v1.2.2 — 2026-11-01
 ### Fixed
 - `update` failed with git's "dubious ownership" error when run through `pct exec`; the updater and installer now mark `/opt/triad` as safe system-wide.

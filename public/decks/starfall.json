@@ -2,6 +2,11 @@
  "id": "starfall",
  "name": "Starfall",
  "description": "Robots, mechs and spacefarers",
+ "music": {
+  "file": "music/starfall.mp3",
+  "title": "Lights Beyond the Sky",
+  "loop": 41.7391
+ },
  "elements": {
   "fire": "🔥",
   "ice": "❄️",

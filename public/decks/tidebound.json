@@ -2,6 +2,11 @@
  "id": "tidebound",
  "name": "Tidebound",
  "description": "Creatures of reef, kelp and the deep",
+ "music": {
+  "file": "music/tidebound.mp3",
+  "title": "Song of the Tidewaters",
+  "loop": 37.8947
+ },
  "elements": {
   "fire": "🔥",
   "ice": "❄️",
