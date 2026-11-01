@@ -1,0 +1,575 @@
+{
+ "id": "bloomwild",
+ "name": "Bloomwild",
+ "description": "Living plants, fungi and forest spirits",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Sprout Sprite",
+   "level": 1,
+   "ranks": [
+    1,
+    3,
+    6,
+    2
+   ],
+   "form": "sprout",
+   "element": "earth",
+   "image": "art/bloomwild/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Puffball",
+   "level": 1,
+   "ranks": [
+    1,
+    2,
+    7,
+    2
+   ],
+   "form": "mushroom",
+   "element": "poison",
+   "image": "art/bloomwild/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Dewdrop Bud",
+   "level": 1,
+   "ranks": [
+    6,
+    1,
+    5,
+    1
+   ],
+   "form": "flower",
+   "element": "water",
+   "image": "art/bloomwild/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Thistle Pup",
+   "level": 1,
+   "ranks": [
+    5,
+    2,
+    5,
+    2
+   ],
+   "form": "sprout",
+   "element": "wind",
+   "image": "art/bloomwild/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Ember Seed",
+   "level": 1,
+   "ranks": [
+    7,
+    1,
+    3,
+    3
+   ],
+   "form": "sprout",
+   "element": "fire",
+   "image": "art/bloomwild/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "Frost Fern",
+   "level": 1,
+   "ranks": [
+    3,
+    2,
+    4,
+    3
+   ],
+   "form": "sprout",
+   "element": "ice",
+   "image": "art/bloomwild/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Spore Imp",
+   "level": 1,
+   "ranks": [
+    5,
+    1,
+    1,
+    5
+   ],
+   "form": "mushroom",
+   "element": "poison",
+   "image": "art/bloomwild/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Daisy Hopper",
+   "level": 1,
+   "ranks": [
+    1,
+    1,
+    7,
+    4
+   ],
+   "form": "flower",
+   "image": "art/bloomwild/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Prickle Cactus",
+   "level": 2,
+   "ranks": [
+    2,
+    8,
+    5,
+    2
+   ],
+   "form": "cactus",
+   "element": "earth",
+   "image": "art/bloomwild/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Toadstool Knight",
+   "level": 2,
+   "ranks": [
+    3,
+    4,
+    4,
+    7
+   ],
+   "form": "mushroom",
+   "image": "art/bloomwild/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Sunpetal",
+   "level": 2,
+   "ranks": [
+    8,
+    4,
+    5,
+    1
+   ],
+   "form": "flower",
+   "element": "holy",
+   "image": "art/bloomwild/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Thunder Bulb",
+   "level": 2,
+   "ranks": [
+    2,
+    1,
+    5,
+    9
+   ],
+   "form": "sprout",
+   "element": "thunder",
+   "image": "art/bloomwild/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Lily Toad",
+   "level": 2,
+   "ranks": [
+    4,
+    6,
+    7,
+    1
+   ],
+   "form": "blob",
+   "element": "water",
+   "image": "art/bloomwild/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Snowcap Shroom",
+   "level": 2,
+   "ranks": [
+    1,
+    9,
+    1,
+    7
+   ],
+   "form": "mushroom",
+   "element": "ice",
+   "image": "art/bloomwild/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Firebloom",
+   "level": 2,
+   "ranks": [
+    3,
+    9,
+    4,
+    2
+   ],
+   "form": "flower",
+   "element": "fire",
+   "image": "art/bloomwild/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Windseed",
+   "level": 2,
+   "ranks": [
+    9,
+    3,
+    4,
+    2
+   ],
+   "form": "flower",
+   "element": "wind",
+   "image": "art/bloomwild/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Mossback Treant",
+   "level": 3,
+   "ranks": [
+    3,
+    1,
+    7,
+    8
+   ],
+   "form": "treant",
+   "element": "earth",
+   "image": "art/bloomwild/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Venus Snapper",
+   "level": 3,
+   "ranks": [
+    3,
+    8,
+    7,
+    2
+   ],
+   "form": "flower",
+   "element": "poison",
+   "image": "art/bloomwild/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Cactus Brawler",
+   "level": 3,
+   "ranks": [
+    3,
+    1,
+    7,
+    8
+   ],
+   "form": "cactus",
+   "element": "fire",
+   "image": "art/bloomwild/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Glowcap Matron",
+   "level": 3,
+   "ranks": [
+    6,
+    3,
+    5,
+    5
+   ],
+   "form": "mushroom",
+   "element": "holy",
+   "image": "art/bloomwild/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Bramble Serpent",
+   "level": 3,
+   "ranks": [
+    6,
+    7,
+    2,
+    4
+   ],
+   "form": "serpent",
+   "element": "poison",
+   "image": "art/bloomwild/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Frostbloom Dryad",
+   "level": 3,
+   "ranks": [
+    9,
+    6,
+    2,
+    3
+   ],
+   "form": "flower",
+   "element": "ice",
+   "image": "art/bloomwild/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Stormvine",
+   "level": 3,
+   "ranks": [
+    3,
+    9,
+    4,
+    5
+   ],
+   "form": "serpent",
+   "element": "thunder",
+   "image": "art/bloomwild/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Lotus Warden",
+   "level": 3,
+   "ranks": [
+    6,
+    2,
+    7,
+    6
+   ],
+   "form": "flower",
+   "element": "water",
+   "image": "art/bloomwild/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Old Oakheart",
+   "level": 4,
+   "ranks": [
+    9,
+    4,
+    5,
+    5
+   ],
+   "form": "treant",
+   "element": "earth",
+   "image": "art/bloomwild/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Inferno Cactus",
+   "level": 4,
+   "ranks": [
+    5,
+    4,
+    6,
+    9
+   ],
+   "form": "cactus",
+   "element": "fire",
+   "image": "art/bloomwild/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Thunder Treant",
+   "level": 4,
+   "ranks": [
+    6,
+    9,
+    3,
+    6
+   ],
+   "form": "treant",
+   "element": "thunder",
+   "image": "art/bloomwild/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Mycelium Queen",
+   "level": 4,
+   "ranks": [
+    8,
+    5,
+    2,
+    8
+   ],
+   "form": "mushroom",
+   "element": "poison",
+   "image": "art/bloomwild/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Winter Willow",
+   "level": 4,
+   "ranks": [
+    9,
+    8,
+    3,
+    3
+   ],
+   "form": "treant",
+   "element": "ice",
+   "image": "art/bloomwild/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Tempest Orchid",
+   "level": 4,
+   "ranks": [
+    9,
+    3,
+    9,
+    2
+   ],
+   "form": "flower",
+   "element": "wind",
+   "image": "art/bloomwild/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Mire Root",
+   "level": 4,
+   "ranks": [
+    8,
+    3,
+    3,
+    9
+   ],
+   "form": "serpent",
+   "element": "water",
+   "image": "art/bloomwild/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "Bloom Seraph",
+   "level": 4,
+   "ranks": [
+    5,
+    8,
+    5,
+    5
+   ],
+   "form": "flower",
+   "element": "holy",
+   "image": "art/bloomwild/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "Elder Sapling",
+   "level": 5,
+   "ranks": [
+    2,
+    10,
+    10,
+    7
+   ],
+   "form": "treant",
+   "element": "holy",
+   "image": "art/bloomwild/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Ancient Cactus King",
+   "level": 5,
+   "ranks": [
+    10,
+    9,
+    7,
+    3
+   ],
+   "form": "cactus",
+   "element": "earth",
+   "image": "art/bloomwild/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "Fungal Overlord",
+   "level": 5,
+   "ranks": [
+    7,
+    7,
+    9,
+    4
+   ],
+   "form": "mushroom",
+   "element": "poison",
+   "image": "art/bloomwild/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "Crimson Rafflesia",
+   "level": 5,
+   "ranks": [
+    8,
+    5,
+    5,
+    10
+   ],
+   "form": "flower",
+   "element": "fire",
+   "image": "art/bloomwild/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Frostwood Elder",
+   "level": 5,
+   "ranks": [
+    10,
+    4,
+    9,
+    5
+   ],
+   "form": "treant",
+   "element": "ice",
+   "image": "art/bloomwild/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Storm Bloom",
+   "level": 5,
+   "ranks": [
+    10,
+    9,
+    2,
+    8
+   ],
+   "form": "flower",
+   "element": "thunder",
+   "image": "art/bloomwild/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Deep Kelp Titan",
+   "level": 5,
+   "ranks": [
+    9,
+    5,
+    8,
+    6
+   ],
+   "form": "serpent",
+   "element": "water",
+   "image": "art/bloomwild/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "Whirling Dandelion",
+   "level": 5,
+   "ranks": [
+    2,
+    10,
+    6,
+    9
+   ],
+   "form": "flower",
+   "element": "wind",
+   "image": "art/bloomwild/40.svg"
+  }
+ ]
+}

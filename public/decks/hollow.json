@@ -1,0 +1,573 @@
+{
+ "id": "hollow",
+ "name": "Hollow Lanterns",
+ "description": "Lantern spirits, masks and wandering ghosts",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Candle Wisp",
+   "level": 1,
+   "ranks": [
+    1,
+    6,
+    5,
+    2
+   ],
+   "form": "wisp",
+   "element": "fire",
+   "image": "art/hollow/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Sheet Ghost",
+   "level": 1,
+   "ranks": [
+    5,
+    5,
+    2,
+    2
+   ],
+   "form": "ghost",
+   "image": "art/hollow/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Paper Mask",
+   "level": 1,
+   "ranks": [
+    2,
+    6,
+    1,
+    4
+   ],
+   "form": "mask",
+   "element": "wind",
+   "image": "art/hollow/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Puddle Phantom",
+   "level": 1,
+   "ranks": [
+    1,
+    6,
+    3,
+    4
+   ],
+   "form": "ghost",
+   "element": "water",
+   "image": "art/hollow/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Frost Breath",
+   "level": 1,
+   "ranks": [
+    4,
+    5,
+    2,
+    1
+   ],
+   "form": "ghost",
+   "element": "ice",
+   "image": "art/hollow/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "Tiny Lantern",
+   "level": 1,
+   "ranks": [
+    7,
+    1,
+    1,
+    3
+   ],
+   "form": "lantern",
+   "element": "holy",
+   "image": "art/hollow/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Static Spook",
+   "level": 1,
+   "ranks": [
+    1,
+    2,
+    6,
+    5
+   ],
+   "form": "wisp",
+   "element": "thunder",
+   "image": "art/hollow/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Ash Mote",
+   "level": 1,
+   "ranks": [
+    2,
+    4,
+    1,
+    5
+   ],
+   "form": "ghost",
+   "element": "earth",
+   "image": "art/hollow/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Grinning Mask",
+   "level": 2,
+   "ranks": [
+    6,
+    2,
+    6,
+    4
+   ],
+   "form": "mask",
+   "element": "fire",
+   "image": "art/hollow/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Lantern Keeper",
+   "level": 2,
+   "ranks": [
+    5,
+    8,
+    1,
+    3
+   ],
+   "form": "lantern",
+   "image": "art/hollow/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Wailing Shade",
+   "level": 2,
+   "ranks": [
+    3,
+    4,
+    3,
+    6
+   ],
+   "form": "ghost",
+   "element": "poison",
+   "image": "art/hollow/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Blue Flame",
+   "level": 2,
+   "ranks": [
+    3,
+    5,
+    6,
+    2
+   ],
+   "form": "wisp",
+   "element": "ice",
+   "image": "art/hollow/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Storm Lantern",
+   "level": 2,
+   "ranks": [
+    4,
+    3,
+    2,
+    7
+   ],
+   "form": "lantern",
+   "element": "thunder",
+   "image": "art/hollow/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Mist Wanderer",
+   "level": 2,
+   "ranks": [
+    1,
+    2,
+    6,
+    7
+   ],
+   "form": "wraith",
+   "element": "wind",
+   "image": "art/hollow/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Bog Lantern",
+   "level": 2,
+   "ranks": [
+    5,
+    7,
+    3,
+    1
+   ],
+   "form": "lantern",
+   "element": "poison",
+   "image": "art/hollow/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Shrine Mask",
+   "level": 2,
+   "ranks": [
+    5,
+    4,
+    3,
+    6
+   ],
+   "form": "mask",
+   "element": "holy",
+   "image": "art/hollow/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Hollow Monk",
+   "level": 3,
+   "ranks": [
+    1,
+    9,
+    5,
+    6
+   ],
+   "form": "wraith",
+   "element": "earth",
+   "image": "art/hollow/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Fox Fire",
+   "level": 3,
+   "ranks": [
+    5,
+    3,
+    6,
+    6
+   ],
+   "form": "wisp",
+   "element": "fire",
+   "image": "art/hollow/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Drowned Bell",
+   "level": 3,
+   "ranks": [
+    4,
+    3,
+    7,
+    5
+   ],
+   "form": "ghost",
+   "element": "water",
+   "image": "art/hollow/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Veiled Maiden",
+   "level": 3,
+   "ranks": [
+    8,
+    1,
+    7,
+    5
+   ],
+   "form": "wraith",
+   "element": "ice",
+   "image": "art/hollow/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Thunder Oni Mask",
+   "level": 3,
+   "ranks": [
+    2,
+    9,
+    4,
+    4
+   ],
+   "form": "mask",
+   "element": "thunder",
+   "image": "art/hollow/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Plague Wraith",
+   "level": 3,
+   "ranks": [
+    5,
+    7,
+    2,
+    7
+   ],
+   "form": "wraith",
+   "element": "poison",
+   "image": "art/hollow/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Paper Crane Spirit",
+   "level": 3,
+   "ranks": [
+    8,
+    2,
+    7,
+    2
+   ],
+   "form": "bird",
+   "element": "wind",
+   "image": "art/hollow/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Temple Guardian",
+   "level": 3,
+   "ranks": [
+    2,
+    9,
+    9,
+    1
+   ],
+   "form": "mask",
+   "element": "holy",
+   "image": "art/hollow/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Grave Lantern",
+   "level": 4,
+   "ranks": [
+    8,
+    4,
+    3,
+    8
+   ],
+   "form": "lantern",
+   "image": "art/hollow/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Wildfire Wraith",
+   "level": 4,
+   "ranks": [
+    7,
+    8,
+    5,
+    3
+   ],
+   "form": "wraith",
+   "element": "fire",
+   "image": "art/hollow/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Frozen Choir",
+   "level": 4,
+   "ranks": [
+    4,
+    9,
+    6,
+    6
+   ],
+   "form": "ghost",
+   "element": "ice",
+   "image": "art/hollow/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Thunder Drum Spirit",
+   "level": 4,
+   "ranks": [
+    6,
+    7,
+    6,
+    4
+   ],
+   "form": "mask",
+   "element": "thunder",
+   "image": "art/hollow/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Miasma Lord",
+   "level": 4,
+   "ranks": [
+    5,
+    6,
+    8,
+    6
+   ],
+   "form": "wraith",
+   "element": "poison",
+   "image": "art/hollow/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Moonlit Kite",
+   "level": 4,
+   "ranks": [
+    6,
+    7,
+    1,
+    9
+   ],
+   "form": "bird",
+   "element": "wind",
+   "image": "art/hollow/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Abyss Bell",
+   "level": 4,
+   "ranks": [
+    9,
+    6,
+    6,
+    4
+   ],
+   "form": "ghost",
+   "element": "water",
+   "image": "art/hollow/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "Lantern Saint",
+   "level": 4,
+   "ranks": [
+    8,
+    8,
+    6,
+    1
+   ],
+   "form": "lantern",
+   "element": "holy",
+   "image": "art/hollow/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "Lord of Lanterns",
+   "level": 5,
+   "ranks": [
+    6,
+    3,
+    9,
+    9
+   ],
+   "form": "lantern",
+   "element": "fire",
+   "image": "art/hollow/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Pale Empress",
+   "level": 5,
+   "ranks": [
+    10,
+    3,
+    4,
+    10
+   ],
+   "form": "wraith",
+   "element": "ice",
+   "image": "art/hollow/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "The Thousand Masks",
+   "level": 5,
+   "ranks": [
+    6,
+    5,
+    7,
+    9
+   ],
+   "form": "mask",
+   "image": "art/hollow/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "Storm Shogun",
+   "level": 5,
+   "ranks": [
+    8,
+    5,
+    4,
+    10
+   ],
+   "form": "wraith",
+   "element": "thunder",
+   "image": "art/hollow/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Rot Mother",
+   "level": 5,
+   "ranks": [
+    3,
+    8,
+    8,
+    10
+   ],
+   "form": "ghost",
+   "element": "poison",
+   "image": "art/hollow/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Sky Whale Spirit",
+   "level": 5,
+   "ranks": [
+    3,
+    9,
+    9,
+    6
+   ],
+   "form": "fish",
+   "element": "wind",
+   "image": "art/hollow/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Drowned King",
+   "level": 5,
+   "ranks": [
+    7,
+    6,
+    10,
+    5
+   ],
+   "form": "wraith",
+   "element": "water",
+   "image": "art/hollow/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "Dawn Kami",
+   "level": 5,
+   "ranks": [
+    5,
+    4,
+    9,
+    9
+   ],
+   "form": "wisp",
+   "element": "holy",
+   "image": "art/hollow/40.svg"
+  }
+ ]
+}

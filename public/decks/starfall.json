@@ -1,0 +1,574 @@
+{
+ "id": "starfall",
+ "name": "Starfall",
+ "description": "Robots, mechs and spacefarers",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Repair Drone",
+   "level": 1,
+   "ranks": [
+    5,
+    2,
+    1,
+    5
+   ],
+   "form": "drone",
+   "image": "art/starfall/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Scrap Rover",
+   "level": 1,
+   "ranks": [
+    1,
+    4,
+    8,
+    1
+   ],
+   "element": "earth",
+   "form": "robot",
+   "image": "art/starfall/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Spark Bot",
+   "level": 1,
+   "ranks": [
+    1,
+    4,
+    1,
+    6
+   ],
+   "element": "thunder",
+   "form": "robot",
+   "image": "art/starfall/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Coolant Crab",
+   "level": 1,
+   "ranks": [
+    3,
+    4,
+    1,
+    4
+   ],
+   "element": "ice",
+   "form": "robot",
+   "image": "art/starfall/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Fuel Sprite",
+   "level": 1,
+   "ranks": [
+    4,
+    1,
+    2,
+    5
+   ],
+   "element": "fire",
+   "form": "drone",
+   "image": "art/starfall/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "Hover Probe",
+   "level": 1,
+   "ranks": [
+    5,
+    4,
+    2,
+    2
+   ],
+   "element": "wind",
+   "form": "drone",
+   "image": "art/starfall/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Bilge Skimmer",
+   "level": 1,
+   "ranks": [
+    1,
+    5,
+    2,
+    4
+   ],
+   "element": "water",
+   "form": "sub",
+   "image": "art/starfall/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Rust Mite",
+   "level": 1,
+   "ranks": [
+    2,
+    3,
+    4,
+    4
+   ],
+   "element": "poison",
+   "form": "robot",
+   "image": "art/starfall/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Patrol Mech",
+   "level": 2,
+   "ranks": [
+    7,
+    7,
+    1,
+    1
+   ],
+   "element": "thunder",
+   "form": "robot",
+   "image": "art/starfall/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Cargo Hauler",
+   "level": 2,
+   "ranks": [
+    1,
+    5,
+    8,
+    3
+   ],
+   "element": "earth",
+   "form": "robot",
+   "image": "art/starfall/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Plasma Turret",
+   "level": 2,
+   "ranks": [
+    1,
+    1,
+    7,
+    7
+   ],
+   "element": "fire",
+   "form": "robot",
+   "image": "art/starfall/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Cryo Sentry",
+   "level": 2,
+   "ranks": [
+    6,
+    5,
+    3,
+    3
+   ],
+   "element": "ice",
+   "form": "robot",
+   "image": "art/starfall/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Toxin Sprayer",
+   "level": 2,
+   "ranks": [
+    5,
+    6,
+    1,
+    4
+   ],
+   "element": "poison",
+   "form": "robot",
+   "image": "art/starfall/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Ion Glider",
+   "level": 2,
+   "ranks": [
+    9,
+    3,
+    2,
+    3
+   ],
+   "element": "wind",
+   "form": "ship",
+   "image": "art/starfall/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Deep Sub",
+   "level": 2,
+   "ranks": [
+    8,
+    1,
+    3,
+    5
+   ],
+   "element": "water",
+   "form": "sub",
+   "image": "art/starfall/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Medic Unit",
+   "level": 2,
+   "ranks": [
+    1,
+    7,
+    1,
+    7
+   ],
+   "element": "holy",
+   "form": "robot",
+   "image": "art/starfall/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Strider Mk III",
+   "level": 3,
+   "ranks": [
+    8,
+    6,
+    5,
+    1
+   ],
+   "form": "robot",
+   "image": "art/starfall/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Flare Gunship",
+   "level": 3,
+   "ranks": [
+    6,
+    5,
+    2,
+    7
+   ],
+   "element": "fire",
+   "form": "ship",
+   "image": "art/starfall/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Arc Walker",
+   "level": 3,
+   "ranks": [
+    9,
+    4,
+    7,
+    1
+   ],
+   "element": "thunder",
+   "form": "robot",
+   "image": "art/starfall/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Frostline Tank",
+   "level": 3,
+   "ranks": [
+    3,
+    1,
+    8,
+    9
+   ],
+   "element": "ice",
+   "form": "robot",
+   "image": "art/starfall/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Bioreactor",
+   "level": 3,
+   "ranks": [
+    7,
+    1,
+    3,
+    8
+   ],
+   "element": "poison",
+   "form": "core",
+   "image": "art/starfall/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Jet Interceptor",
+   "level": 3,
+   "ranks": [
+    1,
+    6,
+    8,
+    4
+   ],
+   "element": "wind",
+   "form": "ship",
+   "image": "art/starfall/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Abyss Dredger",
+   "level": 3,
+   "ranks": [
+    8,
+    1,
+    5,
+    5
+   ],
+   "element": "water",
+   "form": "sub",
+   "image": "art/starfall/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Halo Drone",
+   "level": 3,
+   "ranks": [
+    7,
+    7,
+    4,
+    2
+   ],
+   "element": "holy",
+   "form": "drone",
+   "image": "art/starfall/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Pilot Rhea Kade",
+   "level": 4,
+   "ranks": [
+    5,
+    9,
+    4,
+    7
+   ],
+   "form": "pilot",
+   "image": "art/starfall/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Solar Dreadnought",
+   "level": 4,
+   "ranks": [
+    7,
+    6,
+    8,
+    2
+   ],
+   "element": "fire",
+   "form": "ship",
+   "image": "art/starfall/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Tesla Colossus",
+   "level": 4,
+   "ranks": [
+    2,
+    8,
+    9,
+    5
+   ],
+   "element": "thunder",
+   "form": "robot",
+   "image": "art/starfall/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Cryo Ark",
+   "level": 4,
+   "ranks": [
+    6,
+    9,
+    8,
+    1
+   ],
+   "element": "ice",
+   "form": "ship",
+   "image": "art/starfall/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Hive Carrier",
+   "level": 4,
+   "ranks": [
+    7,
+    7,
+    7,
+    4
+   ],
+   "element": "poison",
+   "form": "ship",
+   "image": "art/starfall/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Tempest Frigate",
+   "level": 4,
+   "ranks": [
+    9,
+    7,
+    4,
+    4
+   ],
+   "element": "wind",
+   "form": "ship",
+   "image": "art/starfall/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Leviathan Sub",
+   "level": 4,
+   "ranks": [
+    9,
+    8,
+    4,
+    4
+   ],
+   "element": "water",
+   "form": "sub",
+   "image": "art/starfall/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "Seraph Satellite",
+   "level": 4,
+   "ranks": [
+    9,
+    7,
+    6,
+    2
+   ],
+   "element": "holy",
+   "form": "drone",
+   "image": "art/starfall/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "Starforge",
+   "level": 5,
+   "ranks": [
+    3,
+    10,
+    7,
+    9
+   ],
+   "element": "fire",
+   "form": "core",
+   "image": "art/starfall/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Null Core",
+   "level": 5,
+   "ranks": [
+    10,
+    5,
+    9,
+    4
+   ],
+   "element": "ice",
+   "form": "core",
+   "image": "art/starfall/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "Storm Engine",
+   "level": 5,
+   "ranks": [
+    10,
+    3,
+    10,
+    7
+   ],
+   "element": "thunder",
+   "form": "core",
+   "image": "art/starfall/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "Titan Prime",
+   "level": 5,
+   "ranks": [
+    5,
+    10,
+    6,
+    7
+   ],
+   "element": "earth",
+   "form": "robot",
+   "image": "art/starfall/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Blight Mother",
+   "level": 5,
+   "ranks": [
+    10,
+    6,
+    4,
+    8
+   ],
+   "element": "poison",
+   "form": "robot",
+   "image": "art/starfall/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Skybreaker",
+   "level": 5,
+   "ranks": [
+    9,
+    8,
+    9,
+    3
+   ],
+   "element": "wind",
+   "form": "ship",
+   "image": "art/starfall/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Ocean Mind",
+   "level": 5,
+   "ranks": [
+    9,
+    7,
+    7,
+    5
+   ],
+   "element": "water",
+   "form": "core",
+   "image": "art/starfall/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "Last Light",
+   "level": 5,
+   "ranks": [
+    2,
+    9,
+    9,
+    8
+   ],
+   "element": "holy",
+   "form": "core",
+   "image": "art/starfall/40.svg"
+  }
+ ]
+}

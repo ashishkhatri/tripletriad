@@ -1,0 +1,11 @@
+{
+  "_comment": "Deck files in this folder, in menu order.",
+  "decks": [
+    "wilds.json",
+    "arcane.json",
+    "starfall.json",
+    "tidebound.json",
+    "bloomwild.json",
+    "hollow.json"
+  ]
+}

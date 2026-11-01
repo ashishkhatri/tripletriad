@@ -1,0 +1,570 @@
+{
+ "id": "wilds",
+ "name": "Wilds",
+ "description": "Beasts and monsters (the original set)",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Moss Sprite",
+   "level": 1,
+   "ranks": [
+    1,
+    4,
+    5,
+    1
+   ],
+   "form": "sprout",
+   "image": "art/wilds/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Ember Newt",
+   "level": 1,
+   "ranks": [
+    5,
+    1,
+    1,
+    3
+   ],
+   "element": "fire",
+   "form": "blob",
+   "image": "art/wilds/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Glass Beetle",
+   "level": 1,
+   "ranks": [
+    1,
+    3,
+    3,
+    5
+   ],
+   "form": "insect",
+   "image": "art/wilds/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Dune Hopper",
+   "level": 1,
+   "ranks": [
+    6,
+    1,
+    1,
+    2
+   ],
+   "element": "earth",
+   "form": "insect",
+   "image": "art/wilds/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Bog Lurker",
+   "level": 1,
+   "ranks": [
+    2,
+    1,
+    6,
+    1
+   ],
+   "element": "poison",
+   "form": "blob",
+   "image": "art/wilds/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "Gale Moth",
+   "level": 1,
+   "ranks": [
+    2,
+    3,
+    1,
+    5
+   ],
+   "element": "wind",
+   "form": "insect",
+   "image": "art/wilds/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Frost Mite",
+   "level": 1,
+   "ranks": [
+    1,
+    5,
+    4,
+    1
+   ],
+   "element": "ice",
+   "form": "insect",
+   "image": "art/wilds/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Tide Crab",
+   "level": 1,
+   "ranks": [
+    3,
+    1,
+    5,
+    2
+   ],
+   "element": "water",
+   "form": "crab",
+   "image": "art/wilds/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Spark Wisp",
+   "level": 2,
+   "ranks": [
+    2,
+    6,
+    1,
+    6
+   ],
+   "element": "thunder",
+   "form": "wisp",
+   "image": "art/wilds/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Thornback",
+   "level": 2,
+   "ranks": [
+    4,
+    6,
+    2,
+    4
+   ],
+   "form": "quad",
+   "image": "art/wilds/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Cinder Hound",
+   "level": 2,
+   "ranks": [
+    6,
+    2,
+    5,
+    3
+   ],
+   "element": "fire",
+   "form": "quad",
+   "image": "art/wilds/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Rime Wolf",
+   "level": 2,
+   "ranks": [
+    3,
+    5,
+    2,
+    6
+   ],
+   "element": "ice",
+   "form": "quad",
+   "image": "art/wilds/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Mire Toad",
+   "level": 2,
+   "ranks": [
+    5,
+    4,
+    3,
+    5
+   ],
+   "element": "poison",
+   "form": "blob",
+   "image": "art/wilds/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Stone Golemling",
+   "level": 2,
+   "ranks": [
+    6,
+    5,
+    4,
+    1
+   ],
+   "element": "earth",
+   "form": "golem",
+   "image": "art/wilds/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Reef Serpent",
+   "level": 2,
+   "ranks": [
+    2,
+    4,
+    6,
+    5
+   ],
+   "element": "water",
+   "form": "serpent",
+   "image": "art/wilds/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Storm Kite",
+   "level": 2,
+   "ranks": [
+    7,
+    1,
+    3,
+    5
+   ],
+   "element": "wind",
+   "form": "bird",
+   "image": "art/wilds/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Iron Sentinel",
+   "level": 3,
+   "ranks": [
+    6,
+    6,
+    3,
+    5
+   ],
+   "form": "golem",
+   "image": "art/wilds/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Blaze Drake",
+   "level": 3,
+   "ranks": [
+    7,
+    3,
+    6,
+    4
+   ],
+   "element": "fire",
+   "form": "serpent",
+   "image": "art/wilds/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Glacier Stag",
+   "level": 3,
+   "ranks": [
+    4,
+    6,
+    7,
+    3
+   ],
+   "element": "ice",
+   "form": "quad",
+   "image": "art/wilds/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Volt Lancer",
+   "level": 3,
+   "ranks": [
+    3,
+    7,
+    4,
+    6
+   ],
+   "element": "thunder",
+   "form": "golem",
+   "image": "art/wilds/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Venom Matriarch",
+   "level": 3,
+   "ranks": [
+    6,
+    2,
+    6,
+    7
+   ],
+   "element": "poison",
+   "form": "insect",
+   "image": "art/wilds/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Canyon Titan",
+   "level": 3,
+   "ranks": [
+    7,
+    6,
+    4,
+    3
+   ],
+   "element": "earth",
+   "form": "golem",
+   "image": "art/wilds/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Abyss Eel",
+   "level": 3,
+   "ranks": [
+    5,
+    3,
+    7,
+    5
+   ],
+   "element": "water",
+   "form": "serpent",
+   "image": "art/wilds/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Sky Warden",
+   "level": 3,
+   "ranks": [
+    3,
+    5,
+    5,
+    7
+   ],
+   "element": "wind",
+   "form": "bird",
+   "image": "art/wilds/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Obsidian Knight",
+   "level": 4,
+   "ranks": [
+    7,
+    7,
+    4,
+    6
+   ],
+   "form": "golem",
+   "image": "art/wilds/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Phoenix Hatchling",
+   "level": 4,
+   "ranks": [
+    6,
+    8,
+    3,
+    7
+   ],
+   "element": "fire",
+   "form": "bird",
+   "image": "art/wilds/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Aurora Lynx",
+   "level": 4,
+   "ranks": [
+    8,
+    4,
+    7,
+    5
+   ],
+   "element": "ice",
+   "form": "quad",
+   "image": "art/wilds/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Thunder Roc",
+   "level": 4,
+   "ranks": [
+    5,
+    7,
+    6,
+    6
+   ],
+   "element": "thunder",
+   "form": "bird",
+   "image": "art/wilds/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Plague Wyrm",
+   "level": 4,
+   "ranks": [
+    7,
+    5,
+    8,
+    4
+   ],
+   "element": "poison",
+   "form": "serpent",
+   "image": "art/wilds/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Mountain King",
+   "level": 4,
+   "ranks": [
+    8,
+    6,
+    3,
+    7
+   ],
+   "element": "earth",
+   "form": "golem",
+   "image": "art/wilds/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Leviathan Pup",
+   "level": 4,
+   "ranks": [
+    4,
+    8,
+    6,
+    6
+   ],
+   "element": "water",
+   "form": "serpent",
+   "image": "art/wilds/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "Lantern Seraph",
+   "level": 4,
+   "ranks": [
+    6,
+    6,
+    7,
+    5
+   ],
+   "element": "holy",
+   "form": "wraith",
+   "image": "art/wilds/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "Crimson Wyrm",
+   "level": 5,
+   "ranks": [
+    9,
+    7,
+    5,
+    8
+   ],
+   "element": "fire",
+   "form": "serpent",
+   "image": "art/wilds/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Hoarfrost Empress",
+   "level": 5,
+   "ranks": [
+    8,
+    9,
+    6,
+    6
+   ],
+   "element": "ice",
+   "form": "wraith",
+   "image": "art/wilds/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "Storm Sovereign",
+   "level": 5,
+   "ranks": [
+    5,
+    8,
+    9,
+    7
+   ],
+   "element": "thunder",
+   "form": "bird",
+   "image": "art/wilds/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "Elder Treant",
+   "level": 5,
+   "ranks": [
+    7,
+    6,
+    8,
+    8
+   ],
+   "element": "earth",
+   "form": "treant",
+   "image": "art/wilds/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Void Weaver",
+   "level": 5,
+   "ranks": [
+    10,
+    4,
+    7,
+    8
+   ],
+   "form": "insect",
+   "image": "art/wilds/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Tempest Djinn",
+   "level": 5,
+   "ranks": [
+    6,
+    9,
+    5,
+    9
+   ],
+   "element": "wind",
+   "form": "wisp",
+   "image": "art/wilds/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Dawn Archon",
+   "level": 5,
+   "ranks": [
+    9,
+    6,
+    9,
+    6
+   ],
+   "element": "holy",
+   "form": "wraith",
+   "image": "art/wilds/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "Clockwork Colossus",
+   "level": 5,
+   "ranks": [
+    8,
+    8,
+    8,
+    5
+   ],
+   "form": "golem",
+   "image": "art/wilds/40.svg"
+  }
+ ]
+}

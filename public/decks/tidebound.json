@@ -1,0 +1,575 @@
+{
+ "id": "tidebound",
+ "name": "Tidebound",
+ "description": "Creatures of reef, kelp and the deep",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Bubble Minnow",
+   "level": 1,
+   "ranks": [
+    4,
+    2,
+    5,
+    3
+   ],
+   "form": "fish",
+   "element": "water",
+   "image": "art/tidebound/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Pebble Crab",
+   "level": 1,
+   "ranks": [
+    3,
+    4,
+    1,
+    6
+   ],
+   "form": "crab",
+   "element": "earth",
+   "image": "art/tidebound/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Drift Jelly",
+   "level": 1,
+   "ranks": [
+    3,
+    1,
+    2,
+    7
+   ],
+   "form": "jelly",
+   "element": "poison",
+   "image": "art/tidebound/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Kelp Snail",
+   "level": 1,
+   "ranks": [
+    2,
+    4,
+    2,
+    4
+   ],
+   "form": "blob",
+   "element": "earth",
+   "image": "art/tidebound/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Puddle Pup",
+   "level": 1,
+   "ranks": [
+    3,
+    7,
+    1,
+    2
+   ],
+   "form": "blob",
+   "element": "water",
+   "image": "art/tidebound/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "Spark Shrimp",
+   "level": 1,
+   "ranks": [
+    1,
+    1,
+    5,
+    7
+   ],
+   "form": "fish",
+   "element": "thunder",
+   "image": "art/tidebound/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Frost Krill",
+   "level": 1,
+   "ranks": [
+    3,
+    2,
+    1,
+    8
+   ],
+   "form": "fish",
+   "element": "ice",
+   "image": "art/tidebound/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Ink Squidling",
+   "level": 1,
+   "ranks": [
+    2,
+    8,
+    1,
+    3
+   ],
+   "form": "octo",
+   "element": "poison",
+   "image": "art/tidebound/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Lantern Angler",
+   "level": 2,
+   "ranks": [
+    9,
+    1,
+    6,
+    2
+   ],
+   "form": "fish",
+   "element": "holy",
+   "image": "art/tidebound/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Bramble Urchin",
+   "level": 2,
+   "ranks": [
+    3,
+    4,
+    2,
+    8
+   ],
+   "form": "blob",
+   "element": "poison",
+   "image": "art/tidebound/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Tidepool Turtle",
+   "level": 2,
+   "ranks": [
+    5,
+    7,
+    2,
+    2
+   ],
+   "form": "turtle",
+   "element": "water",
+   "image": "art/tidebound/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Coral Crab",
+   "level": 2,
+   "ranks": [
+    5,
+    2,
+    6,
+    4
+   ],
+   "form": "crab",
+   "element": "fire",
+   "image": "art/tidebound/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Storm Ray",
+   "level": 2,
+   "ranks": [
+    1,
+    9,
+    4,
+    4
+   ],
+   "form": "fish",
+   "element": "thunder",
+   "image": "art/tidebound/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Mist Jelly",
+   "level": 2,
+   "ranks": [
+    2,
+    8,
+    4,
+    3
+   ],
+   "form": "jelly",
+   "element": "wind",
+   "image": "art/tidebound/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Shell Hermit",
+   "level": 2,
+   "ranks": [
+    5,
+    6,
+    1,
+    5
+   ],
+   "form": "crab",
+   "element": "earth",
+   "image": "art/tidebound/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Glacier Seal",
+   "level": 2,
+   "ranks": [
+    2,
+    6,
+    6,
+    3
+   ],
+   "form": "blob",
+   "element": "ice",
+   "image": "art/tidebound/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Reef Guardian",
+   "level": 3,
+   "ranks": [
+    5,
+    6,
+    5,
+    3
+   ],
+   "form": "turtle",
+   "element": "earth",
+   "image": "art/tidebound/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Thunder Eel",
+   "level": 3,
+   "ranks": [
+    8,
+    9,
+    2,
+    2
+   ],
+   "form": "serpent",
+   "element": "thunder",
+   "image": "art/tidebound/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Blaze Pufferfish",
+   "level": 3,
+   "ranks": [
+    7,
+    5,
+    6,
+    2
+   ],
+   "form": "fish",
+   "element": "fire",
+   "image": "art/tidebound/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Frostfin Shark",
+   "level": 3,
+   "ranks": [
+    2,
+    5,
+    8,
+    6
+   ],
+   "form": "fish",
+   "element": "ice",
+   "image": "art/tidebound/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Venom Octopod",
+   "level": 3,
+   "ranks": [
+    9,
+    1,
+    3,
+    6
+   ],
+   "form": "octo",
+   "element": "poison",
+   "image": "art/tidebound/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Gale Manta",
+   "level": 3,
+   "ranks": [
+    8,
+    3,
+    4,
+    6
+   ],
+   "form": "fish",
+   "element": "wind",
+   "image": "art/tidebound/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Pearl Sentinel",
+   "level": 3,
+   "ranks": [
+    4,
+    2,
+    7,
+    6
+   ],
+   "form": "crab",
+   "element": "holy",
+   "image": "art/tidebound/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Deepwater Serpent",
+   "level": 3,
+   "ranks": [
+    5,
+    9,
+    3,
+    4
+   ],
+   "form": "serpent",
+   "element": "water",
+   "image": "art/tidebound/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Ironclaw Crab",
+   "level": 4,
+   "ranks": [
+    8,
+    6,
+    2,
+    9
+   ],
+   "form": "crab",
+   "element": "earth",
+   "image": "art/tidebound/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Abyssal Angler",
+   "level": 4,
+   "ranks": [
+    5,
+    6,
+    6,
+    7
+   ],
+   "form": "fish",
+   "image": "art/tidebound/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Storm Kraken",
+   "level": 4,
+   "ranks": [
+    9,
+    3,
+    2,
+    9
+   ],
+   "form": "octo",
+   "element": "thunder",
+   "image": "art/tidebound/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Molten Turtle",
+   "level": 4,
+   "ranks": [
+    4,
+    7,
+    6,
+    7
+   ],
+   "form": "turtle",
+   "element": "fire",
+   "image": "art/tidebound/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Aurora Jelly",
+   "level": 4,
+   "ranks": [
+    7,
+    3,
+    5,
+    8
+   ],
+   "form": "jelly",
+   "element": "ice",
+   "image": "art/tidebound/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Tempest Manta",
+   "level": 4,
+   "ranks": [
+    6,
+    3,
+    6,
+    9
+   ],
+   "form": "fish",
+   "element": "wind",
+   "image": "art/tidebound/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Plague Leech",
+   "level": 4,
+   "ranks": [
+    5,
+    5,
+    5,
+    9
+   ],
+   "form": "serpent",
+   "element": "poison",
+   "image": "art/tidebound/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "Tide Oracle",
+   "level": 4,
+   "ranks": [
+    7,
+    7,
+    3,
+    8
+   ],
+   "form": "turtle",
+   "element": "holy",
+   "image": "art/tidebound/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "Elder Kraken",
+   "level": 5,
+   "ranks": [
+    8,
+    10,
+    5,
+    5
+   ],
+   "form": "octo",
+   "element": "water",
+   "image": "art/tidebound/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Coral Leviathan",
+   "level": 5,
+   "ranks": [
+    10,
+    8,
+    6,
+    3
+   ],
+   "form": "serpent",
+   "element": "fire",
+   "image": "art/tidebound/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "Abyss Sovereign",
+   "level": 5,
+   "ranks": [
+    3,
+    10,
+    4,
+    10
+   ],
+   "form": "octo",
+   "image": "art/tidebound/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "Glacial Behemoth",
+   "level": 5,
+   "ranks": [
+    10,
+    5,
+    8,
+    5
+   ],
+   "form": "turtle",
+   "element": "ice",
+   "image": "art/tidebound/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Thunderjaw Shark",
+   "level": 5,
+   "ranks": [
+    9,
+    6,
+    9,
+    4
+   ],
+   "form": "fish",
+   "element": "thunder",
+   "image": "art/tidebound/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Venom Hydra",
+   "level": 5,
+   "ranks": [
+    10,
+    7,
+    8,
+    3
+   ],
+   "form": "serpent",
+   "element": "poison",
+   "image": "art/tidebound/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Shell Colossus",
+   "level": 5,
+   "ranks": [
+    6,
+    8,
+    10,
+    3
+   ],
+   "form": "crab",
+   "element": "earth",
+   "image": "art/tidebound/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "Sea Seraph",
+   "level": 5,
+   "ranks": [
+    10,
+    8,
+    1,
+    9
+   ],
+   "form": "jelly",
+   "element": "holy",
+   "image": "art/tidebound/40.svg"
+  }
+ ]
+}

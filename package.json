@@ -1,0 +1,13 @@
+{
+  "name": "triad-online",
+  "version": "1.0.0",
+  "description": "Self-hosted Triple Triad-style card game with AI and online multiplayer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

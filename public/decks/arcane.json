@@ -1,0 +1,573 @@
+{
+ "id": "arcane",
+ "name": "Arcane Order",
+ "description": "Wizards, knights and wanderers of an invented realm",
+ "elements": {
+  "fire": "🔥",
+  "ice": "❄️",
+  "thunder": "⚡",
+  "earth": "⛰️",
+  "poison": "☠️",
+  "wind": "🌪️",
+  "water": "💧",
+  "holy": "✨"
+ },
+ "cards": [
+  {
+   "id": 1,
+   "name": "Village Squire",
+   "level": 1,
+   "ranks": [
+    1,
+    9,
+    2,
+    1
+   ],
+   "form": "hero",
+   "image": "art/arcane/1.svg"
+  },
+  {
+   "id": 2,
+   "name": "Hedge Witch",
+   "level": 1,
+   "ranks": [
+    1,
+    2,
+    2,
+    7
+   ],
+   "element": "poison",
+   "form": "hero",
+   "image": "art/arcane/2.svg"
+  },
+  {
+   "id": 3,
+   "name": "Tinker Apprentice",
+   "level": 1,
+   "ranks": [
+    1,
+    7,
+    2,
+    3
+   ],
+   "form": "hero",
+   "image": "art/arcane/3.svg"
+  },
+  {
+   "id": 4,
+   "name": "Torchbearer",
+   "level": 1,
+   "ranks": [
+    3,
+    7,
+    2,
+    1
+   ],
+   "element": "fire",
+   "form": "hero",
+   "image": "art/arcane/4.svg"
+  },
+  {
+   "id": 5,
+   "name": "Frost Acolyte",
+   "level": 1,
+   "ranks": [
+    2,
+    7,
+    1,
+    2
+   ],
+   "element": "ice",
+   "form": "hero",
+   "image": "art/arcane/5.svg"
+  },
+  {
+   "id": 6,
+   "name": "River Ferryman",
+   "level": 1,
+   "ranks": [
+    4,
+    1,
+    2,
+    5
+   ],
+   "element": "water",
+   "form": "hero",
+   "image": "art/arcane/6.svg"
+  },
+  {
+   "id": 7,
+   "name": "Field Scout",
+   "level": 1,
+   "ranks": [
+    3,
+    1,
+    1,
+    8
+   ],
+   "element": "wind",
+   "form": "hero",
+   "image": "art/arcane/7.svg"
+  },
+  {
+   "id": 8,
+   "name": "Quarry Hand",
+   "level": 1,
+   "ranks": [
+    6,
+    5,
+    1,
+    1
+   ],
+   "element": "earth",
+   "form": "hero",
+   "image": "art/arcane/8.svg"
+  },
+  {
+   "id": 9,
+   "name": "Lancer of Vell",
+   "level": 2,
+   "ranks": [
+    2,
+    8,
+    2,
+    5
+   ],
+   "element": "thunder",
+   "form": "hero",
+   "image": "art/arcane/9.svg"
+  },
+  {
+   "id": 10,
+   "name": "Ashen Duelist",
+   "level": 2,
+   "ranks": [
+    3,
+    6,
+    6,
+    2
+   ],
+   "element": "fire",
+   "form": "hero",
+   "image": "art/arcane/10.svg"
+  },
+  {
+   "id": 11,
+   "name": "Glacier Monk",
+   "level": 2,
+   "ranks": [
+    8,
+    2,
+    7,
+    1
+   ],
+   "element": "ice",
+   "form": "hero",
+   "image": "art/arcane/11.svg"
+  },
+  {
+   "id": 12,
+   "name": "Marsh Alchemist",
+   "level": 2,
+   "ranks": [
+    1,
+    5,
+    2,
+    8
+   ],
+   "element": "poison",
+   "form": "hero",
+   "image": "art/arcane/12.svg"
+  },
+  {
+   "id": 13,
+   "name": "Tide Corsair",
+   "level": 2,
+   "ranks": [
+    5,
+    6,
+    5,
+    1
+   ],
+   "element": "water",
+   "form": "hero",
+   "image": "art/arcane/13.svg"
+  },
+  {
+   "id": 14,
+   "name": "Gale Archer",
+   "level": 2,
+   "ranks": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "element": "wind",
+   "form": "hero",
+   "image": "art/arcane/14.svg"
+  },
+  {
+   "id": 15,
+   "name": "Stonewarden",
+   "level": 2,
+   "ranks": [
+    4,
+    7,
+    2,
+    5
+   ],
+   "element": "earth",
+   "form": "hero",
+   "image": "art/arcane/15.svg"
+  },
+  {
+   "id": 16,
+   "name": "Lantern Cleric",
+   "level": 2,
+   "ranks": [
+    6,
+    9,
+    2,
+    1
+   ],
+   "element": "holy",
+   "form": "hero",
+   "image": "art/arcane/16.svg"
+  },
+  {
+   "id": 17,
+   "name": "Storm Templar",
+   "level": 3,
+   "ranks": [
+    5,
+    5,
+    7,
+    4
+   ],
+   "element": "thunder",
+   "form": "hero",
+   "image": "art/arcane/17.svg"
+  },
+  {
+   "id": 18,
+   "name": "Pyre Sorceress",
+   "level": 3,
+   "ranks": [
+    9,
+    2,
+    9,
+    1
+   ],
+   "element": "fire",
+   "form": "hero",
+   "image": "art/arcane/18.svg"
+  },
+  {
+   "id": 19,
+   "name": "Rime Paladin",
+   "level": 3,
+   "ranks": [
+    9,
+    6,
+    2,
+    4
+   ],
+   "element": "ice",
+   "form": "hero",
+   "image": "art/arcane/19.svg"
+  },
+  {
+   "id": 20,
+   "name": "Nightshade Assassin",
+   "level": 3,
+   "ranks": [
+    6,
+    4,
+    8,
+    2
+   ],
+   "element": "poison",
+   "form": "hero",
+   "image": "art/arcane/20.svg"
+  },
+  {
+   "id": 21,
+   "name": "Coral Mage",
+   "level": 3,
+   "ranks": [
+    4,
+    9,
+    7,
+    1
+   ],
+   "element": "water",
+   "form": "hero",
+   "image": "art/arcane/21.svg"
+  },
+  {
+   "id": 22,
+   "name": "Sky Ranger",
+   "level": 3,
+   "ranks": [
+    4,
+    6,
+    3,
+    6
+   ],
+   "element": "wind",
+   "form": "hero",
+   "image": "art/arcane/22.svg"
+  },
+  {
+   "id": 23,
+   "name": "Granite Champion",
+   "level": 3,
+   "ranks": [
+    7,
+    3,
+    7,
+    4
+   ],
+   "element": "earth",
+   "form": "hero",
+   "image": "art/arcane/23.svg"
+  },
+  {
+   "id": 24,
+   "name": "Sunward Priest",
+   "level": 3,
+   "ranks": [
+    6,
+    4,
+    7,
+    3
+   ],
+   "element": "holy",
+   "form": "hero",
+   "image": "art/arcane/24.svg"
+  },
+  {
+   "id": 25,
+   "name": "Captain Orla Venn",
+   "level": 4,
+   "ranks": [
+    8,
+    9,
+    1,
+    7
+   ],
+   "form": "hero",
+   "image": "art/arcane/25.svg"
+  },
+  {
+   "id": 26,
+   "name": "Emberlord Kass",
+   "level": 4,
+   "ranks": [
+    7,
+    8,
+    5,
+    4
+   ],
+   "element": "fire",
+   "form": "hero",
+   "image": "art/arcane/26.svg"
+  },
+  {
+   "id": 27,
+   "name": "Winter Regent",
+   "level": 4,
+   "ranks": [
+    6,
+    9,
+    3,
+    5
+   ],
+   "element": "ice",
+   "form": "hero",
+   "image": "art/arcane/27.svg"
+  },
+  {
+   "id": 28,
+   "name": "Thunder Chancellor",
+   "level": 4,
+   "ranks": [
+    8,
+    6,
+    4,
+    6
+   ],
+   "element": "thunder",
+   "form": "hero",
+   "image": "art/arcane/28.svg"
+  },
+  {
+   "id": 29,
+   "name": "Plague Doctor Morrow",
+   "level": 4,
+   "ranks": [
+    9,
+    3,
+    7,
+    6
+   ],
+   "element": "poison",
+   "form": "hero",
+   "image": "art/arcane/29.svg"
+  },
+  {
+   "id": 30,
+   "name": "Admiral of Brine",
+   "level": 4,
+   "ranks": [
+    9,
+    5,
+    9,
+    2
+   ],
+   "element": "water",
+   "form": "hero",
+   "image": "art/arcane/30.svg"
+  },
+  {
+   "id": 31,
+   "name": "Windcaller Seren",
+   "level": 4,
+   "ranks": [
+    9,
+    1,
+    9,
+    6
+   ],
+   "element": "wind",
+   "form": "hero",
+   "image": "art/arcane/31.svg"
+  },
+  {
+   "id": 32,
+   "name": "High Oracle",
+   "level": 4,
+   "ranks": [
+    9,
+    4,
+    8,
+    3
+   ],
+   "element": "holy",
+   "form": "hero",
+   "image": "art/arcane/32.svg"
+  },
+  {
+   "id": 33,
+   "name": "The Ash King",
+   "level": 5,
+   "ranks": [
+    8,
+    7,
+    6,
+    9
+   ],
+   "element": "fire",
+   "form": "hero",
+   "image": "art/arcane/33.svg"
+  },
+  {
+   "id": 34,
+   "name": "Queen of Long Night",
+   "level": 5,
+   "ranks": [
+    8,
+    4,
+    7,
+    10
+   ],
+   "element": "ice",
+   "form": "hero",
+   "image": "art/arcane/34.svg"
+  },
+  {
+   "id": 35,
+   "name": "Archmage Thessaly",
+   "level": 5,
+   "ranks": [
+    9,
+    2,
+    8,
+    8
+   ],
+   "element": "thunder",
+   "form": "hero",
+   "image": "art/arcane/35.svg"
+  },
+  {
+   "id": 36,
+   "name": "The Gray Wanderer",
+   "level": 5,
+   "ranks": [
+    2,
+    10,
+    9,
+    9
+   ],
+   "form": "hero",
+   "image": "art/arcane/36.svg"
+  },
+  {
+   "id": 37,
+   "name": "Mother of Thorns",
+   "level": 5,
+   "ranks": [
+    7,
+    9,
+    5,
+    6
+   ],
+   "element": "poison",
+   "form": "hero",
+   "image": "art/arcane/37.svg"
+  },
+  {
+   "id": 38,
+   "name": "Warden of Tides",
+   "level": 5,
+   "ranks": [
+    8,
+    6,
+    8,
+    7
+   ],
+   "element": "water",
+   "form": "hero",
+   "image": "art/arcane/38.svg"
+  },
+  {
+   "id": 39,
+   "name": "Saint of Dawn",
+   "level": 5,
+   "ranks": [
+    7,
+    8,
+    6,
+    7
+   ],
+   "element": "holy",
+   "form": "hero",
+   "image": "art/arcane/39.svg"
+  },
+  {
+   "id": 40,
+   "name": "The Iron Pretender",
+   "level": 5,
+   "ranks": [
+    10,
+    1,
+    7,
+    10
+   ],
+   "element": "earth",
+   "form": "hero",
+   "image": "art/arcane/40.svg"
+  }
+ ]
+}

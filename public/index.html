@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Triad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- MENU -->
+  <section id="menu" class="screen active">
+    <h1 class="logo">TRIAD</h1>
+    <p class="tag">A four-sided card duel</p>
+
+    <div class="panel">
+      <label class="field">Your name <input id="name" maxlength="16" placeholder="Player"></label>
+
+      <label class="field">Card set <select id="deck"></select></label>
+      <p id="deck-desc" class="muted deck-desc"></p>
+      <fieldset class="rules">
+        <legend>Rules</legend>
+        <label><input type="checkbox" id="r-open" checked> Open</label>
+        <label><input type="checkbox" id="r-same"> Same</label>
+        <label><input type="checkbox" id="r-plus"> Plus</label>
+        <label><input type="checkbox" id="r-elemental"> Elemental</label>
+      </fieldset>
+
+      <div class="row">
+        <select id="difficulty">
+          <option value="easy">Easy</option>
+          <option value="normal" selected>Normal</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button id="btn-ai" class="primary">Play vs Computer</button>
+      </div>
+
+      <div class="divider"><span>Online</span></div>
+      <button id="btn-create">Create room</button>
+      <div class="row">
+        <input id="join-code" maxlength="4" placeholder="CODE" autocomplete="off">
+        <button id="btn-join">Join</button>
+      </div>
+      <p id="menu-error" class="error"></p>
+    </div>
+    <details class="howto">
+      <summary>How to play</summary>
+      <p>Take turns placing cards on the 3×3 board. When your card's side beats the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards (counting the one left in hand) wins.</p>
+      <p><b>Same:</b> if 2+ sides you touch have equal numbers, those cards flip. <b>Plus:</b> if 2+ touching pairs add to the same total, those cards flip. Cards flipped by Same or Plus can chain-capture (<b>Combo</b>). <b>Elemental:</b> marked squares give +1 to a matching element and −1 to everything else. <b>Open:</b> both hands are visible.</p>
+    </details>
+  </section>
+
+  <!-- LOBBY -->
+  <section id="lobby" class="screen">
+    <div class="panel center">
+      <p>Room code</p>
+      <div id="room-code" class="code">----</div>
+      <p class="muted">Share this code (or the link) with your opponent.</p>
+      <button id="btn-copy">Copy invite link</button>
+      <p class="muted waiting">Waiting for opponent<span class="dots"></span></p>
+      <button id="btn-cancel" class="ghost">Cancel</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen">
+    <header class="hud">
+      <div class="who theirs"><span id="name-theirs">CPU</span> <b id="score-theirs">5</b></div>
+      <div id="turn" class="turn"></div>
+      <div class="who mine"><b id="score-mine">5</b> <span id="name-mine">You</span></div>
+    </header>
+    <div class="table">
+      <div id="hand-theirs" class="hand theirs"></div>
+      <div id="board" class="board"></div>
+      <div id="hand-mine" class="hand mine"></div>
+    </div>
+    <div class="footer">
+      <span id="rules-label" class="muted"></span>
+      <button id="btn-quit" class="ghost small">Quit</button>
+    </div>
+    <div id="banner" class="banner"></div>
+    <div id="result" class="overlay">
+      <div class="panel center">
+        <h2 id="result-title"></h2>
+        <p id="result-score" class="muted"></p>
+        <p id="result-note" class="muted"></p>
+        <div class="row">
+          <button id="btn-rematch" class="primary">Rematch</button>
+          <button id="btn-menu" class="ghost">Menu</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="toast"></div>
+  <script src="game.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
