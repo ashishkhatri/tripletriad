@@ -148,13 +148,29 @@
       if (!state.board[idx]) c.classList.toggle('can-drop', on || selected !== null);
     });
   }
+  // Cancels an in-progress drag (set while dragging) — used by right-click and Escape.
+  let cancelDrag = null;
   function startDrag(e, i, el) {
     if (!myTurn() || (e.button !== undefined && e.button > 0)) return;
     e.preventDefault();
     const sx = e.clientX, sy = e.clientY, rect = el.getBoundingClientRect();
     const offX = sx - rect.left, offY = sy - rect.top;
     let ghost = null, over = null;
+    const cleanup = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      window.removeEventListener('contextmenu', onContext, true);
+      cancelDrag = null;
+      if (ghost) { ghost.remove(); ghost = null; }
+      if (over) over.classList.remove('drop-over');
+      el.classList.remove('dragging');
+    };
+    // put the card back in the hand and deselect it
+    const cancel = () => { cleanup(); selected = null; render(); };
+    const onContext = (ev) => { ev.preventDefault(); ev.stopPropagation(); cancel(); };
     const move = (ev) => {
+      if (ev.buttons & 2) return cancel();   // right button pressed while dragging
       if (!ghost) {
         if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
         ghost = el.cloneNode(true);
@@ -172,23 +188,35 @@
       if (over !== target) { if (over) over.classList.remove('drop-over'); over = target; if (over) over.classList.add('drop-over'); }
     };
     const up = (ev) => {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerup', up);
-      window.removeEventListener('pointercancel', up);
-      if (ghost) {
-        ghost.remove();
-        el.classList.remove('dragging');
-        if (over && ev.type === 'pointerup' && myTurn()) { selected = i; playMove(i, Number(over.dataset.cell)); return; }
+      const wasDragging = !!ghost, target = over;
+      cleanup();
+      if (wasDragging) {
+        if (target && ev.type === 'pointerup' && myTurn()) { selected = i; playMove(i, Number(target.dataset.cell)); return; }
         render();
         return;
       }
       selected = selected === i ? null : i;
       render();
     };
+    cancelDrag = cancel;
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
     window.addEventListener('pointercancel', up);
+    window.addEventListener('contextmenu', onContext, true);
   }
+
+  // Right-click or Escape puts a selected (click-to-place) or dragged card back.
+  function resetCard() {
+    if (cancelDrag) { cancelDrag(); return true; }
+    if (state && selected !== null) { selected = null; render(); return true; }
+    return false;
+  }
+  document.addEventListener('contextmenu', (e) => {
+    if (document.querySelector('#game.active') && resetCard()) e.preventDefault();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.querySelector('#game.active')) resetCard();
+  });
 
   let resultShown = false;
   async function applyResult(newState, events) {

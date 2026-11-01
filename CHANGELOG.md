@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.0.3 — 2026-11-01
+### Added
+- Right-click puts a card back: mid-drag it returns the card to your hand without placing it,
+  and after clicking a card to select it, it deselects. Escape does the same.
+  Right-clicking with nothing selected still shows the browser's normal menu.
+
 ## v2.0.2 — 2026-11-01
 ### Changed
 - Rule tooltips now appear only when the pointer rests on the ⓘ itself, after a 1-second delay,
