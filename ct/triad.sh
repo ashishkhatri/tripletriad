@@ -35,7 +35,7 @@ EOF
 # ---------- checks ----------
 [[ $EUID -eq 0 ]] || die "Run this as root on the Proxmox host."
 command -v pct >/dev/null && command -v pveam >/dev/null || die "This must run on a Proxmox VE host (pct/pveam not found)."
-[[ "$REPO" != *ashishkhatri/tripletriad* ]] || die "Repository not set. Set TRIAD_REPO=owner/name."
+[[ "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || die "Repository not set. Set TRIAD_REPO=owner/name."
 
 header
 
