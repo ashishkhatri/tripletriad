@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.0.2 — 2026-11-01
+### Changed
+- Rule tooltips now appear only when the pointer rests on the ⓘ itself, after a 1-second delay,
+  and hide as soon as it moves away. Tapping the ⓘ on phones still opens them instantly.
+### Fixed
+- The Wager tooltip was faint while the rule was greyed out; only the checkbox and label are dimmed now.
+- Removed the tooltip instructions from "How to play".
+
 ## v2.0.1 — 2026-11-01
 ### Fixed
 - Rule tooltips stayed open after clicking a checkbox or the Hands dropdown until you clicked again.

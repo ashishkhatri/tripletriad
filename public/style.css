@@ -354,7 +354,8 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .rules label.rule:nth-child(even) .rule-tip { left: auto; right: 0; transform: translate(0, 4px); }
 .rules label.rule:nth-child(even) .rule-tip::after { left: auto; right: 24px; transform: none; }
 @media (hover: hover) {
-  .rules label.rule:hover .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); }
+  /* show only while the pointer rests on the (i) itself, after a 1 second delay; hide immediately */
+  .rules label.rule .rule-info:hover ~ .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); transition-delay: 1s; }
 }
 .rules label.rule.tip-open .rule-tip,
 .rules label.rule:has(.rule-info:focus-visible) .rule-tip { opacity: 1; visibility: visible; transform: translate(0, 0); }
@@ -393,7 +394,9 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 
 .rules label.rule-wide { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
 .rules label.rule-wide select { flex: 1; padding: 6px 8px; font-size: 16px; }
-.rules label.disabled { opacity: .5; }
+.rules label.disabled { color: #9a8462; }
+.rules label.disabled input { opacity: .45; }
+.rules label.disabled .rule-tip { color: var(--ink); }
 .rules-note { grid-column: 1 / -1; margin: 2px 0 0; font-size: 14px; font-style: italic; color: var(--ink-soft); }
 .rules-note:empty { display: none; }
 
