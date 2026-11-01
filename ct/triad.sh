@@ -144,7 +144,7 @@ chown -R triad:triad /opt/triad
 sed -e "s/^Environment=PORT=.*/Environment=PORT=$PORT/" /opt/triad/triad.service > /etc/systemd/system/triad.service
 systemctl daemon-reload
 systemctl enable -q --now triad
-install -m 0755 /opt/triad/ct/update.sh /usr/local/bin/update
+install -m 0755 /opt/triad/ct/update.sh /usr/bin/update
 cat > /etc/motd <<EOF
 
   Triad card game  ->  http://$(hostname -I | awk '{print $1}'):$PORT

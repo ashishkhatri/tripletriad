@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.2.1 — 2026-11-01
+### Fixed
+- `pct exec <CTID> -- update` failed with "No such file or directory": the updater now installs to `/usr/bin/update`.
+  Containers installed earlier need one run of `pct exec <CTID> -- /usr/local/bin/update` to move it.
+
 ## v1.2.0 — 2026-11-01
 ### Changed
 - New fantasy look: engraved serif lettering (Cinzel Decorative, Cinzel, EB Garamond), gilded title,
