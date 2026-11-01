@@ -16,6 +16,7 @@
   let roomDeck = null;        // deck id of the current room
   let account = null;         // { name } when signed in
   const decks = new Map();
+  const sfx = (name, opts) => (typeof Sfx !== 'undefined' ? Sfx : { play() {} }).play(name, opts);
   const glyphsFor = (deckId) => ((decks.get(deckId) || {}).elements) || {};
   const glyph = (el) => (state && state.glyphs && state.glyphs[el]) || glyphsFor(roomDeck)[el] || '';
 
@@ -167,12 +168,13 @@
       el.classList.remove('dragging');
     };
     // put the card back in the hand and deselect it
-    const cancel = () => { cleanup(); selected = null; render(); };
+    const cancel = () => { cleanup(); selected = null; render(); sfx('cancel'); };
     const onContext = (ev) => { ev.preventDefault(); ev.stopPropagation(); cancel(); };
     const move = (ev) => {
       if (ev.buttons & 2) return cancel();   // right button pressed while dragging
       if (!ghost) {
         if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
+        sfx('pick');
         ghost = el.cloneNode(true);
         ghost.classList.remove('selected', 'playable');
         ghost.classList.add('drag-ghost');
@@ -196,6 +198,7 @@
         return;
       }
       selected = selected === i ? null : i;
+      sfx(selected === null ? 'cancel' : 'pick');
       render();
     };
     cancelDrag = cancel;
@@ -208,7 +211,7 @@
   // Right-click or Escape puts a selected (click-to-place) or dragged card back.
   function resetCard() {
     if (cancelDrag) { cancelDrag(); return true; }
-    if (state && selected !== null) { selected = null; render(); return true; }
+    if (state && selected !== null) { selected = null; render(); sfx('cancel'); return true; }
     return false;
   }
   document.addEventListener('contextmenu', (e) => {
@@ -220,12 +223,25 @@
 
   let resultShown = false;
   async function applyResult(newState, events) {
+    const prevTurn = state ? state.turn : null;
     state = newState;
     selected = null;
     render();
+    // sounds: placing, then each flip a beat apart; rule chimes play with their banners
+    let flips = 0;
     for (const e of events) {
-      if (e.type === 'rule') await banner({ same: 'Same!', plus: 'Plus!', combo: 'Combo!' }[e.rule]);
+      if (e.type === 'place') sfx('place');
+      else if (e.type === 'flip' && e.by === 'basic') sfx('flip', { delay: 0.18 + 0.09 * flips++ });
     }
+    for (const e of events) {
+      if (e.type === 'rule') {
+        sfx(e.rule);
+        await banner({ same: 'Same!', plus: 'Plus!', combo: 'Combo!' }[e.rule]);
+        const ruleFlips = events.filter((x) => x.type === 'flip' && x.by === e.rule);
+        ruleFlips.forEach((_, k) => sfx('flip', { delay: 0.08 * k }));
+      }
+    }
+    if (!state.over && state.turn === me && prevTurn !== null && prevTurn !== me) sfx('turn', { delay: 0.35 });
     if (state.over && !resultShown) showResult();
   }
 
@@ -242,7 +258,7 @@
     $('#result-wager-cards').innerHTML = '';
     $('#btn-result-packs').hidden = true;
     $('#btn-rematch').disabled = false;
-    setTimeout(() => $('#result').classList.add('show'), 500);
+    setTimeout(() => { $('#result').classList.add('show'); sfx(w === 'draw' ? 'draw' : w === me ? 'win' : 'lose'); }, 500);
   }
   function showRewards(msg) {
     const r = msg.rewards;
@@ -254,6 +270,8 @@
       if (r.newPacks > 0) t += ` · ${r.newPacks === 1 ? 'A pack unlocked!' : r.newPacks + ' packs unlocked!'}`;
       else t += ` · next pack in ${r.nextPackIn} XP`;
       $('#result-xp-text').textContent = t;
+      sfx('xp', { delay: 0.6 });
+      if (r.newPacks > 0) sfx('unlock', { delay: 1.1 });
       $('#btn-result-packs').hidden = !(r.packs > 0);
       $('#btn-result-packs').textContent = r.packs > 1 ? `Open packs (${r.packs})` : 'Open pack';
     } else if (!account) {
@@ -267,6 +285,7 @@
       const c = deckCard(roomDeck, id);
       wc.appendChild(cardEl(playCard(c), msg.wager.won ? 'mine' : 'theirs', glyphsFor(roomDeck)));
       $('#result-wager-text').textContent = msg.wager.won ? `${c.name} joins your collection.` : `${names[1 - me]} took your ${c.name}.`;
+      sfx(msg.wager.won ? 'wager-win' : 'wager-lose', { delay: 0.3 });
       if (msg.wager.refill && msg.wager.refill.length) $('#result-wager-text').textContent += ' You got a spare level-1 card so you still have a full hand.';
     }
   }
@@ -382,6 +401,7 @@
         disconnect(); show('menu');
         break;
       case 'error':
+        sfx('error');
         busy = false; render();
         if (msg.fatal) { disconnect(); show('menu'); }
         if (document.querySelector('#menu.active')) $('#menu-error').textContent = msg.msg; else toast(msg.msg);
@@ -425,7 +445,7 @@
       const id = builder.picked[i];
       if (id !== undefined) {
         const el = cardEl(playCard(deckCard(roomDeck, id)), 'mine', g);
-        if (!builder.locked) { el.classList.add('pickable'); el.onclick = () => { builder.picked.splice(i, 1); renderBuilder(); }; el.title = 'Remove from hand'; }
+        if (!builder.locked) { el.classList.add('pickable'); el.onclick = () => { builder.picked.splice(i, 1); sfx('cancel'); renderBuilder(); }; el.title = 'Remove from hand'; }
         slot.appendChild(el);
       }
       tray.appendChild(slot);
@@ -441,7 +461,7 @@
       const wrap = document.createElement('div'); wrap.className = 'grid-card';
       const el = cardEl(playCard(c), 'mine', g);
       const left = builder.cards[c.id] - builder.picked.filter((x) => x === c.id).length;
-      if (canAdd(c.id)) { el.classList.add('pickable'); el.onclick = () => { builder.picked.push(c.id); renderBuilder(); }; }
+      if (canAdd(c.id)) { el.classList.add('pickable'); el.onclick = () => { builder.picked.push(c.id); sfx('place'); renderBuilder(); }; }
       else wrap.classList.add('unavailable');
       wrap.appendChild(el);
       const badge = document.createElement('span'); badge.className = 'count'; badge.textContent = `×${left}`; wrap.appendChild(badge);
@@ -553,7 +573,8 @@
   async function openPack(deckId) {
     packDeck = deckId;
     let r;
-    try { r = await api('POST', '/api/packs/open', { deck: deckId }); } catch (e) { toast(e.message); return; }
+    try { r = await api('POST', '/api/packs/open', { deck: deckId }); } catch (e) { toast(e.message); sfx('error'); return; }
+    sfx('pack-open');
     const box = $('#pack-cards'); box.innerHTML = '';
     const deck = decks.get(deckId);
     let revealed = 0;
@@ -571,6 +592,7 @@
       holder.onclick = () => {
         if (holder.classList.contains('revealed')) return;
         holder.classList.add('revealed', `rarity-${c.level}`);
+        sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
         if (++revealed === r.cards.length) {
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
           $('#btn-pack-again').hidden = r.summary.packs < 1;
@@ -584,6 +606,11 @@
   }
 
   // ---------- wiring ----------
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('button');
+    if (b && !b.disabled && !b.classList.contains('music-btn') && !b.classList.contains('rule-info')) sfx('click');
+  }, true);
+
   document.querySelectorAll('.rule-info').forEach((b) => {
     b.addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();

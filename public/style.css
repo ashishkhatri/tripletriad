@@ -477,3 +477,9 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 }
 #pack { z-index: 40; background: radial-gradient(ellipse at center, #1a0f07ee 0%, #000000f2 100%); }
 #auth { z-index: 45; }
+
+/* sound-effects control, inside the music box */
+.sfx-ctl { display: inline-flex; align-items: center; gap: 6px; padding-right: 8px; margin-right: 2px; border-right: 1px solid #8a6a2688; }
+.music-ctl .sfx-ctl input[type=range] { width: 64px; }
+.music-btn.sfx-btn { font-size: 15px; }
+@media (max-width: 640px) { .music-ctl .sfx-ctl input[type=range], .music-ctl > input[type=range] { width: 48px; } }

@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.1.0 — 2026-11-01
+### Added
+- Sound effects (original, stored as MP3s in `public/sfx/`): card pick-up, placement, flips, putting a card back,
+  Same / Plus / Combo chimes, your-turn bell, win / lose / draw stings, XP gained, pack unlocked, wager won / lost,
+  button clicks and errors.
+- Pack opening sounds: a tear-and-shimmer when the pack opens, and a reveal for each card that gets grander
+  with the card's level.
+- Sound-effects toggle (🔔) and volume slider beside the music control, remembered per browser.
+- `tools/gensfx.py`, which synthesizes the effects.
+
 ## v2.0.3 — 2026-11-01
 ### Added
 - Right-click puts a card back: mid-drag it returns the card to your hand without placing it,

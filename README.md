@@ -205,6 +205,15 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 "music": { "file": "music/my-theme.mp3", "title": "My Theme" }
 ```
 
+## Sound effects
+
+Original sound effects live in `public/sfx/` (MP3, ~560 KB total): card pick-up, placement, flips,
+putting a card back, Same/Plus/Combo chimes, your-turn bell, win/lose/draw stings, XP, pack unlocks,
+wagers, pack opening and a reveal sound per card level (grander for rarer cards).
+The 🔔 button and slider next to the music control mute them and set their volume (remembered per browser).
+They're synthesized by `tools/gensfx.py` (`python3 tools/gensfx.py`), and any file can be swapped for your own MP3
+with the same name.
+
 ## Versions and releases
 
 The running version is shown at the bottom of the main menu and at `/version`.
@@ -225,6 +234,9 @@ see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
 | `public/music/` | Set themes (MP3) |
 | `public/music.js` | Music player |
 | `tools/genmusic.py` | Music composer/renderer |
+| `public/sfx/` | Sound effects (MP3) |
+| `public/sfx.js` | Sound-effects player |
+| `tools/gensfx.py` | Sound-effects synthesizer |
 | `ct/triad.sh` | Proxmox LXC installer (run on the host) |
 | `ct/update.sh` | In-container updater (`update`) |
 | `triad.service` | systemd unit |
