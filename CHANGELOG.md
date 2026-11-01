@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.2.0 — 2026-11-01
+### Changed
+- New fantasy look: engraved serif lettering (Cinzel Decorative, Cinzel, EB Garamond), gilded title,
+  parchment menu with a gold frame and flourishes, carved-wood board with gilt inlay,
+  gold-framed cards with parchment name plates and blue/red inner rims for ownership,
+  medallion scores, an ornate card back, and wood/gold buttons.
+
 ## v1.1.1 — 2026-11-01
 ### Fixed
 - Installer no longer prints perl/locale warnings inside the new container.
