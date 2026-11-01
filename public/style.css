@@ -281,7 +281,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 
 /* music control */
 .music-ctl {
-  position: fixed; top: 10px; right: 10px; z-index: 25; display: flex; align-items: center; gap: 8px;
+  position: fixed; bottom: 12px; right: 12px; z-index: 25; display: flex; align-items: center; gap: 8px;
   padding: 4px 10px 4px 4px; border-radius: 22px;
   background: #1a0f07cc; border: 1px solid var(--gold-lo); box-shadow: 0 3px 10px #000a;
 }
@@ -290,7 +290,39 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .music-ctl input[type=range] { width: 80px; accent-color: var(--gold); padding: 0; background: none; box-shadow: none; border: 0; }
 .music-title { font-style: italic; font-size: 14px; color: var(--muted); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 640px) {
-  .music-ctl { top: auto; bottom: 10px; right: 10px; }
+  .music-ctl { bottom: 10px; right: 10px; }
   .music-title { display: none; }
   .music-ctl input[type=range] { width: 64px; }
+}
+
+/* drag & drop */
+.hand.mine .card.playable { touch-action: none; }
+.hand.mine .card.dragging { opacity: .35; }
+.drag-ghost {
+  position: fixed !important; top: 0; left: 0; margin: 0 !important; z-index: 60; pointer-events: none;
+  box-shadow: 0 0 0 2px var(--gold-hi), 0 0 24px #f6e2a0aa, 0 18px 30px #000c !important; transition: none !important;
+}
+.cell.drop-over { background: radial-gradient(ellipse at 50% 40%, #6a4a1e 0%, #2a190e 100%); box-shadow: inset 0 3px 8px #000c, 0 0 0 3px var(--gold-hi), 0 0 22px #f6e2a0cc; }
+
+/* ---------- desktop: bigger board, full non-overlapping hands ---------- */
+@media (min-width: 900px) and (min-height: 560px) {
+  :root {
+    --cell: min(14.5vw, calc((100vh - 236px) / 3.75), 200px);
+    --hcard: calc(var(--cell) * 0.6);
+  }
+  #game.active { padding: 18px 16px 10px; }
+  .hud { max-width: calc(var(--cell) * 4.6 + 120px); }
+  .who { font-size: 20px; gap: 14px; }
+  .who b { width: 60px; height: 60px; font-size: 32px; }
+  .turn { font-size: 21px; }
+  .table { gap: 32px; margin: 16px 0 12px; }
+  .board { gap: 10px; padding: 16px; }
+  .hand { gap: 6px; }
+  .hand .card { margin-top: 0; }
+  .hand.mine .card.playable:hover { transform: translateX(-10px); }
+  .hand.mine .card.selected { transform: translateX(-22px); }
+  .hand .card .nm { font-size: .6em; }
+  .footer { font-size: 18px; }
+  .banner { font-size: 96px; }
+  .logo { font-size: 76px; }
 }

@@ -3,6 +3,18 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v1.4.0 — 2026-11-01
+### Added
+- Drag and drop: drag a card from your hand onto the board (mouse or touch). Click/tap to select then place still works.
+- App icon (three fanned cards with a gold star) used as the browser icon, home-screen icon and Proxmox container logo.
+- Web app manifest, so the game can be installed to a phone home screen or as a desktop app.
+### Changed
+- Desktop layout: the board and cards scale to the window (up to 200px cells), both hands show as full
+  non-overlapping columns, and the scores and turn text are larger. The phone layout is unchanged.
+- Music control moved to the bottom-right corner.
+### Fixed
+- Playing your first card while the "You start" banner was showing could start two computer turns and freeze the game.
+
 ## v1.3.0 — 2026-11-01
 ### Added
 - Background music: an original theme for every card set, stored as MP3 files in `public/music/`

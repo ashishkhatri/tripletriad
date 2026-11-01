@@ -118,7 +118,7 @@ pct create "$CTID" "$TEMPLATE_STORAGE:vztmpl/$TEMPLATE" \
   --rootfs "$STORAGE:$DISK" --net0 "$NET" \
   --unprivileged 1 --features nesting=1 --onboot 1 \
   --ostype debian --tags "triad;game" \
-  --description "<div align='center'><h2>Triad</h2><p>Card game · port $PORT</p><a href='https://github.com/$REPO'>github.com/$REPO</a></div>" >/dev/null
+  --description "<div align='center'><img src='https://raw.githubusercontent.com/$REPO/main/public/icons/icon-192.png' width='96'/><h2>Triad</h2><p>Card game · port $PORT</p><a href='https://github.com/$REPO'>github.com/$REPO</a></div>" >/dev/null
 msg_ok "Created LXC $CTID"
 
 msg_info "Starting container"

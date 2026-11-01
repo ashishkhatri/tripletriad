@@ -79,7 +79,7 @@
     $('#name-theirs').textContent = names[opp] || 'Opponent';
     const turn = $('#turn');
     if (state.over) { turn.textContent = 'Game over'; turn.classList.remove('me'); }
-    else if (state.turn === me) { turn.textContent = selected === null ? 'Your turn — pick a card' : 'Place it on the board'; turn.classList.add('me'); }
+    else if (state.turn === me) { turn.textContent = selected === null ? 'Your turn — drag a card onto the board' : 'Place it on the board'; turn.classList.add('me'); }
     else { turn.textContent = `${names[opp] || 'Opponent'} is thinking…`; turn.classList.remove('me'); }
     $('#rules-label').textContent = (state.deck && state.deck.name ? state.deck.name + ' — ' : '') + (Object.keys(RULE_NAMES).filter((k) => state.rules[k]).map((k) => RULE_NAMES[k]).join(' · ') || 'Basic rules');
 
@@ -89,7 +89,7 @@
       const el = cardEl(c, 'mine');
       if (myTurn()) {
         el.classList.add('playable');
-        el.onclick = () => { selected = selected === i ? null : i; render(); };
+        el.addEventListener('pointerdown', (e) => startDrag(e, i, el));
       }
       if (selected === i) el.classList.add('selected');
       hm.appendChild(el);
@@ -102,6 +102,7 @@
     for (let i = 0; i < 9; i++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
+      cell.dataset.cell = i;
       const slot = state.board[i];
       const elKey = state.elements[i];
       if (elKey && !slot) { const e = document.createElement('div'); e.className = 'elem'; e.textContent = glyph(elKey) || '?'; cell.appendChild(e); }
@@ -123,6 +124,54 @@
       board.appendChild(cell);
     }
     prevBoard = state.board.map((s) => (s ? { owner: s.owner, id: s.card.id } : null));
+  }
+
+  // ---------- drag & drop (mouse and touch); a plain click still selects ----------
+  function markDrops(on) {
+    document.querySelectorAll('#board .cell').forEach((c, idx) => {
+      if (!state.board[idx]) c.classList.toggle('can-drop', on || selected !== null);
+    });
+  }
+  function startDrag(e, i, el) {
+    if (!myTurn() || (e.button !== undefined && e.button > 0)) return;
+    e.preventDefault();
+    const sx = e.clientX, sy = e.clientY, rect = el.getBoundingClientRect();
+    const offX = sx - rect.left, offY = sy - rect.top;
+    let ghost = null, over = null;
+    const move = (ev) => {
+      if (!ghost) {
+        if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
+        ghost = el.cloneNode(true);
+        ghost.classList.remove('selected', 'playable');
+        ghost.classList.add('drag-ghost');
+        ghost.style.width = rect.width + 'px'; ghost.style.height = rect.height + 'px';
+        document.body.appendChild(ghost);
+        el.classList.add('dragging');
+        markDrops(true);
+      }
+      ghost.style.transform = `translate(${ev.clientX - offX}px, ${ev.clientY - offY}px) rotate(-3deg) scale(1.06)`;
+      const hit = document.elementFromPoint(ev.clientX, ev.clientY);
+      const c = hit && hit.closest('#board .cell[data-cell]');
+      const target = c && !state.board[Number(c.dataset.cell)] ? c : null;
+      if (over !== target) { if (over) over.classList.remove('drop-over'); over = target; if (over) over.classList.add('drop-over'); }
+    };
+    const up = (ev) => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      if (ghost) {
+        ghost.remove();
+        el.classList.remove('dragging');
+        if (over && ev.type === 'pointerup' && myTurn()) { selected = i; playMove(i, Number(over.dataset.cell)); return; }
+        render();
+        return;
+      }
+      selected = selected === i ? null : i;
+      render();
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
   }
 
   async function applyResult(newState, events) {
@@ -158,16 +207,26 @@
     }
   }
 
+  let aiRunning = false;
   async function maybeAI() {
+    if (aiRunning) return;   // only one computer turn at a time
     if (mode !== 'ai' || !state || state.over || state.turn === me) { render(); return; }
+    aiRunning = true;
+    const game = state;
     busy = true; render();
-    await sleep(650);
-    if (mode !== 'ai') return;
-    const m = TT.chooseMove(state, aiLevel);
-    const r = TT.applyMove(state, state.turn, m.hand, m.cell);
-    await applyResult(r.state, r.events);
-    busy = false;
-    render();
+    try {
+      await sleep(650);
+      if (mode !== 'ai' || !state || state !== game || state.over || state.turn === me) return;
+      const m = TT.chooseMove(state, aiLevel);
+      const r = TT.applyMove(state, state.turn, m.hand, m.cell);
+      await applyResult(r.state, r.events);
+    } catch (e) {
+      console.error('AI turn failed', e);
+    } finally {
+      aiRunning = false;
+      busy = false;
+      render();
+    }
   }
 
   function startAI() {
