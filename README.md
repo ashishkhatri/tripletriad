@@ -6,7 +6,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
 ## Features
 
 - 3×3 board, cards with four ranks (1–9, A = 10)
-- Optional rules: **Open**, **Same**, **Plus** (both with **Combo** chains), **Elemental**
+- Optional rules: **Open**, **Same**, **Plus** (both with **Combo** chains), **Elemental**, **Storms**
 - Computer opponent: Easy / Normal / Hard (Hard looks one move ahead when hands are open, and never peeks at a hidden hand)
 - Online rooms with 4-letter codes and invite links, server-authoritative moves, reconnect on refresh, rematches
 - Six card sets with illustrated art, chosen from the menu (the room host's choice applies to both players):
@@ -247,6 +247,37 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
   chosen in the menu or Collection screen and is remembered; a match uses its own set's theme.
 - **Card packs:** each set has its own sealed foil pack (`public/packs/`, made by `node tools/genpacks.js`).
   Click it to tear it open, then click each card to reveal it. A pack is only used once it's torn.
+
+## Storms (optional rule)
+
+Between moves an elemental storm may strike the board (about 40% of the time after the first couple of moves, never
+twice in a row). The square, line or pair it will hit glows, and the player about to move is dealt **2–3 response
+cards** and has 25 seconds to choose how to face it (the computer chooses for itself; online, a player who runs out
+of time gets a sensible pick).
+
+| Storm | Effect |
+|---|---|
+| 🔥 Wildfire | Scorches a card: −1 to every side for the rest of the match |
+| 🌊 Tidal Surge | Pushes a row or column along; moved cards attack their new neighbours |
+| 🌪️ Cyclone | Spins a card a quarter turn; it attacks with its new sides |
+| ⚡ Thunderbolt | Flips a card to the other side |
+| ❄️ Blizzard | Freezes a square for two turns: no placing there, and a card on it can't be flipped |
+| ⛰️ Earthquake | Swaps two neighbouring cards; both attack their new neighbours |
+| 🐉 Dragon Flight | A dragon sweeps across a row, column or diagonal, flipping every card beneath it |
+
+Cards of the storm's element are immune to the card-targeting storms (fire cards to Wildfire and the dragon, and so on).
+Attacks caused by storms use the basic higher-number rule.
+
+| Response | What it does |
+|---|---|
+| 🛡️ Ward | Blocks the storm. Each player starts with 2 Wards (shown next to the score) |
+| ↪️ Deflect | Moves the storm onto the spot that hurts your opponent most |
+| 🪨 Brace | The storm hits, but none of your cards can be flipped or weakened by it |
+| ✨ Harness | The storm hits, and your next card gets +1 on every side |
+| ⛈️ Weather it | Take the hit and gain a Ward (max 3) |
+| 🎲 Defy fate | A different, random storm strikes instead |
+
+Every storm, response and capture it causes appears in the move history. Each card set's sound kit has its own storm sounds.
 
 ## Sound effects
 

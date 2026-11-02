@@ -3,6 +3,20 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.5.0 — 2026-11-01
+### Added
+- **Storms** rule: between moves, elemental storms may strike the board — Wildfire (scorch −1), Tidal Surge (push a
+  row/column), Cyclone (spin a card), Thunderbolt (flip a card), Blizzard (freeze a square for two turns),
+  Earthquake (swap two cards) and a **Dragon** that flies across a line flipping everything beneath it.
+  Moved and spun cards attack their new neighbours; cards of the storm's element are immune.
+- Roguelike responses: the player about to move is dealt 2–3 cards — Ward, Deflect, Brace, Harness, Weather it,
+  Defy fate — and picks one within 25 seconds. Wards (2 each, max 3) and Harness boosts show next to the score.
+- Storm animations (fire bursts, lightning flashes, waves, whirlwinds, frost, board shake, a flying dragon),
+  sliding and spinning cards, scorched and frozen markings, and storm sounds in every set's sound kit.
+- Storms in the move history, with what each response did and every capture the storm caused.
+### Fixed
+- Game updates are now applied strictly in order, so an animation can never let an older board overwrite a newer one.
+
 ## v3.4.0 — 2026-11-01
 ### Added
 - **Move history:** a panel you open from the **History** button under the board (or **Move history** on the result

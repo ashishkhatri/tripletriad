@@ -494,6 +494,82 @@ def fx_reveal(K, level):
             for m in [43, 50]: place(x, 0.16, K.tone(hz(m), 2.0, 1.2, 0.2) * 0.3)
     return K.room(x, K.room_s * 1.3)
 
+# ---- storms: an elemental core (same in every kit) wrapped in the kit's own instruments and room ----
+def crackle(d, density=60, lo=1200, hi=7000):
+    x = canvas(d)
+    for _ in range(int(d * density)):
+        g = int(rng.integers(int(0.002 * SR), int(0.009 * SR)))
+        place(x, rng.uniform(0, d), bp(rng.standard_normal(g), lo, hi) * np.hanning(g) * rng.uniform(0.2, 1))
+    return x
+def roar(d, lo=60, hi=900):
+    tt = t(d)
+    x = band_sweep(noise(d), lo, hi, True, q=(0.7, 1.5)) * 0.6
+    x += lp(sweep(140, 55, d, 1.2) * (1 + 0.5 * np.sin(2 * np.pi * 23 * tt)), 900) * 0.6
+    return x * np.sin(np.pi * np.clip(tt / d, 0, 1)) ** 0.8
+def fx_storm_warn(K):
+    x = canvas(2.2)
+    place(x, 0, lp(noise(1.6), 500) * np.sin(np.pi * np.clip(t(1.6) / 1.6, 0, 1)) ** 2 * 0.5)       # rumble swell
+    for i, m in enumerate([50, 53, 57]): place(x, 0.15 + i * 0.12, K.tone(hz(m), 1.6, 1.6, 0.4), 0.3)  # ominous minor
+    place(x, 0.5, K.swish(0.9, 300, 2500) * 0.3)
+    return K.room(x, K.room_s * 1.2)
+def fx_storm_fire(K):
+    x = canvas(1.6)
+    place(x, 0, roar(0.5, 200, 3000) * 0.5)
+    place(x, 0.05, crackle(1.1, 90) * 0.8)
+    place(x, 0.0, K.thump(120, 50, 0.4, 8) * 0.5)
+    place(x, 0.2, K.tone(hz(52), 1.0, 2.5, 0.4) * 0.15)
+    return K.room(x, K.room_s * 0.8)
+def fx_storm_tide(K):
+    x = canvas(1.6)
+    w = lp(noise(1.1), 2500) * np.sin(np.pi * np.clip(t(1.1) / 1.1, 0, 1)) ** 1.5
+    place(x, 0, w * 0.9)
+    place(x, 0.5, hp(noise(0.6), 3000) * env_exp(int(0.6 * SR), 5) * 0.25)     # foam hiss
+    for k in range(6): place(x, 0.55 + k * 0.06, Tidebound().drop(hz(int(rng.integers(70, 90))), 0.1) * 0.3)
+    place(x, 0.1, K.swish(0.6, 400, 3000) * 0.3)
+    return K.room(x)
+def fx_storm_wind(K):
+    x = canvas(1.6)
+    tt = t(1.3)
+    w = band_sweep(noise(1.3), 300, 2500, True, steps=16, q=(0.85, 1.2)) * (0.6 + 0.4 * np.sin(2 * np.pi * 3 * tt))
+    place(x, 0, w * np.sin(np.pi * tt / 1.3) * 0.9)
+    place(x, 0.1, glide(300, 900, 1.0) * np.sin(np.pi * np.clip(t(1.0), 0, 1)) * 0.06)
+    place(x, 0.9, K.tick() * 0.4)
+    return K.room(x)
+def fx_storm_lightning(K):
+    x = canvas(2.2)
+    place(x, 0, hp(noise(0.08), 1500) * env_exp(int(0.08 * SR), 30, 0.0005) * 1.0)   # crack
+    place(x, 0.02, crackle(0.25, 200, 2000, 9000) * 0.7)
+    place(x, 0.1, lp(noise(1.8), 300) * env_exp(int(1.8 * SR), 2.2, 0.05) * 1.1)     # thunder roll
+    place(x, 0.05, K.thump(90, 35, 0.6, 5) * 0.6)
+    return K.room(x, K.room_s * 1.2)
+def fx_storm_frost(K):
+    x = canvas(1.8)
+    place(x, 0, hp(noise(0.9), 4000) * np.sin(np.pi * np.clip(t(0.9) / 0.9, 0, 1)) * 0.25)
+    for k in range(12): place(x, 0.15 + k * 0.05 + rng.uniform(0, 0.02), Arcane().pluck(hz(int(rng.integers(96, 110))), 0.15, 30) * rng.uniform(0.15, 0.4))
+    place(x, 0.7, crackle(0.25, 120, 3000, 9000) * 0.5)   # ice setting
+    place(x, 0.2, K.tone(hz(86), 1.2, 3, 0.6) * 0.15)
+    return K.room(x, K.room_s * 1.1)
+def fx_storm_quake(K):
+    x = canvas(1.8)
+    tt = t(1.2)
+    place(x, 0, lp(noise(1.2), 160) * (0.7 + 0.3 * np.sin(2 * np.pi * 9 * tt)) * np.sin(np.pi * tt / 1.2) ** 0.7 * 1.6)
+    for k in range(5): place(x, 0.1 + k * 0.18, K.thump(90, 40, 0.3, 10) * rng.uniform(0.4, 0.8))
+    place(x, 0.3, crackle(0.8, 50, 400, 3000) * 0.5)
+    return K.room(x, K.room_s * 0.7)
+def fx_storm_dragon(K):
+    x = canvas(2.4)
+    for k in range(5):   # wingbeats
+        place(x, 0.05 + k * 0.3, lp(noise(0.22), 700) * np.sin(np.pi * np.clip(t(0.22) / 0.22, 0, 1)) ** 2 * 0.8)
+    place(x, 0.35, roar(1.1, 80, 1500) * 0.9)
+    place(x, 0.7, crackle(0.9, 80) * 0.5)
+    place(x, 0.4, K.tone(hz(45), 1.6, 1.4, 0.3) * 0.2)
+    return K.room(x, K.room_s * 1.2)
+def fx_ward(K):
+    x = chord(K, [74, 81, 86], 0.03, 1.2, 0.35, 1.2)
+    place(x, 0, K.swish(0.35, 4000, 800, up=False) * 0.35)
+    place(x, 0, K.thump(300, 150, 0.12, 30) * 0.4)
+    return K.room(x)
+
 EFFECTS = {
     'pick': fx_pick, 'place': fx_place, 'flip': fx_flip, 'cancel': fx_cancel,
     'same': fx_same, 'plus': fx_plus, 'combo': fx_combo, 'turn': fx_turn,
@@ -501,6 +577,9 @@ EFFECTS = {
     'xp': fx_xp, 'unlock': fx_unlock, 'wager-win': fx_wager_win, 'wager-lose': fx_wager_lose,
     'pack-open': fx_pack_open, 'click': fx_click, 'error': fx_error,
     **{f'reveal-{l}': (lambda K, l=l: fx_reveal(K, l)) for l in range(1, 6)},
+    'storm-warn': fx_storm_warn, 'storm-fire': fx_storm_fire, 'storm-tide': fx_storm_tide, 'storm-wind': fx_storm_wind,
+    'storm-lightning': fx_storm_lightning, 'storm-frost': fx_storm_frost, 'storm-quake': fx_storm_quake,
+    'storm-dragon': fx_storm_dragon, 'ward': fx_ward,
 }
 
 def finish(x):

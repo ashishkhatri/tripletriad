@@ -7,6 +7,8 @@ window.Sfx = (() => {
     same: 0.55, plus: 0.55, combo: 0.6, turn: 0.35,
     win: 0.7, lose: 0.6, draw: 0.55, xp: 0.45, unlock: 0.6, 'wager-win': 0.55, 'wager-lose': 0.55,
     'pack-open': 0.65, 'reveal-1': 0.45, 'reveal-2': 0.5, 'reveal-3': 0.55, 'reveal-4': 0.65, 'reveal-5': 0.75,
+    'storm-warn': 0.6, 'storm-fire': 0.65, 'storm-tide': 0.65, 'storm-wind': 0.6, 'storm-lightning': 0.75,
+    'storm-frost': 0.6, 'storm-quake': 0.75, 'storm-dragon': 0.8, ward: 0.55,
   };
   let ctx = null, out = null;
   const buffers = new Map();

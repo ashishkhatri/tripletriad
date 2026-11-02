@@ -2,7 +2,7 @@
 (() => {
   const $ = (s) => document.querySelector(s);
   const RANK = (n) => (n >= 10 ? 'A' : String(n));
-  const RULE_NAMES = { open: 'Open', same: 'Same', plus: 'Plus', elemental: 'Elemental', wager: 'Wager' };
+  const RULE_NAMES = { open: 'Open', same: 'Same', plus: 'Plus', elemental: 'Elemental', storms: 'Storms', wager: 'Wager' };
   const HAND_NAMES = { balanced: '', random: 'Random hands', build: 'Built hands', budget: 'Budget hands' };
 
   let mode = null;            // 'ai' | 'online' while a match is open
@@ -84,7 +84,7 @@
   }
   function readRules() {
     return {
-      open: $('#r-open').checked, same: $('#r-same').checked, plus: $('#r-plus').checked, elemental: $('#r-elemental').checked,
+      open: $('#r-open').checked, same: $('#r-same').checked, plus: $('#r-plus').checked, elemental: $('#r-elemental').checked, storms: $('#r-storms').checked,
       handMode: $('#r-hands').value, wager: $('#r-wager').checked,
     };
   }
@@ -179,8 +179,10 @@
       if (elKey && !slot) { const e = document.createElement('div'); e.className = `elem el-${elKey}`; e.textContent = glyph(elKey) || '?'; e.title = `${cap(elKey)} square`; cell.appendChild(e); }
       if (slot) {
         const el = cardEl(slot.card, slot.owner === me ? 'mine' : 'theirs');
-        const prev = prevBoard[i];
-        if (!prev) el.classList.add('placed');
+        const moved = shiftedFrom[i];
+        const prev = moved !== undefined ? prevBoard[moved] : prevBoard[i];
+        if (moved !== undefined) { el.classList.add('shifted'); el.dataset.from = moved; if (prev && prev.owner !== slot.owner) el.classList.add('owner-changed'); }
+        else if (!prev) el.classList.add('placed');
         else if (prev.owner !== slot.owner) {
           const from = prevBoard.findIndex((p, k) => !p && state.board[k]);   // the card just played
           const src = from >= 0 ? from : i;
@@ -189,20 +191,130 @@
           el.style.setProperty('--fd', sameRow ? (i % 3 > src % 3 ? 1 : -1) : (i > src ? -1 : 1));
         }
         cell.appendChild(el);
-        if (elKey) {
-          const up = slot.card.el === elKey;
-          const m = document.createElement('div'); m.className = 'mod ' + (up ? 'up' : 'down'); m.textContent = up ? '+1' : '−1';
+        const total = (elKey ? (slot.card.el === elKey ? 1 : -1) : 0) + (slot.mod || 0);
+        if (slot.mod < 0) el.classList.add('scorched');
+        if (slot.mod > 0) el.classList.add('empowered');
+        if (total) {
+          const m = document.createElement('div'); m.className = 'mod ' + (total > 0 ? 'up' : 'down'); m.textContent = (total > 0 ? '+' : '−') + Math.abs(total);
+          m.title = [elKey ? (slot.card.el === elKey ? '+1 matching element square' : '−1 element square') : '', slot.mod < 0 ? `${slot.mod} scorched` : slot.mod > 0 ? `+${slot.mod} harnessed` : ''].filter(Boolean).join(', ');
           cell.appendChild(m);
         }
-      } else if (myTurn() && selected !== null) {
+      } else if (myTurn() && selected !== null && TT.openCells(state).includes(i)) {
         cell.classList.add('can-drop');
         cell.onclick = () => playMove(selected, i);
       }
+      if (state.frost && state.frost[i] > 0) {
+        cell.classList.add('frozen');
+        const f = document.createElement('div'); f.className = 'frost-tag'; f.textContent = `❄ ${state.frost[i]}`; f.title = `Frozen for ${state.frost[i]} more turn${state.frost[i] > 1 ? 's' : ''}`;
+        cell.appendChild(f);
+      }
+      if (state.storm && state.storm.cells.includes(i)) { cell.classList.add('storm-target', 'st-' + state.storm.kind); cell.style.setProperty('--si', state.storm.cells.indexOf(i)); const ring = document.createElement('div'); ring.className = 'storm-ring'; cell.appendChild(ring); }
       board.appendChild(cell);
     }
     prevBoard = state.board.map((s) => (s ? { owner: s.owner, id: s.card.id } : null));
+    shiftedFrom = {};
+    renderStormBits();
     renderHistory();
   }
+
+  // ---------- storms ----------
+  let shiftedFrom = {};
+  const STORM_ICON = { fire: '🔥', tide: '🌊', wind: '🌪️', lightning: '⚡', frost: '❄️', quake: '⛰️', dragon: '🐉' };
+  const RESP_ICON = { ward: '🛡️', deflect: '↪️', brace: '🪨', harness: '✨', weather: '⛈️', defy: '🎲' };
+  let stormTick = null, stormShownFor = null;
+  function renderStormBits() {
+    const on = !!(state && state.rules.storms);
+    $('#wards-mine').hidden = !on; $('#wards-theirs').hidden = !on;
+    if (on) {
+      const w = state.wards || [0, 0], b = state.boost || [0, 0];
+      $('#wards-mine').innerHTML = `<i>🛡️</i>${w[me]}${b[me] ? ' <i>✨</i>' : ''}`;
+      $('#wards-theirs').innerHTML = `<i>🛡️</i>${w[1 - me]}${b[1 - me] ? ' <i>✨</i>' : ''}`;
+      $('#wards-mine').title = `Your Wards: ${w[me]}${b[me] ? ' · next card +1 (Harness)' : ''}`;
+      $('#wards-theirs').title = `${names[1 - me] || 'Opponent'}'s Wards: ${w[1 - me]}${b[1 - me] ? ' · next card +1' : ''}`;
+    }
+    const panel = $('#storm');
+    const st = state && state.storm;
+    $('#board').classList.toggle('storming', !!st);
+    if (!st) { panel.classList.remove('show'); clearInterval(stormTick); stormShownFor = null; return; }
+    const key = st.seed;
+    if (stormShownFor === key) return;
+    stormShownFor = key;
+    const info = TT.STORMS[st.kind];
+    const mine = st.chooser === me;
+    panel.className = 'storm show st-' + st.kind;
+    $('#storm-icon').textContent = STORM_ICON[st.kind];
+    $('#storm-name').textContent = info.name;
+    $('#storm-text').textContent = info.text + (info.el && st.kind !== 'quake' && st.kind !== 'tide' && st.kind !== 'frost' ? ` ${cap(info.el)} cards are immune.` : '');
+    $('#storm-who').textContent = mine ? 'How will you face it?' : `${names[st.chooser] || 'Opponent'} is choosing how to face it…`;
+    const box = $('#storm-options'); box.innerHTML = '';
+    st.options.forEach((o) => {
+      const r = TT.RESPONSES[o];
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'resp resp-' + o; b.disabled = !mine;
+      const extra = o === 'ward' ? ` (${(state.wards || [0, 0])[st.chooser]} left)` : '';
+      b.innerHTML = `<span class="resp-ic">${RESP_ICON[o]}</span><b>${r.name}</b><span class="resp-tx">${r.text}${extra}</span>`;
+      b.onclick = () => { if (!mine) return; box.querySelectorAll('.resp').forEach((x) => { x.disabled = true; x.classList.toggle('picked', x === b); }); sfx('click'); send({ t: 'storm', choice: o }); };
+      box.appendChild(b);
+    });
+    const bar = $('#storm-timer span');
+    clearInterval(stormTick);
+    const total = st.deadline ? Math.max(1, st.deadline - Date.now()) : 25000;
+    const end = Date.now() + total, full = 25000;
+    const tick = () => { const left = Math.max(0, end - Date.now()); bar.style.width = (100 * left / full) + '%'; if (!left) clearInterval(stormTick); };
+    tick(); stormTick = setInterval(tick, 200);
+  }
+  // Plays a strike on the current board before the new state is drawn.
+  async function stormFx(e) {
+    const board = $('#board');
+    const cells = e.cells.map((c) => board.querySelector(`.cell[data-cell="${c}"]`)).filter(Boolean);
+    sfx('storm-' + e.kind);
+    board.classList.add('fx-' + e.kind);
+    if (e.kind === 'dragon' && cells.length) {
+      const b = board.getBoundingClientRect();
+      const first = cells[0].getBoundingClientRect(), last = cells[cells.length - 1].getBoundingClientRect();
+      const cx = (r) => r.left + r.width / 2 - b.left, cy = (r) => r.top + r.height / 2 - b.top;
+      const dx = cx(last) - cx(first), dy = cy(last) - cy(first);
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len, uy = dy / len, pad = Math.max(b.width, b.height) * 0.45;
+      const d = document.createElement('div'); d.className = 'dragon';
+      d.innerHTML = DRAGON_SVG;
+      d.style.setProperty('--x0', (cx(first) - ux * pad) + 'px'); d.style.setProperty('--y0', (cy(first) - uy * pad) + 'px');
+      d.style.setProperty('--x1', (cx(last) + ux * pad) + 'px'); d.style.setProperty('--y1', (cy(last) + uy * pad) + 'px');
+      d.style.setProperty('--ang', Math.atan2(uy, ux) + 'rad');
+      board.appendChild(d);
+      cells.forEach((c, k) => setTimeout(() => c.classList.add('fx-hit'), 350 + k * 260));
+      await sleep(1500);
+      d.remove();
+    } else {
+      cells.forEach((c, k) => { c.style.setProperty('--fi', k); c.classList.add('fx-hit'); });
+      await sleep(e.kind === 'tide' || e.kind === 'quake' ? 650 : 900);
+    }
+    board.classList.remove('fx-' + e.kind);
+    cells.forEach((c) => c.classList.remove('fx-hit'));
+  }
+  // Slides moved cards from their old square to the new one.
+  function animateShifts() {
+    const board = $('#board');
+    board.querySelectorAll('.card.shifted').forEach((el) => {
+      const from = board.querySelector(`.cell[data-cell="${el.dataset.from}"]`);
+      const to = el.closest('.cell');
+      if (!from || !to) return;
+      const a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
+      el.style.transition = 'none';
+      el.style.translate = `${a.left - b.left}px ${a.top - b.top}px`;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = 'translate .55s cubic-bezier(.3,1.3,.5,1)'; el.style.translate = '0 0'; }));
+      setTimeout(() => { el.style.transition = ''; el.style.translate = ''; }, 700);
+    });
+  }
+  const DRAGON_SVG = `<svg viewBox="0 0 200 120" aria-hidden="true"><defs><linearGradient id="dg" x1="0" x2="1"><stop offset="0" stop-color="#3a0d0a"/><stop offset=".6" stop-color="#8e1d12"/><stop offset="1" stop-color="#d9481e"/></linearGradient><radialGradient id="df" cx=".1" cy=".5" r=".9"><stop offset="0" stop-color="#fff6b0"/><stop offset=".35" stop-color="#ffb02e"/><stop offset="1" stop-color="#ff3d00" stop-opacity="0"/></radialGradient></defs>
+    <path class="wing w1" d="M92 58 C80 20 60 6 34 2 C46 18 50 30 48 42 C40 34 30 30 18 30 C30 40 36 50 38 60 Z" fill="url(#dg)" opacity=".95"/>
+    <path d="M18 64 C40 54 70 52 96 56 C120 50 140 52 158 58 C168 54 178 54 186 58 C180 62 176 66 168 68 C150 72 128 72 110 70 C80 76 50 76 18 64 Z" fill="url(#dg)"/>
+    <path d="M18 64 C10 60 4 62 0 70 C8 68 12 70 18 70 Z" fill="#3a0d0a"/>
+    <circle cx="176" cy="59" r="2.2" fill="#ffd34d"/>
+    <path d="M180 54 L190 46 L186 56 Z" fill="#3a0d0a"/>
+    <path class="wing w2" d="M100 58 C96 26 112 10 140 4 C130 20 128 32 132 44 C138 38 150 34 164 36 C150 44 140 52 134 62 Z" fill="#6b150d" opacity=".9"/>
+    <path class="breath" d="M188 60 C200 58 214 56 230 50 L232 72 C214 68 202 66 188 64 Z" fill="url(#df)"/>
+  </svg>`;
 
   // ---------- move history ----------
   const SIDE = ['top', 'right', 'bottom', 'left'];
@@ -241,8 +353,9 @@
     const cards = Array(9).fill(null);
     const entries = [];
     hist.forEach((h, i) => {
-      cards[h.cell] = h.card;
-      const snapshot = cards.slice();
+      let snapshot;
+      if (h.snap) snapshot = h.snap.map((x) => (x && x.card ? x.card : null));
+      else { cards[h.cell] = h.card; snapshot = cards.slice(); }
       entries.push({ h, i, snapshot });
     });
     for (const { h, i, snapshot } of entries.reverse()) {
@@ -253,9 +366,39 @@
       const lines = [];
       const flips = new Set();
       const num = (v, cls) => `<b class="n ${cls}">${RANK(v)}</b>`;
-      const modTxt = (m, v) => (m ? ` <small>(${RANK(v - m)} ${m > 0 ? '+ 1' : '− 1'} element)</small>` : '');
+      const modTxt = (m, v) => (m ? ` <small>(${RANK(v - m)} ${m > 0 ? '+' : '−'} ${Math.abs(m)})</small>` : '');
       if (h.mod) lines.push({ html: `Placed on ${h.mod > 0 ? 'a matching' : 'a different'} element square: <b>${h.mod > 0 ? '+1' : '−1'}</b> to every side.`, cls: 'note' });
+      if (h.storm) {
+        const SN = TT.STORMS, R = TT.RESPONSES;
+        lines.push({ html: `<span class="tag tstorm">${R[h.choice].name}</span> ${h.choice === 'ward' ? 'The storm was blocked.' : R[h.choice].text}`, cls: 'note' });
+        if (h.kind !== h.original) lines.push({ html: `Fate turned ${SN[h.original].name} into <b>${SN[h.kind].name}</b>.`, cls: 'note' });
+      }
+      if (h.boosted) lines.push({ html: 'Harnessed: <b>+1</b> to every side.', cls: 'note' });
       h.steps.forEach((st, si) => {
+        if (h.storm) {
+          const t = {
+            warded: null, 'gain-ward': null, boost: null, deflected: null, defied: null,
+            scorch: `🔥 <b>${nm(st.n)}</b> is scorched: −1 to every side.`,
+            bolt: `⚡ <b>${nm(st.n)}</b> was struck and changed sides.`,
+            burn: `🐉 <b>${nm(st.n)}</b> was swept up by the dragon and changed sides.`,
+            spin: `🌪 <b>${nm(st.n)}</b> spun a quarter turn.`,
+            freeze: `❄ The ${SIDE_CELL[st.n]} square is frozen for two turns.`,
+            swap: `⛰ <b>${nm(st.a)}</b> and <b>${nm(st.b)}</b> swapped places.`,
+            tide: st.moves ? `🌊 ${st.moves.length ? st.moves.map((m) => `<b>${nm(m.to)}</b> was pushed ${SIDE_CELL[m.from]} → ${SIDE_CELL[m.to]}`).join('; ') : 'Nothing could move.'}` : '',
+            dragon: '🐉 The dragon flew over the ' + (st.path ? st.path.map((c) => SIDE_CELL[c]).join(' → ') : '') + ' squares.',
+            sx: `<b>${nm(st.n)}</b> was ${st.why === 'immune' ? 'immune (same element as the storm)' : st.why === 'frozen' ? 'frozen solid and held' : 'braced and held'}.`,
+          }[st.k];
+          if (st.k === 'scap') {
+            const od = (st.d + 2) % 4;
+            marks.push({ cell: st.from, d: st.d, cls: 'win', step: si }, { cell: st.n, d: od, cls: 'lose', step: si });
+            flips.add(st.n);
+            lines.push({ html: `${nm(st.from)}’s ${SIDE[st.d]} ${num(st.a, 'win')} beats ${nm(st.n)}’s ${SIDE[od]} ${num(st.b, 'lose')} → <b>captured</b>`, step: si, cls: 'win' });
+          } else if (t) {
+            if (st.k === 'bolt' || st.k === 'burn') flips.add(st.n);
+            lines.push({ html: t, cls: 'note' });
+          }
+          return;
+        }
         if (st.k === 'same' || st.k === 'plus') {
           const parts = st.pairs.map((x) => {
             marks.push({ cell: h.cell, d: x.d, cls: st.k, step: si }, { cell: x.n, d: (x.d + 2) % 4, cls: st.k, step: si });
@@ -278,18 +421,21 @@
           lines.push({
             html: st.k === 'combo'
               ? `<span class="tag combo">Combo</span> ${a} beats ${b} → <b>captured</b>`
-              : st.flip ? `${a} beats ${b} → <b>captured</b>` : `${a} vs ${b} → ${st.a === st.b ? 'tie, ' : ''}holds`,
+              : st.flip ? `${a} beats ${b} → <b>captured</b>` : st.ice ? `${a} beats ${b}, but it’s frozen → holds` : `${a} vs ${b} → ${st.a === st.b ? 'tie, ' : ''}holds`,
             step: si, cls,
           });
         }
       });
-      if (!h.steps.length) {
+      if (!h.steps.length && !h.storm) {
         const around = [0, 1, 2, 3].map((d) => TT.neighbor(h.cell, d)).filter((n) => n >= 0 && h.owners[n] !== null);
         lines.push({ html: i === 0 ? 'First card on the board.' : around.length ? 'Only its own side’s cards next to it, so nothing to capture.' : 'Nothing next to it yet.', cls: 'note' });
       }
 
       const head = document.createElement('div'); head.className = 'hist-head';
-      head.innerHTML = `<span class="hist-no">${i + 1}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>`;
+      if (h.storm) li.classList.add('storm-entry');
+      head.innerHTML = h.storm
+        ? `<span class="hist-no">${STORM_ICON[h.kind]}</span><span><b>${TT.STORMS[h.original || h.kind].name}</b> <small>· ${who(h.p)} chose ${TT.RESPONSES[h.choice].name}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `${flips.size} flipped` : 'no flips'}</span>`
+        : `<span class="hist-no">${hist.slice(0, i + 1).filter((x) => !x.storm).length}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>`;
       li.appendChild(head);
       const body = document.createElement('div'); body.className = 'hist-body';
       const mb = document.createElement('div'); mb.className = 'mini-board';
@@ -297,10 +443,14 @@
         const cell = document.createElement('div'); cell.className = 'mini-cell';
         const ek = state.elements && state.elements[c];
         if (ek) { cell.classList.add('elem'); cell.dataset.el = glyphs[ek] || glyph(ek) || ''; }
+        const sn = h.snap && h.snap[c];
+        if (sn && sn.f) { cell.classList.add('mini-frozen'); }
+        if (h.storm && h.cells && h.cells.includes(c)) cell.classList.add('mini-struck');
         if (snapshot[c]) {
           cell.classList.add(h.owners[c] === me ? 'own-mine' : 'own-theirs');
           const mc = miniCard(snapshot[c], h.owners[c], c, marks);
-          if (c === h.cell) mc.classList.add('placed');
+          if (sn && sn.m) { const mm = document.createElement('i'); mm.className = 'mini-mod ' + (sn.m > 0 ? 'up' : 'down'); mm.textContent = (sn.m > 0 ? '+' : '−') + Math.abs(sn.m); mc.appendChild(mm); }
+          if (!h.storm && c === h.cell) mc.classList.add('placed');
           if (flips.has(c)) { mc.classList.add('flipped'); const f = document.createElement('i'); f.className = 'flip-badge'; f.textContent = '↻'; mc.appendChild(f); }
           cell.appendChild(mc);
         }
@@ -419,11 +569,42 @@
   });
 
   let resultShown = false;
-  async function applyResult(newState, events) {
+  // Updates are applied one at a time: storm animations wait, and a later update must never be overwritten by an earlier one.
+  let applyQueue = Promise.resolve();
+  function applyResult(newState, events) {
+    const run = applyQueue.then(() => applyResultNow(newState, events)).catch((e) => console.error(e));
+    applyQueue = run;
+    return run;
+  }
+  async function applyResultNow(newState, events) {
     const prevTurn = state ? state.turn : null;
+    const strikeEv = events.find((e) => e.type === 'strike');
+    const stormEv = events.find((e) => e.type === 'storm');
+    if (stormEv) {
+      $('#storm').classList.remove('show');
+      const rn = TT.RESPONSES[stormEv.choice].name;
+      sfx(stormEv.choice === 'ward' ? 'ward' : 'click');
+      await banner(`${stormEv.chooser === me ? 'You' : names[stormEv.chooser]}: ${rn}`);
+    }
+    if (strikeEv && state) await stormFx(strikeEv);
+    shiftedFrom = {};
+    for (const e of events) if (e.type === 'shift') shiftedFrom[e.to] = e.from;
     state = newState;
     selected = null;
     render();
+    if (Object.keys(shiftedFrom).length || events.some((e) => e.type === 'shift')) animateShifts();
+    for (const e of events) {
+      const el = document.querySelector(`#board .cell[data-cell="${e.cell}"] .card`);
+      if (e.type === 'spin' && el) el.classList.add('spun');
+      if (e.type === 'scorch' && el) el.classList.add('scorch-anim');
+      if (e.type === 'flip' && e.by === 'storm' && el && !el.classList.contains('flip')) el.classList.add('flip', 'flip-y');
+    }
+    if (events.some((e) => e.type === 'flip' && e.by === 'storm')) sfx('flip', { delay: 0.1 });
+    if (events.some((e) => e.type === 'storm-warn')) {
+      await sleep(events.some((e) => e.type === 'place') ? 650 : 0);
+      sfx('storm-warn');
+      await banner(`${STORM_ICON[newState.storm.kind]} ${TT.STORMS[newState.storm.kind].name}!`);
+    }
     // sounds: placing, then each flip a beat apart; rule chimes play with their banners
     let flips = 0;
     for (const e of events) {
@@ -1117,7 +1298,7 @@
     try { $('#name').value = localStorage.getItem('triad-name') || ''; } catch (e) { /* ignore */ }
     try {
       const r = JSON.parse(localStorage.getItem('triad-rules') || 'null');
-      if (r) { ['open', 'same', 'plus', 'elemental', 'wager'].forEach((k) => { $('#r-' + k).checked = !!r[k]; }); if (r.handMode) $('#r-hands').value = r.handMode; }
+      if (r) { ['open', 'same', 'plus', 'elemental', 'storms', 'wager'].forEach((k) => { $('#r-' + k).checked = !!r[k]; }); if (r.handMode) $('#r-hands').value = r.handMode; }
     } catch (e) { /* ignore */ }
     await loadAccount();
     setView(currentView);

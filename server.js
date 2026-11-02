@@ -162,7 +162,7 @@ function beginRound(room) {
   const deck = DECKS.get(room.deck);
   room.state = null; room.hands = [null, null]; room.rematch = [false, false];
   room.wager = null; room.results = [null, null]; room.finished = false;
-  clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer);
+  clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer); clearTimeout(room.stormTimer);
   const mode = room.rules.handMode;
   if (mode === 'balanced') return startGame(room, null);
   if (mode === 'random') {
@@ -217,8 +217,38 @@ function applyMove(room, seat, hand, cell) {
     if (e.type === 'flip') st.flips++;
     else if (e.type === 'rule' && st[e.rule] !== undefined) st[e.rule]++;
   }
+  if (!state.over && room.rules.storms) {
+    room.state = TT.rollStorm(room.state, Math.random, process.env.STORM_CHANCE ? Number(process.env.STORM_CHANCE) : undefined);
+    if (room.state.storm) return beginStorm(room, events);
+  }
   pushState(room, events);
   if (state.over) finish(room); else scheduleAI(room);
+}
+
+// ---------- Storms: a pending choice between moves ----------
+const STORM_SECONDS = 25;
+function beginStorm(room, events) {
+  const st = room.state.storm;
+  st.deadline = Date.now() + STORM_SECONDS * 1000;
+  room.phase = 'storm';
+  pushState(room, events.concat([{ type: 'storm-warn', kind: st.kind }]));
+  clearTimeout(room.stormTimer);
+  const pl = room.players[st.chooser];
+  const auto = () => {
+    if (room.phase !== 'storm' || !room.state.storm || !rooms.has(room.code)) return;
+    resolveStorm(room, st.chooser, TT.chooseStormResponse(room.state, pl && pl.ai ? pl.level : 'normal'));
+  };
+  room.stormTimer = setTimeout(auto, pl && pl.ai ? 3200 : STORM_SECONDS * 1000);
+}
+function resolveStorm(room, seat, choice) {
+  const { state, events } = TT.resolveStorm(room.state, seat, choice);
+  clearTimeout(room.stormTimer);
+  room.state = state;
+  room.phase = 'playing';
+  const st = room.stats && room.stats[seat];
+  if (st) st.storms = (st.storms || 0) + 1;
+  pushState(room, events);
+  scheduleAI(room);
 }
 
 // End of a match: XP for signed-in players, then the wager (if on).
@@ -360,6 +390,12 @@ function handle(ws, msg) {
       catch (e) { send(ws, { t: 'error', msg: e.message }); }
       return;
     }
+    case 'storm': {
+      if (!room || room.phase !== 'storm' || !room.state || !room.state.storm) return;
+      try { resolveStorm(room, ws.seat, String(msg.choice)); }
+      catch (e) { send(ws, { t: 'error', msg: e.message }); }
+      return;
+    }
     case 'wager': {
       if (!room || room.phase !== 'wager' || room.wager.winner !== ws.seat) return;
       let idx = Number.isInteger(msg.index) ? msg.index : room.wager.options.findIndex((o) => o.id === Number(msg.card));
@@ -380,7 +416,7 @@ function handle(ws, msg) {
       if (other && !other.ai) send(other.ws, { t: 'opponent_left' });
       // Leaving mid-wager settles it so the winner still gets their card.
       if (room.phase === 'wager') settleWager(room, bestOption(room));
-      clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer);
+      clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer); clearTimeout(room.stormTimer);
       rooms.delete(room.code);
       ws.room = null;
       return;
@@ -417,7 +453,7 @@ setInterval(() => {
     const anyone = humans(r).some(({ p }) => p.ws && p.ws.readyState === 1);
     if (!anyone && now - r.lastActive > 30 * 60 * 1000) {
       if (r.phase === 'wager') { try { settleWager(r, bestOption(r)); } catch { /* ignore */ } }
-      clearTimeout(r.aiTimer); clearTimeout(r.wagerTimer); rooms.delete(code);
+      clearTimeout(r.aiTimer); clearTimeout(r.wagerTimer); clearTimeout(r.stormTimer); rooms.delete(code);
     }
   }
   auth.pruneSessions();

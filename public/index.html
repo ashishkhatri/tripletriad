@@ -83,6 +83,7 @@
         <label class="rule" data-tip="When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you."><input type="checkbox" id="r-same"> Same<button type="button" class="rule-info" aria-label="About the Same rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When the card you place touches two or more cards with matching numbers on the touching sides, all of those opponent cards flip to you.</span></label>
         <label class="rule" data-tip="When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you."><input type="checkbox" id="r-plus"> Plus<button type="button" class="rule-info" aria-label="About the Plus rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">When two or more touching pairs add up to the same total (your side + their side), all of those opponent cards flip to you.</span></label>
         <label class="rule" data-tip="Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1."><input type="checkbox" id="r-elemental"> Elemental<button type="button" class="rule-info" aria-label="About the Elemental rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Some squares carry an element. A card of that element gets +1 on every side there; any other card gets −1.</span></label>
+        <label class="rule" data-tip="Between moves, elemental storms may strike the board: wildfire, tidal surges, cyclones, lightning, blizzards, earthquakes, even a dragon. The player about to move is dealt 2–3 response cards (Ward, Deflect, Brace…) and chooses how to face it."><input type="checkbox" id="r-storms"> Storms<button type="button" class="rule-info" aria-label="About the Storms rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Between moves, elemental storms may strike the board: wildfire, tidal surges, cyclones, lightning, blizzards, earthquakes, even a dragon. The player about to move is dealt 2–3 response cards (Ward, Deflect, Brace…) and chooses how to face it.</span></label>
         <label class="rule rule-wide" data-tip="Balanced: everyone is dealt a fair random hand (no account needed). Random: 5 random cards from your collection. Build: choose any 5 cards you own. Budget: choose 5 you own whose levels add up to 15 or less.">Hands
           <select id="r-hands">
             <option value="balanced">Balanced</option>
@@ -155,9 +156,9 @@
   <!-- GAME -->
   <section id="game" class="screen">
     <header class="hud">
-      <div class="who theirs"><span id="name-theirs">CPU</span> <b id="score-theirs">5</b></div>
+      <div class="who theirs"><span id="name-theirs">CPU</span> <b id="score-theirs">5</b> <span id="wards-theirs" class="wards" hidden></span></div>
       <div id="turn" class="turn"></div>
-      <div class="who mine"><b id="score-mine">5</b> <span id="name-mine">You</span></div>
+      <div class="who mine"><span id="wards-mine" class="wards" hidden></span> <b id="score-mine">5</b> <span id="name-mine">You</span></div>
     </header>
     <div class="table">
       <div id="hand-theirs" class="hand theirs"></div>
@@ -170,6 +171,12 @@
       <button id="btn-quit" class="ghost small">Quit</button>
     </div>
     <div id="banner" class="banner"></div>
+    <div id="storm" class="storm" role="dialog" aria-labelledby="storm-name">
+      <div class="storm-head"><span id="storm-icon" class="storm-icon"></span><div><h3 id="storm-name"></h3><p id="storm-text"></p></div></div>
+      <p id="storm-who" class="storm-who"></p>
+      <div id="storm-options" class="storm-options"></div>
+      <div id="storm-timer" class="storm-timer"><span></span></div>
+    </div>
     <aside id="history" class="history" aria-label="Move history">
       <header><h3>Move history</h3><button id="btn-history-close" class="ghost small" aria-label="Close">✕</button></header>
       <p class="muted hist-hint">Newest first. Hover or tap a line to pick out the numbers it compares.</p>
