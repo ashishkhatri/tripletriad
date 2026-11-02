@@ -3,6 +3,17 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.1 — 2026-11-02
+### Fixed
+- Tapping a card to select it and then dragging a different card left the first card selected. Starting a drag now
+  clears any tapped selection.
+- On phones, the last card you touched stayed lifted (a "sticky" hover), which looked like a second selection.
+  The hover lift now only happens with a real mouse.
+- Dragging or tapping onto a frozen square (Storms) is no longer offered as a drop target.
+### Changed
+- The selected card is much more prominent: it grows (about 25% on phones, 14% on desktop), lifts, and gets a pulsing
+  gold ring, while the rest of your hand dims.
+
 ## v3.8.0 — 2026-11-02
 ### Added
 - Phones and tablets: cards now move with the device. The motion sensor tilts every card as you tilt the phone, and

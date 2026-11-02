@@ -158,6 +158,7 @@
     $('#rules-label').textContent = (state.deck && state.deck.name ? state.deck.name + ' — ' : '') + (ruleBits.join(' · ') || 'Basic rules');
 
     const hm = $('#hand-mine'); hm.innerHTML = '';
+    hm.classList.toggle('has-selected', selected !== null && myTurn());
     state.hands[me].forEach((c, i) => {
       const el = cardEl(c, 'mine');
       if (myTurn()) {
@@ -535,7 +536,7 @@
   // ---------- drag & drop (mouse and touch); a plain click still selects ----------
   function markDrops(on) {
     document.querySelectorAll('#board .cell').forEach((c, idx) => {
-      if (!state.board[idx]) c.classList.toggle('can-drop', on || selected !== null);
+      if (!state.board[idx]) c.classList.toggle('can-drop', (on || selected !== null) && TT.openCells(state).includes(idx));
     });
   }
   // Cancels an in-progress drag (set while dragging) — used by right-click and Escape.
@@ -575,6 +576,12 @@
         const decay = () => { if (!ghost) return; ghost._swing.rx *= 0.82; ghost._swing.ry *= 0.82; requestAnimationFrame(decay); };
         requestAnimationFrame(decay);
         el.classList.add('dragging');
+        // dragging a card replaces any card selected by tapping
+        if (selected !== null) {
+          selected = null;
+          document.querySelectorAll('#hand-mine .card.selected').forEach((x) => x.classList.remove('selected'));
+          $('#hand-mine').classList.remove('has-selected');
+        }
         markDrops(true);
       }
       ghost.style.setProperty('--gx', `${ev.clientX - offX}px`);
@@ -585,7 +592,7 @@
       ghost._swing.rx = Math.max(-30, Math.min(30, ghost._swing.rx * 0.6 - vy * 1.4));
       const hit = document.elementFromPoint(ev.clientX, ev.clientY);
       const c = hit && hit.closest('#board .cell[data-cell]');
-      const target = c && !state.board[Number(c.dataset.cell)] ? c : null;
+      const target = c && !state.board[Number(c.dataset.cell)] && TT.openCells(state).includes(Number(c.dataset.cell)) ? c : null;
       if (over !== target) { if (over) over.classList.remove('drop-over'); over = target; if (over) over.classList.add('drop-over'); }
     };
     const up = (ev) => {

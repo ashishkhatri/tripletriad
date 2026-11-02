@@ -207,7 +207,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .hand .card { width: var(--hcard); height: calc(var(--hcard) * var(--ar)); margin-top: calc(var(--hcard) * -0.7); }
 .hand .card:first-child { margin-top: 0; }
 .hand.mine .card.playable { cursor: pointer; }
-.hand.mine .card.playable:hover { --tx: -8px; }
+@media (hover: hover) { .hand.mine .card.playable:hover { --tx: -8px; } }
 .hand.mine .card.selected { --tx: -18px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 18px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 6px 18px #000a; z-index: 5; }
 
 /* gilt card frame; inner rim colour shows the owner */
@@ -291,7 +291,6 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   .hand { flex-direction: row; }
   .hand .card { margin-top: 0; margin-left: calc(var(--hcard) * -0.2); }
   .hand .card:first-child { margin-left: 0; }
-  .hand.mine .card.playable:hover { --tx: 0px; --ty: -6px; }
   .hand.mine .card.selected { --tx: 0px; --ty: -14px; }
   .banner { font-size: 44px; }
   .logo { font-size: 46px; }
@@ -344,7 +343,6 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   .hand.theirs .card { direction: ltr; }
   .hand .card { margin: 0; width: 100%; height: 100%; }
   .hand .card:first-child { margin: 0; }
-  .hand.mine .card.playable:hover { --tx: 0px; --ty: -8px; }
   .hand.mine .card.selected { --tx: 0px; --ty: -16px; }
   .footer { font-size: 18px; }
   .banner { font-size: 96px; }
@@ -1271,3 +1269,18 @@ button.big { padding: 14px 18px; font-size: 17px; }
   .pack-card { width: 170px; height: 237px; font-size: 30px; }
   .pack-cards { column-gap: 26px; }
 }
+
+/* the selected (tapped / clicked) card: bigger, lifted, with a pulsing gold ring; the rest of the hand dims */
+.hand.mine .card { scale: var(--sc, 1); transition: scale .25s cubic-bezier(.2,1.4,.4,1), filter .2s; }
+.hand.mine .card.selected { --sc: 1.14; z-index: 6; animation: selPulse 1.1s ease-in-out infinite alternate; }
+@keyframes selPulse {
+  from { box-shadow: 0 0 0 3px var(--gold-hi), 0 0 16px color-mix(in srgb, var(--gold-hi) 60%, transparent), 0 10px 22px #000b; }
+  to   { box-shadow: 0 0 0 4px #fff, 0 0 30px color-mix(in srgb, var(--gold-hi) 85%, transparent), 0 14px 28px #000c; }
+}
+.hand.mine.has-selected .card:not(.selected) { filter: brightness(.6) saturate(.7); --sc: .94; }
+@media (hover: hover) { .hand.mine.has-selected .card.playable:not(.selected):hover { filter: brightness(.85); } }
+@media (max-width: 640px) {
+  .hand.mine .card.selected { --sc: 1.25; --ty: -20px; }
+}
+@media (prefers-reduced-motion: reduce) { .hand.mine .card.selected { animation: none; box-shadow: 0 0 0 4px var(--gold-hi), 0 10px 22px #000b; } }
+@media (min-width: 900px) and (min-height: 560px) and (hover: hover) { .hand.mine .card.playable:hover { --tx: 0px; --ty: -8px; } }
