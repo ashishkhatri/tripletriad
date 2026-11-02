@@ -36,41 +36,113 @@
 
   // ---------- device tilt (gyroscope / orientation sensor) ----------
   // tilt.x, tilt.y in -1..1: how far the device is tipped right / toward you from where you usually hold it.
-  const tilt = { on: false, x: 0, y: 0, b0: null, g0: null, lastEvent: 0 };
+  // Sources, best first: 'deviceorientation' angles, then gravity from 'devicemotion' (some browsers only
+  // provide one of them). window.CardTilt reports what's happening so the Account page can show it.
+  const tilt = { on: false, x: 0, y: 0, b0: null, g0: null, lastEvent: 0, source: null, listening: false, events: 0, nulls: 0, perm: null, since: 0 };
   const TILT_RANGE = 22;        // degrees of device tilt that map to a full card tilt
-  function onOrientation(e) {
-    if (e.beta == null || e.gamma == null) return;
-    // map sensor axes to the screen's axes for portrait / landscape
+  const hasSensorApi = 'DeviceOrientationEvent' in window || 'DeviceMotionEvent' in window;
+  const needsPermission = typeof window.DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+  let userPref = null;          // true / false once the player chooses on the Account page
+  try { const v = localStorage.getItem('triad-tilt'); if (v === 'on' || v === 'off') userPref = v === 'on'; } catch (e) { /* ignore */ }
+  const wanted = () => (userPref !== null ? userPref : !reduceMotion);
+
+  function feed(fb, lr, source) {
+    // map the sensor's axes to the screen's axes for portrait / landscape
     const ang = (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : (window.orientation || 0);
-    let fb = e.beta, lr = e.gamma;                                   // front-back, left-right (portrait)
-    if (ang === 90) { fb = -e.gamma; lr = e.beta; }
-    else if (ang === -90 || ang === 270) { fb = e.gamma; lr = -e.beta; }
-    else if (ang === 180) { fb = -e.beta; lr = -e.gamma; }
+    let f = fb, l = lr;
+    if (ang === 90) { f = -lr; l = fb; }
+    else if (ang === -90 || ang === 270) { f = lr; l = -fb; }
+    else if (ang === 180) { f = -fb; l = -lr; }
     const now = performance.now();
     const dt = tilt.lastEvent ? Math.min(0.2, (now - tilt.lastEvent) / 1000) : 0;
-    tilt.lastEvent = now;
+    tilt.lastEvent = now; tilt.source = source;
     // the neutral pose slowly follows how the device is held, so any comfortable angle works
-    if (tilt.b0 === null) { tilt.b0 = fb; tilt.g0 = lr; }
+    if (tilt.b0 === null) { tilt.b0 = f; tilt.g0 = l; }
     const follow = 1 - Math.exp(-dt / 2.5);
-    tilt.b0 += (fb - tilt.b0) * follow;
-    tilt.g0 += (lr - tilt.g0) * follow;
-    tilt.x = clamp((lr - tilt.g0) / TILT_RANGE, -1, 1);
-    tilt.y = clamp((fb - tilt.b0) / TILT_RANGE, -1, 1);
+    tilt.b0 += (f - tilt.b0) * follow;
+    tilt.g0 += (l - tilt.g0) * follow;
+    tilt.x = clamp((l - tilt.g0) / TILT_RANGE, -1, 1);
+    tilt.y = clamp((f - tilt.b0) / TILT_RANGE, -1, 1);
     tilt.on = true;
   }
-  function listenTilt() { window.addEventListener('deviceorientation', onOrientation, { passive: true }); }
-  if (!finePointer && 'DeviceOrientationEvent' in window && !reduceMotion) {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      // iOS asks for permission, and only from a tap
-      const ask = () => {
-        window.removeEventListener('touchend', ask, true); window.removeEventListener('click', ask, true);
-        DeviceOrientationEvent.requestPermission().then((r) => { if (r === 'granted') listenTilt(); }).catch(() => {});
-      };
+  function onOrientation(e) {
+    tilt.events++;
+    if (e.beta == null || e.gamma == null) { tilt.nulls++; return; }
+    feed(e.beta, e.gamma, 'orientation');
+  }
+  function onMotion(e) {
+    tilt.events++;
+    // only used when orientation angles aren't arriving
+    if (tilt.source === 'orientation' && performance.now() - tilt.lastEvent < 500) return;
+    const g = e.accelerationIncludingGravity;
+    if (!g || g.x == null || g.y == null || g.z == null || (g.x === 0 && g.y === 0 && g.z === 0)) { tilt.nulls++; return; }
+    // gravity -> front/back (beta-like) and left/right (gamma-like) angles in degrees
+    const fb = Math.atan2(g.y, g.z) / D2R;
+    const lr = Math.atan2(-g.x, Math.hypot(g.y, g.z)) / D2R;
+    feed(fb, lr, 'motion');
+  }
+  function listenTilt() {
+    if (tilt.listening) return;
+    tilt.listening = true; tilt.since = performance.now();
+    window.addEventListener('deviceorientation', onOrientation, { passive: true });
+    window.addEventListener('devicemotion', onMotion, { passive: true });
+    notify();
+  }
+  function stopTilt() {
+    tilt.listening = false; tilt.on = false;
+    window.removeEventListener('deviceorientation', onOrientation);
+    window.removeEventListener('devicemotion', onMotion);
+    notify();
+  }
+  // iOS (and anything else with requestPermission) only allows asking from a tap
+  function requestAccess() {
+    if (!needsPermission) { listenTilt(); return Promise.resolve('granted'); }
+    const asks = [DeviceOrientationEvent.requestPermission()];
+    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') asks.push(DeviceMotionEvent.requestPermission());
+    return Promise.all(asks).then((rs) => {
+      tilt.perm = rs.includes('granted') ? 'granted' : 'denied';
+      if (tilt.perm === 'granted') listenTilt();
+      notify();
+      return tilt.perm;
+    }).catch(() => { tilt.perm = 'denied'; notify(); return 'denied'; });
+  }
+  if (!finePointer && hasSensorApi && wanted()) {
+    if (needsPermission) {
+      const ask = () => { window.removeEventListener('touchend', ask, true); window.removeEventListener('click', ask, true); if (wanted()) requestAccess(); };
       window.addEventListener('touchend', ask, true); window.addEventListener('click', ask, true);
     } else listenTilt();
   }
-  // stale sensor (no events for a while, e.g. a desktop that reports none): fall back to the drifting light
-  const tiltLive = () => tilt.on && performance.now() - tilt.lastEvent < 1500;
+  // stale sensor (no events for a while): fall back to the drifting light
+  const tiltLive = () => tilt.on && tilt.listening && performance.now() - tilt.lastEvent < 1500;
+
+  const listeners = new Set();
+  function notify() { listeners.forEach((fn) => { try { fn(); } catch (e) { /* ignore */ } }); }
+  function status() {
+    if (finePointer) return { code: 'mouse', text: 'Using your mouse — tilt is for phones and tablets.' };
+    if (!hasSensorApi) return { code: 'unsupported', text: 'This browser has no motion sensor support.' };
+    if (!window.isSecureContext) return { code: 'insecure', text: 'Motion sensors need a secure (https://) address. Open the game through your https link instead of the local IP.' };
+    if (!wanted()) return { code: 'off', text: reduceMotion && userPref === null ? 'Off because your device asks for reduced motion.' : 'Off.' };
+    if (needsPermission && tilt.perm !== 'granted') return { code: tilt.perm === 'denied' ? 'denied' : 'permission', text: tilt.perm === 'denied' ? 'Motion access was refused. Allow it in your browser settings, then reload.' : 'Tap “Turn on” to allow motion access.' };
+    if (tiltLive()) return { code: 'on', text: `Working (${tilt.source === 'motion' ? 'gravity sensor' : 'orientation sensor'}).` };
+    const waited = tilt.listening ? performance.now() - tilt.since : 0;
+    if (tilt.events && tilt.nulls >= tilt.events) return { code: 'blocked', text: 'Your browser is hiding the sensor readings. In Brave: Site settings → Motion sensors → Allow (and check Shields fingerprinting).' };
+    if (waited > 2500 && !tilt.events) return { code: 'blocked', text: 'No sensor readings are arriving. Your browser may block motion sensors for this site — check its Site settings → Motion sensors.' };
+    if (tilt.events && !tiltLive()) return { code: 'idle', text: 'Sensor connected — move the device to see it.' };
+    return { code: 'waiting', text: 'Waiting for the sensor…' };
+  }
+  window.CardTilt = {
+    status,
+    reading: () => ({ x: tilt.x, y: tilt.y, events: tilt.events, source: tilt.source }),
+    enabled: wanted,
+    setEnabled(on) {
+      userPref = !!on;
+      try { localStorage.setItem('triad-tilt', on ? 'on' : 'off'); } catch (e) { /* ignore */ }
+      if (on) return requestAccess();
+      stopTilt();
+      return Promise.resolve('off');
+    },
+    onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
+  };
 
   const states = new WeakMap();
   const norm = (v) => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
@@ -132,7 +204,7 @@
           if (ghost && el._swing) { trx = el._swing.rx; try_ = el._swing.ry; }
           else if (!reduceMotion && !still) { try_ = Math.sin(t * 0.6) * 3; trx = Math.cos(t * 0.5) * 2; }
         }
-        if (reduceMotion && !ghost) { trx = 0; try_ = 0; }
+        if (reduceMotion && !ghost && !tiltLive()) { trx = 0; try_ = 0; }
         spring(s, 'rx', trx, dt);
         spring(s, 'ry', try_, dt);
 

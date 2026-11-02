@@ -1284,3 +1284,15 @@ button.big { padding: 14px 18px; font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { .hand.mine .card.selected { animation: none; box-shadow: 0 0 0 4px var(--gold-hi), 0 10px 22px #000b; } }
 @media (min-width: 900px) and (min-height: 560px) and (hover: hover) { .hand.mine .card.playable:hover { --tx: 0px; --ty: -8px; } }
+
+/* card tilt settings */
+.tilt-panel h3 { margin: 0 0 4px; }
+.tilt-panel h3 small { font-weight: 400; font-size: .7em; }
+.tilt-status { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; line-height: 1.35; }
+.tilt-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: .35em; background: #888; }
+.tilt-dot.ok { background: #57d27a; box-shadow: 0 0 8px #57d27a; }
+.tilt-dot.wait { background: #f0c96a; }
+.tilt-dot.bad { background: #ff6b5b; }
+.tilt-meter { position: relative; width: 100px; height: 100px; margin: 6px 0 10px; border-radius: 50%; border: 1px solid currentColor; opacity: .8;
+  background: radial-gradient(circle, transparent 30%, #0001 31%, transparent 32%); }
+.tilt-meter span { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; background: var(--gold-hi, #f0c96a); box-shadow: 0 0 10px var(--gold-hi, #f0c96a); }

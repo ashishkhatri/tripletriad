@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.2 — 2026-11-02
+### Fixed
+- Card tilt now also works from the gravity sensor (`devicemotion`) when a browser doesn't deliver orientation angles,
+  and keeps working with reduced motion if you turn it on yourself.
+### Added
+- **Card tilt** panel on the Account page: shows whether tilt is working and why not (no https, sensor blocked by the
+  browser, permission refused, reduced motion), a live tilt meter, and a Turn on / Turn off button (remembered).
+
 ## v3.8.1 — 2026-11-02
 ### Fixed
 - Tapping a card to select it and then dragging a different card left the first card selected. Starting a drag now

@@ -1283,6 +1283,29 @@
   $('#btn-cancel').onclick = () => { disconnect(); show('menu'); };
   const toMenu = () => { disconnect(); show('menu'); };
   $('#btn-quit').onclick = toMenu;
+  // ---------- card tilt settings (Account page) ----------
+  function renderTilt() {
+    const T = window.CardTilt;
+    if (!T) return;
+    const st = T.status();
+    $('#tilt-text').textContent = st.text;
+    $('#tilt-dot').className = 'tilt-dot ' + ({ on: 'ok', idle: 'ok', waiting: 'wait', permission: 'wait' }[st.code] || (st.code === 'mouse' || st.code === 'off' ? 'off' : 'bad'));
+    const b = $('#btn-tilt');
+    b.hidden = st.code === 'mouse' || st.code === 'unsupported';
+    b.textContent = T.enabled() && st.code !== 'permission' && st.code !== 'denied' ? 'Turn off' : 'Turn on';
+    const r = T.reading();
+    $('#tilt-meter').hidden = !(st.code === 'on' || st.code === 'idle');
+    $('#tilt-ball').style.transform = `translate(${(r.x * 40).toFixed(1)}px, ${(r.y * 40).toFixed(1)}px)`;
+  }
+  $('#btn-tilt').onclick = () => {
+    const T = window.CardTilt; if (!T) return;
+    const st = T.status();
+    const turnOn = !T.enabled() || st.code === 'permission' || st.code === 'denied';
+    T.setEnabled(turnOn).then(renderTilt);
+    renderTilt();
+  };
+  setInterval(() => { if (!$('#view-account').hidden && document.querySelector('#menu.active')) renderTilt(); }, 300);
+  if (window.CardTilt) window.CardTilt.onChange(renderTilt);
   $('#btn-history').onclick = () => setHistory(!historyOpen);
   $('#btn-history-close').onclick = () => setHistory(false);
   $('#btn-result-history').onclick = () => setHistory(true);
