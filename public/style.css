@@ -830,7 +830,22 @@ button .shards { color: inherit; }
 .pack-card.revealed .foil-badge { opacity: 1; }
 .pack-card .scrap-btn { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .3s .6s; }
 .pack-card.revealed .scrap-btn { opacity: 1; pointer-events: auto; }
-.pack-card.scrapped .pack-inner { filter: grayscale(1) brightness(.45); transition: filter .4s; }
+/* scrapped from the reveal: the card stays visible, greyed out with a red slash and a stamp.
+   (The filter goes on the card face, not the 3D flipper: a filter there flattened the flip and hid the card.) */
+.pack-card.scrapped .face-front { filter: grayscale(1) brightness(.7); transition: filter .4s; }
+.pack-card.scrapped::after {
+  content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: 6px;
+  background: linear-gradient(to top right, transparent calc(50% - 4px), #e5483bdd calc(50% - 4px), #e5483bdd calc(50% + 4px), transparent calc(50% + 4px));
+  animation: slashIn .35s ease-out both;
+}
+.pack-card.scrapped::before {
+  content: "SCRAPPED"; position: absolute; left: 50%; top: 50%; z-index: 5; pointer-events: none;
+  translate: -50% -50%; rotate: -12deg; padding: .15em .5em; border: 3px solid #e5483b; border-radius: 6px;
+  font: 800 .5em/1.2 system-ui, sans-serif; letter-spacing: .12em; color: #ff6b5e; background: #0009;
+  animation: stampIn .35s .15s cubic-bezier(.3,1.6,.5,1) both;
+}
+@keyframes slashIn { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes stampIn { from { opacity: 0; scale: 1.8; } to { opacity: 1; scale: 1; } }
 .pack-cards { padding-bottom: 50px; }
 
 /* ===== floating tooltip (one element, positioned by script so nothing can clip or misplace it) ===== */
@@ -1386,3 +1401,134 @@ button.big { padding: 14px 18px; font-size: 17px; }
 #cd-meta { min-height: 2.6em; display: flex; align-items: center; justify-content: center; }
 /* element icons are hidden in matches without the Elemental rule */
 #game.no-elements .card .el, body:has(#game.active.no-elements) .drag-ghost .el { display: none; }
+
+/* storm history: the "before" layer sits over each square while a storm line replays */
+.mini-before { display: none; position: absolute; inset: 0; border-radius: 5px; z-index: 4; background: #221e1b; }
+.mini-before.own-mine { background: linear-gradient(160deg, var(--mine-hi), var(--mine) 60%); }
+.mini-before.own-theirs { background: linear-gradient(160deg, var(--theirs-hi), var(--theirs) 60%); }
+.mini-before.mini-frozen::after { content: '❄'; position: absolute; z-index: 3; left: 2px; bottom: 1px; font-size: 11px; }
+.mini-board.show-before .mini-cell:not(.cell-after) .mini-before { display: block; }
+.mini-board.show-before .mini-cell .mini-card .flip-badge { display: none; }
+/* clockwise spin into the new orientation */
+.mini-cell.fx-spin > .mini-card { animation: miniSpinCW .7s cubic-bezier(.3,1.3,.5,1); }
+@keyframes miniSpinCW { from { rotate: -90deg; scale: .85; } to { rotate: 0deg; scale: 1; } }
+.mini-cell.fx-spin::after { content: '↻'; position: absolute; z-index: 6; right: -6px; top: -8px; font: 700 16px/1 system-ui, sans-serif; color: #c9fff0; text-shadow: 0 0 6px #7fe0c0; animation: miniBurst .9s ease-out both; }
+
+/* ===================== sound controls: icons at the top that open a volume popover ===================== */
+.music-ctl {
+  top: 11px; bottom: auto !important; right: 14px; left: auto !important; z-index: 40; gap: 6px; padding: 0;
+  background: none; border: 0; box-shadow: none; justify-content: flex-end;
+}
+.snd-group { position: relative; display: inline-flex; }
+.music-btn { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border-radius: 50%; line-height: 0; }
+.music-btn svg { width: 20px; height: 20px; display: block; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.music-btn .slash { display: none; stroke-width: 2.4; }
+.music-btn.off { opacity: .7; }
+.music-btn.off .slash { display: inline; }
+.snd-pop {
+  position: absolute; top: calc(100% + 8px); right: 0; display: none; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: 12px; white-space: nowrap; z-index: 2;
+  background: color-mix(in srgb, var(--wood-3, #2a1a10) 96%, #000); border: 1px solid var(--gold-lo); box-shadow: 0 8px 22px #000b;
+  color: var(--text, #f3ead8); font-style: normal;
+}
+.snd-group.open .snd-pop { display: flex; }
+.snd-name { font-size: 13px; font-weight: 700; }
+.snd-toggle { min-width: 46px; padding: 4px 10px !important; font-size: 12px !important; }
+.snd-pop input[type=range] { width: 110px; accent-color: var(--gold); padding: 0; background: none; box-shadow: none; border: 0; }
+.fs-btn { display: none; }
+@media (hover: none), (pointer: coarse) { .fs-btn { display: grid; } }
+/* leave room for the icons */
+@media (min-width: 900px) {
+  #nav { padding-right: 112px; }
+  #game .hud { padding-right: 104px; }
+}
+
+/* ===================== card set picker in the top bar ===================== */
+.set-bar { position: relative; display: flex; align-items: center; gap: 8px; }
+.set-bar select { font-size: 15px; padding-top: 7px !important; padding-bottom: 7px !important; padding-left: 12px; min-width: 0; }
+.pack-pill { padding: 5px 10px !important; font-size: 14px !important; border-radius: 16px !important; white-space: nowrap; animation: pillPulse 1.6s ease-in-out infinite; }
+@keyframes pillPulse { 50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-hi) 45%, transparent), 0 0 14px var(--gold-hi); } }
+.set-bar .set-progress { position: absolute; left: 2px; right: 2px; bottom: -7px; margin: 0; }
+.set-bar .set-progress .xpbar { height: 3px; margin: 0; }
+#col-deck { display: none; }
+@media (min-width: 900px) {
+  .set-bar { margin-left: 16px; }
+  .set-bar select { max-width: 210px; }
+}
+@media (min-width: 900px) and (max-width: 1420px) {
+  #nav .nav-item span { display: none; }       /* icons only on narrower desktops, to fit the picker */
+  #nav .nav-item { padding: 9px 11px; }
+}
+@media (max-width: 899px) {
+  #nav { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--wood-3) 97%, transparent); }  /* (a backdrop filter would trap the fixed picker inside the bottom bar) */
+  .set-bar { position: fixed; top: 10px; right: 118px; z-index: 39; gap: 6px; }
+  .set-bar select { font-size: 18px; padding: 2px 1.9em 2px 8px !important; height: 34px; background-position: calc(100% - 1.05em) 55%, calc(100% - .75em) 55%, 0 0 !important; }
+  .set-bar .pack-pill { padding: 4px 8px !important; font-size: 13px !important; }
+  .set-bar .set-progress { display: none; }
+  /* a fixed top band: logo on the left, set picker, packs and sound icons on the right */
+  .mobile-head { position: fixed; top: 0; left: 0; right: 0; z-index: 25; max-width: none !important; height: 54px; margin: 0 !important;
+    padding: 0 12px; box-sizing: border-box; align-items: center;
+    background: color-mix(in srgb, var(--wood-3) 97%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--metal-4) 60%, transparent); box-shadow: 0 4px 16px #0006; }
+  body.with-nav #menu.screen.active { padding-top: 66px; }
+  .mobile-head .shards { display: none !important; }
+  .mh-logo { display: grid; grid-template-columns: auto auto; align-items: center; column-gap: 6px; font-size: 20px !important; line-height: 1; white-space: nowrap; }
+  .mh-logo .orn-m { grid-row: span 2; margin: 0; }
+  .mh-version { grid-column: 2; margin: 2px 0 0 0 !important; font-size: 9px !important; }
+  .music-ctl { top: 10px; right: 8px; gap: 4px; }
+  .music-btn { width: 34px; height: 34px; }
+  .music-btn svg { width: 18px; height: 18px; }
+}
+
+/* ===================== phones: the match fits the screen, no scrolling ===================== */
+body.in-game { overflow: hidden; overscroll-behavior: none; }
+@media (max-width: 640px) {
+  body.in-game #game.active { height: 100dvh; padding-bottom: 0 !important; padding-top: 6px; box-sizing: border-box; overflow: hidden; justify-content: space-between; }
+  body.in-game { --avail: calc(100dvh - 345px); }
+  body.in-game #game { --cell: min(28vw, 110px, calc(var(--avail) / 4.6)); --hcard: min(18vw, 70px, calc(var(--avail) / 6.4)); }
+  body.in-game .music-ctl { top: auto; bottom: 4px !important; right: 6px; }
+  body.in-game .music-btn { width: 30px; height: 30px; }
+  body.in-game #game .footer { padding-right: 104px; min-height: 36px; }
+}
+
+/* ===================== large card view ===================== */
+#card-zoom { z-index: 60; cursor: zoom-out; background: radial-gradient(ellipse at center, #000d, #000f); }
+.cz-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; color: #f3ead8; animation: czIn .35s cubic-bezier(.2,1.3,.4,1); }
+.cz-card { width: min(78vw, 46vh * 63 / 88, 360px); aspect-ratio: 63 / 88; font-size: min(15vw, 9vh, 68px); }
+.cz-card .card { width: 100%; height: 100%; font-size: inherit; }
+#cz-name { margin: 8px 0 0; font-family: var(--display); font-size: 30px; color: var(--metal-1); }
+#card-zoom .muted { color: #d8cdb9; margin: 0; }
+.cz-hint { font-size: 13px; opacity: .6; }
+@keyframes czIn { from { opacity: 0; transform: scale(.7) translateY(30px); } }
+.pack-card.revealed { cursor: zoom-in; }
+
+/* ===================== LEGENDARY announcement ===================== */
+.legend-banner {
+  position: absolute; left: 50%; top: 18%; translate: -50% 0; z-index: 30; pointer-events: none; white-space: nowrap;
+  font-family: var(--display); font-weight: 900; font-size: clamp(42px, 9vw, 110px); letter-spacing: .12em;
+  background: linear-gradient(180deg, #fff 0%, #ffe9a0 35%, #ffb02e 60%, #ff6a00 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 18px #ffb02e) drop-shadow(0 6px 0 #6b2a00);
+  animation: legendIn 2.6s cubic-bezier(.2,1.2,.3,1) .8s both;
+}
+@keyframes legendIn {
+  0% { opacity: 0; scale: 3; letter-spacing: .6em; }
+  12% { opacity: 1; scale: 1; letter-spacing: .12em; }
+  80% { opacity: 1; scale: 1.06; }
+  100% { opacity: 0; scale: 1.15; }
+}
+
+/* ===================== crafted card arrives in the collection ===================== */
+.grid-card { position: relative; }
+.grid-card.craft-new .card { animation: craftFlip .9s cubic-bezier(.3,1.3,.5,1) both; }
+@keyframes craftFlip { 0% { transform: perspective(600px) rotateY(-180deg) scale(.6); opacity: 0; } 50% { opacity: 1; } 100% { transform: none; } }
+.grid-card.craft-dupe .card { animation: craftPop .6s cubic-bezier(.3,1.6,.5,1); }
+@keyframes craftPop { 40% { transform: scale(1.12); } }
+.grid-card.craft-dupe:not(.craft-foil) .count:not(.foil-count), .grid-card.craft-new:not(.craft-foil) .count:not(.foil-count) { animation: countPop 1.4s ease-out; }
+.grid-card.craft-foil .foil-count { animation: countPop 1.4s ease-out; }
+@keyframes countPop { 0% { transform: scale(1); } 20% { transform: scale(1.9); background: #fff; color: #111; box-shadow: 0 0 18px 6px #ffe58a; } 100% { transform: scale(1); } }
+.craft-burst { position: absolute; inset: -30%; z-index: 5; pointer-events: none; border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #ffe9a0aa 22%, #ffb02e44 45%, transparent 65%); mix-blend-mode: screen;
+  animation: craftBurst 1.2s ease-out forwards; }
+.craft-burst.foil { background: radial-gradient(circle, #fff 0%, #fff0 20%), conic-gradient(from 0deg, #ff6b9a88, #ffd36b88, #6bffb588, #6bc8ff88, #c58cff88, #ff6b9a88);
+  -webkit-mask: radial-gradient(circle, #000 20%, transparent 65%); mask: radial-gradient(circle, #000 20%, transparent 65%); }
+@keyframes craftBurst { 0% { opacity: 0; scale: .3; } 20% { opacity: 1; } 100% { opacity: 0; scale: 1.3; rotate: 40deg; } }
+#nav .nav-item span { white-space: nowrap; }

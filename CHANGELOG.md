@@ -3,6 +3,32 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.4 — 2026-11-02
+### Added
+- **Card set picker in the top bar**, everywhere outside a match (with a 🎁 button showing unopened packs and a thin XP
+  bar). On phones it shows just the set's icon until you open it. The set tile on the Play screen is gone, and the
+  Collection uses the same picker.
+- **Sound controls are small icons at the top**: a bell (sound effects) and a note (music). Tap one for its on/off
+  switch and volume slider; a slash through the icon means it's off.
+- **Full-screen button** on phones and tablets.
+- **Tap an opened pack card** to see it large.
+- **"LEGENDARY!"** — opening a Legendary card gets a giant announcement on screen and an announcer voice (your device's
+  speech voice, deep and slow), timed to the impact.
+- **Crafting** closes the card popup and shows the card arriving in the Collection: a first copy flips in with a burst
+  of light; an extra copy flashes and its ×N count pops.
+### Changed
+- Phones: a match now fits the screen with no scrolling (cards shrink to fit the height); the sound icons sit in the
+  bottom corner during a match. The phone header is a fixed bar with the logo, picker, packs and sound icons.
+- Narrower desktop windows show the navigation as icons only so everything fits in the top bar.
+- Cyclone's description says it turns cards **clockwise** (top → right → bottom → left).
+- Removed the dark oval "ground shadow" under every card's artwork.
+### Fixed
+- Move history for storms now shows the board **before** the strike, then animates to the result (e.g. a Cyclone card
+  is shown in its old orientation, then spins clockwise into its new one), instead of animating the already-changed
+  card. (History of matches from older versions still shows the result only.)
+- Scrapping a card during a pack opening no longer hides it: it stays visible, greyed out, with a red slash and a
+  SCRAPPED stamp.
+
 ## v0.4.3 — 2026-11-02
 ### Changed
 - After a storm hits, the computer now waits as long as it does when choosing a storm response (4.5–6 seconds) before

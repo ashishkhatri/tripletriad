@@ -73,30 +73,36 @@ window.Sfx = (() => {
   function setEnabled(on) { enabled = on; save(); updateUI(); if (on) play('click'); }
   function setVolume(v) { volume = v; save(); if (out) out.gain.setTargetAtTime(v, ctx.currentTime, 0.03); if (v > 0 && !enabled) enabled = true; updateUI(); }
 
-  // ---------- control (sits beside the music control) ----------
-  let btn, slider;
+  // ---------- control: bell icon at the top (see SoundUI in music.js) ----------
+  let group;
   function buildUI() {
-    const box = document.querySelector('.music-ctl');
-    if (!box) return setTimeout(buildUI, 50);
-    const wrap = document.createElement('span'); wrap.className = 'sfx-ctl';
-    btn = document.createElement('button'); btn.type = 'button'; btn.className = 'music-btn sfx-btn';
-    btn.onclick = (e) => { e.stopPropagation(); setEnabled(!enabled); };
-    slider = document.createElement('input'); slider.type = 'range'; slider.min = 0; slider.max = 1; slider.step = 0.01;
-    slider.setAttribute('aria-label', 'Sound effects volume');
-    slider.oninput = () => setVolume(Number(slider.value));
-    slider.onchange = () => play('flip');
-    wrap.append(btn, slider);
-    box.prepend(wrap);
+    if (!window.SoundUI) return setTimeout(buildUI, 50);
+    const box = window.SoundUI.box();
+    group = window.SoundUI.group({
+      icon: 'bell', label: 'Sound effects',
+      enabled: () => enabled, setEnabled, volume: () => volume, setVolume, onChange: () => play('flip'),
+    });
+    box.prepend(group.el);
     updateUI();
   }
-  function updateUI() {
-    if (!btn) return;
-    btn.textContent = enabled ? '🔔' : '🔕';
-    btn.title = enabled ? 'Sound effects on — click to mute' : 'Sound effects off — click to turn on';
-    btn.classList.toggle('off', !enabled);
-    slider.value = volume;
-  }
+  function updateUI() { if (group) group.update(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildUI); else buildUI();
 
-  return { play, setEnabled, setVolume };
+  // An announcer line through the browser's speech engine (deep, slow and loud), only when sound effects are on.
+  function say(text, opts = {}) {
+    if (!enabled || !('speechSynthesis' in window)) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices();
+      const en = voices.filter((v) => /^en/i.test(v.lang));
+      const pick = en.find((v) => /male|daniel|fred|alex|guy|david|james|google uk english male/i.test(v.name)) || en[0];
+      if (pick) u.voice = pick;
+      u.pitch = opts.pitch ?? 0.2; u.rate = opts.rate ?? 0.72; u.volume = Math.min(1, volume * 1.4);
+      speechSynthesis.cancel();
+      setTimeout(() => speechSynthesis.speak(u), (opts.delay || 0) * 1000);
+    } catch (e) { /* ignore */ }
+  }
+  if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) { /* ignore */ } }
+
+  return { play, setEnabled, setVolume, say };
 })();

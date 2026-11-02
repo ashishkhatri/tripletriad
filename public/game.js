@@ -244,7 +244,7 @@
   const STORMS = {
     fire:      { name: 'Wildfire',     el: 'fire',    weight: 3, text: 'Scorches a card: −1 to every side for the rest of the match.' },
     tide:      { name: 'Tidal Surge',  el: 'water',   weight: 2, text: 'Pushes a row or column along; moved cards attack their new neighbours.' },
-    wind:      { name: 'Cyclone',      el: 'wind',    weight: 2, text: 'Spins a card a quarter turn; it attacks with its new sides.' },
+    wind:      { name: 'Cyclone',      el: 'wind',    weight: 2, text: 'Spins a card a quarter turn clockwise (its top number moves to the right side, and so on); it then attacks with its new sides.' },
     lightning: { name: 'Thunderbolt',  el: 'thunder', weight: 2, text: 'Strikes a card and flips it to the other side.' },
     frost:     { name: 'Blizzard',     el: 'ice',     weight: 2, text: 'Freezes a square for two turns: no placing there, and a card on it can’t be flipped.' },
     quake:     { name: 'Earthquake',   el: 'earth',   weight: 2, text: 'Swaps two neighbouring cards; both attack their new neighbours.' },
@@ -439,7 +439,7 @@
     }
     s.storm = null;
     s.stormCooldown = 1;
-    s.history = (s.history || []).concat([{ storm: true, kind, original: st.kind, choice, p: seat, target, cells: stormCells(kind, target), steps, snap: snap(s), owners: s.board.map((x) => (x ? x.owner : null)) }]);
+    s.history = (s.history || []).concat([{ storm: true, kind, original: st.kind, choice, p: seat, target, cells: stormCells(kind, target), steps, before: snap(s0), snap: snap(s), owners: s.board.map((x) => (x ? x.owner : null)) }]);
     return { state: s, events };
   }
 

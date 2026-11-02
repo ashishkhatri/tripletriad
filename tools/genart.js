@@ -856,7 +856,6 @@ function render(deck, card) {
 <rect width="200" height="250" fill="url(#bg)"/>
 ${motif(c)}
 ${aura(c)}
-<ellipse cx="100" cy="212" rx="58" ry="9" fill="#000" opacity=".3"/>
 <g transform="translate(100 ${ty}) scale(${f(scale * 100) / 100})">${subject}</g>
 <rect width="200" height="250" fill="url(#vig)"/>
 </svg>

@@ -33,7 +33,7 @@
     if (!decks.has(deckId)) return;
     $('#deck').value = deckId; $('#col-deck').value = deckId;
     try { localStorage.setItem('triad-deck', deckId); } catch (e) { /* ignore */ }
-    $('#deck-desc').textContent = decks.get(deckId).description || '';
+    const dd = $('#deck-desc'); if (dd) dd.textContent = decks.get(deckId).description || '';
     applyTheme(deckId);
   }
 
@@ -49,6 +49,7 @@
     // the navigation belongs to the menu and the collection, not to matches
     const navOn = id === 'menu' || id === 'collection';
     document.body.classList.toggle('with-nav', navOn);
+    document.body.classList.toggle('in-game', id === 'game');
     markNav(id === 'collection' ? 'collection' : currentView);
     if (id === 'menu') { refreshProgress(); refreshDailies(); }
   }
@@ -396,7 +397,7 @@
             scorch: `🔥 <b>${nm(st.n)}</b> is scorched: −1 to every side.`,
             bolt: `⚡ <b>${nm(st.n)}</b> was struck and changed sides.`,
             burn: `🐉 <b>${nm(st.n)}</b> was swept up by the dragon and changed sides.`,
-            spin: `🌪 <b>${nm(st.n)}</b> spun a quarter turn.`,
+            spin: `🌪 <b>${nm(st.n)}</b> spun a quarter turn <b>clockwise</b> ↻: top → right → bottom → left.`,
             freeze: `❄ The ${SIDE_CELL[st.n]} square is frozen for two turns.`,
             swap: `⛰ <b>${nm(st.a)}</b> and <b>${nm(st.b)}</b> swapped places.`,
             tide: st.moves ? `🌊 ${st.moves.length ? st.moves.map((m) => `<b>${nm(m.to)}</b> was pushed ${SIDE_CELL[m.from]} → ${SIDE_CELL[m.to]}`).join('; ') : 'Nothing could move.'}` : '',
@@ -410,7 +411,7 @@
             lines.push({ html: `${nm(st.from)}’s ${SIDE[st.d]} ${num(st.a, 'win')} beats ${nm(st.n)}’s ${SIDE[od]} ${num(st.b, 'lose')} → <b>captured</b>`, step: si, cls: 'win' });
           } else if (t) {
             if (st.k === 'bolt' || st.k === 'burn') flips.add(st.n);
-            const cells = st.k === 'swap' ? [st.a, st.b] : st.k === 'tide' ? (st.moves || []).map((m) => m.to) : st.k === 'dragon' ? (st.path || []) : st.n !== undefined ? [st.n] : [];
+            const cells = st.k === 'swap' ? [st.a, st.b] : st.k === 'tide' ? (st.moves || []).flatMap((m) => [m.from, m.to]) : st.k === 'dragon' ? (st.path || []) : st.n !== undefined ? [st.n] : [];
             lines.push({ html: t, cls: 'note', cells, flipped: st.k === 'bolt' || st.k === 'burn' ? [st.n] : [], fx: st.k });
           }
           return;
@@ -479,15 +480,50 @@
           if (flips.has(c)) { mc.classList.add('flipped'); const f = document.createElement('i'); f.className = 'flip-badge'; f.textContent = '↻'; mc.appendChild(f); }
           cell.appendChild(mc);
         }
+        // storms: the board as it was before the strike, shown while a line is replayed, then swapped for the result
+        if (h.storm && h.before) {
+          const bs = h.before[c];
+          const wrap = document.createElement('div'); wrap.className = 'mini-before';
+          if (bs && bs.card) {
+            wrap.classList.add(bs.o === me ? 'own-mine' : 'own-theirs');
+            const bc = miniCard(bs.card, bs.o, -1, []);
+            if (bs.m) { const mm = document.createElement('i'); mm.className = 'mini-mod ' + (bs.m > 0 ? 'up' : 'down'); mm.textContent = (bs.m > 0 ? '+' : '−') + Math.abs(bs.m); bc.appendChild(mm); }
+            wrap.appendChild(bc);
+          }
+          if (bs && bs.f) wrap.classList.add('mini-frozen');
+          cell.appendChild(wrap);
+        }
         mb.appendChild(cell);
       }
       body.appendChild(mb);
       const ul = document.createElement('ul'); ul.className = 'hist-steps';
       const mcells = [...mb.children];
-      const lit = lines.map((ln) => {
+      const hasBefore = !!(h.storm && h.before);
+      const goOff = () => { ul.querySelectorAll('li.lit').forEach((x) => x.classList.remove('lit')); mcells.forEach((c) => c.classList.remove('cell-flash', 'cell-turn', 'fx-spin', 'fx-scorch', 'fx-bolt', 'fx-burn', 'fx-freeze', 'fx-tide', 'fx-swap', 'fx-dragon')); mb.classList.remove('focus'); };
+      let afterTimer = null;
+      const lit = lines.map((ln, lineNo) => {
         const sli = document.createElement('li'); sli.className = ln.cls || ''; sli.innerHTML = ln.html;
-        // light up this line: its numbers glow, its cards flash, captured cards change colour
+        // light up this line: its numbers glow, its cards flash, captured cards change colour.
+        // For storms the affected squares first show how they were before the strike, then change to the result.
         const on = (v) => {
+          if (hasBefore) {
+            clearTimeout(afterTimer);
+            mb.classList.toggle('show-before', v);
+            if (v) {
+              const earlier = new Set(lines.slice(0, lineNo).flatMap((l) => l.cells));
+              mcells.forEach((c, k) => c.classList.toggle('cell-after', earlier.has(k)));
+              sli.classList.add('lit');
+              afterTimer = setTimeout(() => {
+                mcells.forEach((c, k) => { if (ln.cells.includes(k)) c.classList.add('cell-after'); });
+                go(true);
+              }, ln.cells.length ? 450 : 0);
+              return;
+            }
+            mcells.forEach((c) => c.classList.remove('cell-after'));
+          }
+          go(v);
+        };
+        const go = (v) => {
           sli.classList.toggle('lit', v);
           mb.classList.toggle('focus', v && ln.step !== undefined);
           if (ln.step !== undefined) mb.querySelectorAll('.rk.hl').forEach((r) => r.classList.toggle('on', v && r.dataset.steps.split(' ').includes(String(ln.step))));
@@ -513,13 +549,15 @@
         if (placed) { placed.classList.remove('cell-drop'); void placed.offsetWidth; placed.classList.add('cell-drop'); await sleep(550); }
         for (const on of lit) {
           if (replayToken !== token) break;
-          on(true); await sleep(1100);
+          on(true); await sleep(hasBefore ? 1500 : 1100);
+          if (hasBefore) { goOff(); continue; }
           on(false);
           if (replayToken !== token) break;
           await sleep(120);
         }
         li.classList.remove('replaying');
         if (placed) placed.classList.remove('cell-drop');
+        if (hasBefore) { goOff(); mb.classList.remove('show-before'); mcells.forEach((c) => c.classList.remove('cell-after')); }
       };
       head.querySelector('.hist-play').onclick = (e) => { e.stopPropagation(); li._replay(); };
       list.appendChild(li);
@@ -919,7 +957,7 @@
     const grid = $('#build-grid'); grid.innerHTML = '';
     const owned = decks.get(roomDeck).cards.filter((c) => builder.cards[c.id]).sort((a, b) => b.level - a.level || a.id - b.id);
     for (const c of owned) {
-      const wrap = document.createElement('div'); wrap.className = 'grid-card';
+      const wrap = document.createElement('div'); wrap.className = 'grid-card'; wrap.dataset.card = c.id;
       const el = cardEl(playCard(c, (builder.foils[c.id] || 0) > 0), 'mine', g);
       const left = builder.cards[c.id] - builder.picked.filter((x) => x === c.id).length;
       if (canAdd(c.id)) { el.classList.add('pickable'); el.onclick = () => { builder.picked.push(c.id); sfx('place'); renderBuilder(); }; }
@@ -1017,16 +1055,18 @@
   // ---------- progress, collection & packs ----------
   async function refreshProgress() {
     const box = $('#set-progress');
-    if (!account || !decks.size) { box.hidden = true; return; }
+    if (!account || !decks.size) { box.hidden = true; $('#btn-packs').hidden = true; return; }
     try {
       const s = await api('GET', `/api/collection?deck=${encodeURIComponent($('#deck').value)}`);
       box.hidden = false;
       $('#menu-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
-      $('#menu-xp-text').textContent = `${s.xp} XP · ${s.owned}/${s.total} cards · next pack in ${s.nextPackIn} XP`;
+      const xpText = `${decks.get($('#deck').value).name}: ${s.xp} XP · ${s.owned}/${s.total} cards · next pack in ${s.nextPackIn} XP`;
+      $('#menu-xp-text').textContent = xpText; box.title = xpText;
       const b = $('#btn-packs');
       b.hidden = !(s.packs > 0);
-      b.textContent = s.packs > 1 ? `Open ${s.packs} packs` : 'Open your pack';
-    } catch (e) { box.hidden = true; }
+      b.innerHTML = `<span aria-hidden="true">🎁</span> ${s.packs}`;
+      b.title = s.packs > 1 ? `Open ${s.packs} packs` : 'Open your pack';
+    } catch (e) { box.hidden = true; $('#btn-packs').hidden = true; }
   }
   let colSummary = null;
   async function openCollection(deckId) {
@@ -1057,7 +1097,7 @@
     xb.innerHTML = extraCount ? `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>` : 'No extras to scrap';
     const grid = $('#col-grid'); grid.innerHTML = '';
     for (const c of deck.cards) {
-      const wrap = document.createElement('div'); wrap.className = 'grid-card';
+      const wrap = document.createElement('div'); wrap.className = 'grid-card'; wrap.dataset.card = c.id;
       const n = s.cards[c.id] || 0, nf = s.foils[c.id] || 0;
       wrap.appendChild(cardEl(playCard(c, nf > 0 && !n ? true : nf > 0), 'neutral', deck.elements));
       if (n + nf === 0) {
@@ -1102,6 +1142,18 @@
     $('#cd-note').textContent = s.shards < cost ? `You have ${s.shards} shards — ${cost - s.shards} more to craft this.` :
       (have >= 1 && s.copies - 1 < s.minCards ? `You need at least ${s.minCards} cards in a set, so you can\u2019t scrap this one.` : '');
   }
+  // A freshly crafted card: a first copy flips in with a burst of light; an extra copy flashes and its count pops.
+  function craftReveal(id, foil) {
+    const tile = document.querySelector(`#col-grid .grid-card[data-card="${id}"]`);
+    if (!tile) return;
+    tile.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    const s = colSummary, copies = (foil ? s.foils : s.cards)[id] || 0;
+    tile.classList.remove('craft-new', 'craft-dupe'); void tile.offsetWidth;
+    tile.classList.add(copies <= 1 ? 'craft-new' : 'craft-dupe');
+    if (foil) tile.classList.add('craft-foil');
+    const burst = document.createElement('div'); burst.className = 'craft-burst' + (foil ? ' foil' : ''); tile.appendChild(burst);
+    setTimeout(() => { burst.remove(); tile.classList.remove('craft-new', 'craft-dupe', 'craft-foil'); }, 2400);
+  }
   async function detailAction(kind) {
     const { deckId, id, foil } = detail;
     try {
@@ -1112,7 +1164,14 @@
         sfx(lvl >= 3 || foil ? 'craft-big' : 'craft');
         if (foil) sfx('reveal-foil', { delay: 0.85 });
       } else sfx('cancel');
-      toast(kind === 'craft' ? `Crafted ${foil ? 'a foil ' : ''}${deckCard(deckId, id).name}.` : `Scrapped for ${r.gained} shards.`);
+      if (kind === 'craft') {
+        // close the popup and show the new card arriving in the collection
+        $('#card-detail').classList.remove('show');
+        await renderCollection();
+        craftReveal(id, foil);
+        return;
+      }
+      toast(`Scrapped for ${r.gained} shards.`);
       renderCardDetail();
       renderCollection();
     } catch (e) { toast(e.message); sfx('error'); }
@@ -1233,7 +1292,7 @@
       };
       holder.appendChild(sb);
       holder.onclick = () => {
-        if (holder.classList.contains('revealed')) return;
+        if (holder.classList.contains('revealed')) { zoomCard(playCard(c, pc.foil), deck.elements); return; }
         holder.classList.add('revealed', `rarity-${c.level}`);
         // light bursts from behind the card as it turns: bigger and brighter for rarer cards, rainbow for foils
         const rb = document.createElement('div'); rb.className = `reveal-burst rb-${c.level}${pc.foil ? ' rb-foil' : ''}`;
@@ -1241,6 +1300,11 @@
         setTimeout(() => rb.remove(), 2200);
         sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
         if (pc.foil) sfx('reveal-foil', { delay: c.level >= 3 ? 0.5 : 0.12 });
+        if (c.level >= 5) {   // the announcer, timed to the reveal's impact
+          if (typeof Sfx !== 'undefined' && Sfx.say) Sfx.say('Legendary!', { delay: 0.85 });
+          const lb = document.createElement('div'); lb.className = 'legend-banner'; lb.textContent = 'LEGENDARY';
+          $('#pack').appendChild(lb); setTimeout(() => lb.remove(), 2600);
+        }
         if (++revealed === r.cards.length) {
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
           $('#btn-pack-again').hidden = r.summary.packs < 1;
@@ -1418,6 +1482,34 @@
   $('#cd-scrap').onclick = () => detailAction('scrap');
   $('#cd-close').onclick = () => $('#card-detail').classList.remove('show');
   $('#card-detail').addEventListener('click', (e) => { if (e.target.id === 'card-detail') $('#card-detail').classList.remove('show'); });
+  // ---------- full screen (phones and tablets) ----------
+  (function fullscreenButton() {
+    const root = document.documentElement;
+    if (!(root.requestFullscreen || root.webkitRequestFullscreen) || !window.SoundUI) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'music-btn fs-btn';
+    const icon = (on) => (on
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>');
+    const sync = () => { const on = !!(document.fullscreenElement || document.webkitFullscreenElement); b.innerHTML = icon(on); b.title = on ? 'Exit full screen' : 'Full screen'; b.setAttribute('aria-label', b.title); };
+    b.onclick = (e) => {
+      e.stopPropagation();
+      if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      else (root.requestFullscreen || root.webkitRequestFullscreen).call(root, { navigationUI: 'hide' });
+    };
+    document.addEventListener('fullscreenchange', sync); document.addEventListener('webkitfullscreenchange', sync);
+    sync(); window.SoundUI.box().appendChild(b);
+  })();
+
+  // ---------- large view of a card (tap an opened pack card) ----------
+  function zoomCard(card, glyphs) {
+    const z = $('#card-zoom'), box = $('#cz-card');
+    box.innerHTML = ''; box.appendChild(cardEl(card, 'neutral', glyphs));
+    $('#cz-name').textContent = card.name;
+    $('#cz-meta').textContent = `${RARITY[card.level] || ''}${card.foil ? ' · Foil' : ''} · ${cap(card.el)} · ${card.r.map(RANK).join(' / ')}`;
+    z.classList.add('show'); sfx('pick');
+  }
+  $('#card-zoom').addEventListener('click', () => $('#card-zoom').classList.remove('show'));
+
   // ---------- closing popups: ✕ buttons and clicking outside ----------
   const closeResult = () => { $('#result').classList.remove('show'); $('#btn-show-result').hidden = !(state && state.over); };
   $('#btn-result-close').onclick = closeResult;
@@ -1440,7 +1532,8 @@
   // Escape closes whichever popup is on top
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if ($('#card-detail').classList.contains('show')) $('#card-detail').classList.remove('show');
+    if ($('#card-zoom').classList.contains('show')) $('#card-zoom').classList.remove('show');
+    else if ($('#card-detail').classList.contains('show')) $('#card-detail').classList.remove('show');
     else if ($('#auth').classList.contains('show')) $('#auth').classList.remove('show');
     else if ($('#pack').classList.contains('show') && !document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) $('#btn-pack-done').click();
     else if ($('#result').classList.contains('show')) closeResult();
@@ -1454,6 +1547,7 @@
   };
 
   // ---------- boot ----------
+  const SET_ICON = { wilds: '🐾', arcane: '🔮', starfall: '🚀', tidebound: '🌊', bloomwild: '🌸', hollow: '🏮' };
   async function loadDecks() {
     const index = await (await fetch('decks/index.json')).json();
     const sel = $('#deck'), csel = $('#col-deck');
@@ -1461,13 +1555,26 @@
       const d = await (await fetch('decks/' + f)).json();
       d.id = d.id || f.replace(/\.json$/, '');
       decks.set(d.id, d);
-      const o = document.createElement('option'); o.value = d.id; o.textContent = `${d.name} (${d.cards.length})`; sel.appendChild(o);
+      const o = document.createElement('option'); o.value = d.id; o.textContent = `${d.name} (${d.cards.length})`;
       csel.appendChild(o.cloneNode(true));
+      o.dataset.full = `${SET_ICON[d.id] || '🃏'} ${d.name}`; o.dataset.icon = SET_ICON[d.id] || '🃏'; o.textContent = o.dataset.full;
+      sel.appendChild(o);
     }
+    // phones: the top picker shows just the set's icon until it's opened
+    const compact = () => matchMedia('(max-width: 899px)').matches;
+    const labels = (full) => sel.querySelectorAll('option').forEach((o) => { o.textContent = full || !compact() ? o.dataset.full : o.dataset.icon; });
+    ['focus', 'pointerdown', 'touchstart', 'mousedown'].forEach((ev) => sel.addEventListener(ev, () => labels(true), { passive: true }));
+    ['blur', 'change'].forEach((ev) => sel.addEventListener(ev, () => setTimeout(() => labels(false), 0)));
+    matchMedia('(max-width: 899px)').addEventListener('change', () => labels(false));
+    labels(false);
     let saved = null;
     try { saved = localStorage.getItem('triad-deck'); } catch (e) { /* ignore */ }
     chooseSet(saved && decks.has(saved) ? saved : sel.value);
-    sel.onchange = () => { chooseSet(sel.value); refreshProgress(); if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value)); };
+    sel.onchange = () => {
+      chooseSet(sel.value); refreshProgress();
+      if (document.querySelector('#menu.active, #collection.active')) Music.play(musicFor(sel.value));
+      if (document.querySelector('#collection.active')) renderCollection();
+    };
     if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value));
   }
 
