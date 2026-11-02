@@ -93,8 +93,8 @@ function packSvg(deck) {
   <text x="${W / 2}" y="378" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="${st.ink}" text-anchor="middle" letter-spacing="3" opacity=".9">${esc(st.tag)}</text>
   <!-- badge -->
   <g transform="translate(${W / 2} 402)">
-    <rect x="-46" y="-12" width="92" height="24" rx="12" fill="url(#metal)" stroke="#000" stroke-opacity=".3"/>
-    <text y="5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="800" fill="${st.c1}" text-anchor="middle" letter-spacing="2">6 CARDS</text>
+    <rect x="-72" y="-12" width="144" height="24" rx="12" fill="url(#metal)" stroke="#000" stroke-opacity=".3"/>
+    <text y="5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="800" fill="${st.c1}" text-anchor="middle" letter-spacing="1" textLength="128" lengthAdjust="spacingAndGlyphs">5 CARDS + 1 FOIL</text>
   </g>
 </g>
 </svg>
@@ -129,9 +129,9 @@ function packBackSvg(deck) {
   <text x="${W / 4}" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="2" transform="rotate(-90 ${W / 4} 150)">TRIAD</text>
   <text x="${W * 0.75}" y="230" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="3" transform="rotate(90 ${W * 0.75} 230)"${fit}>${name}</text>
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="${st.ink}" opacity=".75" font-size="9.5" text-anchor="middle">
-    <text x="${W / 4}" y="270">6 CARDS · 1 FOIL</text>
-    <text x="${W / 4}" y="286">ONE SET · ${deck.cards.length} CARDS</text>
-    <text x="${W / 4}" y="302">RARER LEVELS INSIDE</text>
+    <text x="${W / 4}" y="270">5 CARDS + 1 FOIL</text>
+    <text x="${W / 4}" y="286">FOIL GUARANTEED</text>
+    <text x="${W / 4}" y="302">ONE SET · ${deck.cards.length} CARDS</text>
   </g>
   <g transform="translate(${W / 4 - 34} 320)" opacity=".8">
     ${Array.from({ length: 22 }, (_, i) => `<rect x="${i * 3.1}" y="0" width="${(i * 7) % 3 === 0 ? 2 : 1}" height="34" fill="${st.ink}"/>`).join('')}

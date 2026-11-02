@@ -124,7 +124,10 @@ const server = http.createServer((req, res) => {
       return res.end(html);
     }
     const versioned = url.searchParams.get('v') === VERSION;
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': versioned ? 'public, max-age=31536000, immutable' : 'no-cache' });
+    // unversioned files must always be checked with the server; tell Cloudflare (or any proxy) not to keep its own copy
+    res.writeHead(200, versioned
+      ? { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'public, max-age=31536000, immutable' }
+      : { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-cache', 'CDN-Cache-Control': 'no-store', 'Cloudflare-CDN-Cache-Control': 'no-store' });
     res.end(data);
   });
 });

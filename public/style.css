@@ -1567,3 +1567,6 @@ select option { color: #1a1a1a !important; background: #ffffff !important; }
 /* the top-bar picker on dark-field themes: light text and arrow */
 :root[data-theme="starfall"] .set-bar select { color: var(--text); --chev: var(--text); }
 @media (max-width: 899px) { :root[data-theme="starfall"] .set-bar select { color: transparent !important; } }
+.col-xp-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+.col-xp-row .xpbar { flex: 1; }
+.col-xp-label { font-family: var(--title); font-weight: 800; font-size: 13px; letter-spacing: .12em; color: var(--metal-2); }

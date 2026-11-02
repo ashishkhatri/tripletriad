@@ -364,3 +364,9 @@ input::placeholder { color: var(--ink-soft); opacity: .45; font-style: italic; }
 :root[data-theme="hollow"] .orn::before { content: ""; width: .55em; height: .72em; border-radius: .22em;
   background: radial-gradient(ellipse at 50% 45%, #fff1c9 0%, #ffb35c 40%, #b4561c 100%); box-shadow: 0 0 .5em #ff9b3d, 0 0 1.1em #ff9b3d77; }
 :root[data-theme="hollow"] .logo-row .orn-r::before { transform: none; }
+
+/* Starfall without cut corners: square-ish panels and buttons with a slight radius */
+:root[data-theme="starfall"] { --chamfer: none; --chamfer-s: none; }
+:root[data-theme="starfall"] .panel { border-radius: 6px; }
+:root[data-theme="starfall"] button { border-radius: 4px; }
+:root[data-theme="starfall"] .who b { clip-path: none; border-radius: 8px; width: 48px; }

@@ -3,6 +3,17 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.7 — 2026-11-02
+### Changed
+- Pack art says **5 CARDS + 1 FOIL** (and "foil guaranteed" on the back).
+- Starfall no longer has cut corners on panels, buttons and score badges.
+- Collection: the bar is labelled **XP** with "N / 100 XP to the next pack"; removed the card count, win record and
+  shard counter; the Open pack and Scrap extras buttons only appear when there's something to open or scrap.
+- Removed the XP bar under the set picker and the star beside the packs button.
+### Fixed
+- Pack art and other files could stay cached at an old version (still showing "3 cards"). Pack art is now fetched
+  for the current release, and Cloudflare is told not to keep its own copies of files that can change.
+
 ## v0.4.6 — 2026-11-02
 ### Changed
 - Hovering the version number says "Open v… Patch notes", and it now opens that version's release notes directly.

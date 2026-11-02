@@ -1151,20 +1151,19 @@
     const s = colSummary;
     setShards(s.shards);
     $('#col-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
-    $('#col-xp-text').textContent = `${s.xp} XP · next pack in ${s.nextPackIn} XP`;
-    $('#col-owned').textContent = `${s.owned} of ${s.total} cards`;
-    $('#col-record').textContent = s.games ? `${s.wins} wins in ${s.games} games` : 'No games yet';
+    // the bar is XP toward the next pack
+    $('#col-xp-text').textContent = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP to the next pack`;
     const ob = $('#btn-open-pack');
-    ob.disabled = s.packs < 1;
-    ob.textContent = s.packs > 0 ? `Open pack (${s.packs})` : 'No packs yet';
+    ob.hidden = s.packs < 1;
+    ob.textContent = `Open pack (${s.packs})`;
     // extras: everything beyond one normal and one foil copy of each card
     let extraValue = 0, extraCount = 0;
     for (const foil of [false, true]) for (const [id, n] of Object.entries(foil ? s.foils : s.cards)) if (n > 1) {
       extraCount += n - 1; extraValue += (n - 1) * s.scrap[deckCard(deckId, id).level] * (foil ? s.foilMult : 1);
     }
     const xb = $('#btn-scrap-extras');
-    xb.disabled = !extraCount;
-    xb.innerHTML = extraCount ? `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>` : 'No extras to scrap';
+    xb.hidden = !extraCount;
+    xb.innerHTML = `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>`;
     const grid = $('#col-grid'); grid.innerHTML = '';
     for (const c of deck.cards) {
       const wrap = document.createElement('div'); wrap.className = 'grid-card'; wrap.dataset.card = c.id;
@@ -1247,6 +1246,8 @@
     } catch (e) { toast(e.message); sfx('error'); }
   }
 
+  // the release this page was served for (stamped on the script URL), used to fetch matching pack art
+  const ASSET_V = (() => { try { return new URL(document.querySelector('script[src*="client.js"]').src).searchParams.get('v') || Date.now(); } catch (e) { return Date.now(); } })();
   let packDeck = null;
   // Step 1: show the sealed pack. Nothing is spent until it's torn open.
   function openPack(deckId) {
@@ -1262,10 +1263,10 @@
     const sealed = document.createElement('div');
     sealed.className = 'sealed lit';
     sealed.dataset.tilt = '26';
-    const src = `packs/${encodeURIComponent(deckId)}.svg`, backSrc = `packs/${encodeURIComponent(deckId)}-back.svg`;
+    const src = `packs/${encodeURIComponent(deckId)}.svg?v=${ASSET_V}`, backSrc = `packs/${encodeURIComponent(deckId)}-back.svg?v=${ASSET_V}`;
     // lighting is cut to the pack's outline with small bitmap masks (cheap to redraw every frame)
-    sealed.style.setProperty('--pack-art', `url("packs/${encodeURIComponent(deckId)}-mask.png")`);
-    sealed.style.setProperty('--pack-back', `url("packs/${encodeURIComponent(deckId)}-back-mask.png")`);
+    sealed.style.setProperty('--pack-art', `url("packs/${encodeURIComponent(deckId)}-mask.png?v=${ASSET_V}")`);
+    sealed.style.setProperty('--pack-back', `url("packs/${encodeURIComponent(deckId)}-back-mask.png?v=${ASSET_V}")`);
     const front = document.createElement('div'); front.className = 'pack-face pack-front';
     for (const part of ['pack-body', 'pack-top']) {
       const d = document.createElement('div'); d.className = part;
