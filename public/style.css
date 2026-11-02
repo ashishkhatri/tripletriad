@@ -643,7 +643,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .pack-edge::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(180deg, #fff3 0 2px, #0000 2px 9px); }
 .pack-edge-l { left: 0; transform-origin: left center; transform: translateX(calc(var(--depth) / -2)) rotateY(-90deg) translateX(calc(var(--depth) / -2)); }
 .pack-edge-r { right: 0; transform-origin: right center; transform: translateX(calc(var(--depth) / 2)) rotateY(90deg) translateX(calc(var(--depth) / 2)); }
-/* lighting layers are cut to the pack's own outline */
+/* lighting layers are cut to the pack's own outline with small bitmap masks (an SVG mask here was redrawn every frame) */
 .pack-face .pack-bulge, .pack-face .pack-crinkle, .pack-face .foil-layer, .pack-face .glare-spot {
   position: absolute; inset: 0; pointer-events: none; border-radius: 0;
   -webkit-mask: var(--pack-art) center / 100% 100% no-repeat; mask: var(--pack-art) center / 100% 100% no-repeat;

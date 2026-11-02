@@ -3,6 +3,18 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.5 — 2026-11-02
+### Fixed
+- Opening packs was slow and could show glitches, especially on phones. The pack's lighting layers were cut to shape
+  with the full pack artwork as a mask, which browsers redrew every frame; they now use small bitmap outline masks.
+  In testing the sealed pack went from about 44 to 60 frames per second on desktop.
+- The card lighting loop measured and restyled cards in an order that forced the browser to redo layout once per card
+  every frame. It now measures everything first, only writes values that changed, and skips the hidden face of
+  pack-reveal cards. On a slowed-down phone the pack reveal and the game board both went from about 40–45 to 60 fps.
+- On phones without the motion sensor, ordinary cards now have a steady light (foils and packs still shimmer), and
+  shadows move in whole pixels, which saves a lot of redrawing.
+- Pack art said "3 cards"; it now says 6 cards with 1 foil.
+
 ## v3.8.4 — 2026-11-02
 ### Changed
 - A card you drag is now exactly the size of a square on the board (it grows from hand size the moment you pick it

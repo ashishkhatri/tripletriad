@@ -94,7 +94,7 @@ function packSvg(deck) {
   <!-- badge -->
   <g transform="translate(${W / 2} 402)">
     <rect x="-46" y="-12" width="92" height="24" rx="12" fill="url(#metal)" stroke="#000" stroke-opacity=".3"/>
-    <text y="5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="800" fill="${st.c1}" text-anchor="middle" letter-spacing="2">3 CARDS</text>
+    <text y="5" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" font-weight="800" fill="${st.c1}" text-anchor="middle" letter-spacing="2">6 CARDS</text>
   </g>
 </g>
 </svg>
@@ -129,7 +129,7 @@ function packBackSvg(deck) {
   <text x="${W / 4}" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="2" transform="rotate(-90 ${W / 4} 150)">TRIAD</text>
   <text x="${W * 0.75}" y="230" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="3" transform="rotate(90 ${W * 0.75} 230)"${fit}>${name}</text>
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="${st.ink}" opacity=".75" font-size="9.5" text-anchor="middle">
-    <text x="${W / 4}" y="270">3 CARDS PER PACK</text>
+    <text x="${W / 4}" y="270">6 CARDS · 1 FOIL</text>
     <text x="${W / 4}" y="286">ONE SET · ${deck.cards.length} CARDS</text>
     <text x="${W / 4}" y="302">RARER LEVELS INSIDE</text>
   </g>

@@ -1123,8 +1123,9 @@
     sealed.className = 'sealed lit';
     sealed.dataset.tilt = '26';
     const src = `packs/${encodeURIComponent(deckId)}.svg`, backSrc = `packs/${encodeURIComponent(deckId)}-back.svg`;
-    sealed.style.setProperty('--pack-art', `url("${src}")`);
-    sealed.style.setProperty('--pack-back', `url("${backSrc}")`);
+    // lighting is cut to the pack's outline with small bitmap masks (cheap to redraw every frame)
+    sealed.style.setProperty('--pack-art', `url("packs/${encodeURIComponent(deckId)}-mask.png")`);
+    sealed.style.setProperty('--pack-back', `url("packs/${encodeURIComponent(deckId)}-back-mask.png")`);
     const front = document.createElement('div'); front.className = 'pack-face pack-front';
     for (const part of ['pack-body', 'pack-top']) {
       const d = document.createElement('div'); d.className = part;

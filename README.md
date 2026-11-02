@@ -252,7 +252,8 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
   Bloomwild: a stitched storybook garden with leaf-shaped buttons and a hedge-framed board; Hollow Lanterns:
   lantern-lit night paper with glowing lines and a lacquered paper-screen board. Each has its own fonts and card back. The theme follows the set
   chosen in the menu or Collection screen and is remembered; a match uses its own set's theme.
-- **Card packs:** each set has its own sealed foil pack (`public/packs/`, made by `node tools/genpacks.js`).
+- **Card packs:** each set has its own sealed foil pack (`public/packs/`, made by `node tools/genpacks.js`,
+  then `tools/genpackmasks.sh` for the small outline masks its lighting uses).
   Click it to tear it open, then click each card to reveal it. A pack is only used once it's torn.
 
 ## Storms (optional rule)
@@ -334,6 +335,7 @@ see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
 | `public/themes.css` | Per-set themes |
 | `public/packs/` | Pack art (SVG) |
 | `tools/genpacks.js` | Pack art generator |
+| `tools/genpackmasks.sh` | Pack outline masks (needs rsvg-convert + ImageMagick) |
 | `public/backs/` | Card backs per set (SVG) |
 | `tools/genbacks.js` | Card back generator |
 | `lib/daily.js` | Daily challenges |

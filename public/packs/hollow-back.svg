@@ -22,7 +22,7 @@
   <text x="75" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="#fff4df" text-anchor="middle" letter-spacing="2" transform="rotate(-90 75 150)">TRIAD</text>
   <text x="225" y="230" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#fff4df" text-anchor="middle" letter-spacing="3" transform="rotate(90 225 230)" textLength="180" lengthAdjust="spacingAndGlyphs">HOLLOW LANTERNS</text>
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="#fff4df" opacity=".75" font-size="9.5" text-anchor="middle">
-    <text x="75" y="270">3 CARDS PER PACK</text>
+    <text x="75" y="270">6 CARDS · 1 FOIL</text>
     <text x="75" y="286">ONE SET · 40 CARDS</text>
     <text x="75" y="302">RARER LEVELS INSIDE</text>
   </g>

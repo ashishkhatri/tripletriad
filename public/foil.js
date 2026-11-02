@@ -161,15 +161,26 @@
     s[key] += s['v' + key] * dt;
   }
 
-  let last = performance.now();
+  let last = performance.now(), frameNo = 0;
   function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; frameNo++;
     if (!document.hidden) {
       const cards = document.querySelectorAll('.screen.active .lit, .overlay.show .lit, .drag-ghost.lit');
       const vh = innerHeight, vw = innerWidth;
+      // measure every card first, then write: mixing reads and writes forces a full layout per card
+      const rects = Array.from(cards, (el) => el.getBoundingClientRect());
+      let idx = -1;
       for (const el of cards) {
-        const r = el.getBoundingClientRect();
+        const r = rects[++idx];
         if (r.bottom < -50 || r.top > vh + 50 || r.right < -50 || r.left > vw + 50 || r.width < 8) continue;
+        // touch devices: plain cards are lit at half rate (alternating), foils, packs and the dragged card every frame
+        if (!finePointer && !el.classList.contains('drag-ghost') && !el.classList.contains('holo') && !el.classList.contains('sealed') && ((idx + frameNo) & 1)) continue;
+        // pack-reveal cards: only the side facing you needs lighting
+        if (el.classList.contains('face-front') || el.classList.contains('face-back')) {
+          const holder = el.closest('.pack-card');
+          const shown = holder && holder.classList.contains('revealed') ? 'face-front' : 'face-back';
+          if (!el.classList.contains(shown)) continue;
+        }
         let s = states.get(el);
         if (!s) { s = { rx: 0, ry: 0, seed: Math.random() * 100 }; states.set(el, s); }
         const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -196,6 +207,10 @@
           else if (!still) { try_ = tilt.x * mt; trx = -tilt.y * mt; }
           lx = cx - tilt.x * r.width * 1.8;
           ly = cy - r.height * 0.6 - tilt.y * r.height * 1.6;
+        } else if (!el.classList.contains('holo') && !ghost && !el.classList.contains('sealed')) {
+          // no mouse, no sensor, plain card: a still light from above (animating every card's light on a phone
+          // costs a lot of frames for little visible gain; foils and packs keep their shimmer)
+          lx = cx; ly = cy - r.height * 0.9;
         } else {
           // no mouse: a slow wandering light, plus a soft idle sway
           const t = now / 1000 + s.seed;
@@ -205,8 +220,10 @@
           else if (!reduceMotion && !still) { try_ = Math.sin(t * 0.6) * 3; trx = Math.cos(t * 0.5) * 2; }
         }
         if (reduceMotion && !ghost && !tiltLive()) { trx = 0; try_ = 0; }
-        spring(s, 'rx', trx, dt);
-        spring(s, 'ry', try_, dt);
+        const edt = s.t ? Math.min(0.034, (now - s.t) / 1000) : dt;   // per card: some cards update every other frame
+        s.t = now;
+        spring(s, 'rx', trx, edt);
+        spring(s, 'ry', try_, edt);
 
         // shading
         const a = s.rx * D2R, b = s.ry * D2R;
@@ -226,9 +243,11 @@
         const foil = clamp(0.3 + turn * 14 + fresnel * 3 + spec * 0.35, 0, 0.92);
         const glare = clamp(0.3 + sheen * 0.6, 0, 0.95);
 
-        const st = el.style;
-        st.setProperty('--rx', s.rx.toFixed(2) + 'deg');
-        st.setProperty('--ry', s.ry.toFixed(2) + 'deg');
+        // only touch a variable when its value actually changes: each write makes the browser restyle the card
+        const prev = s.vars || (s.vars = {});
+        const st = { setProperty(k, v) { if (prev[k] !== v) { prev[k] = v; el.style.setProperty(k, v); } } };
+        st.setProperty('--rx', s.rx.toFixed(1) + 'deg');
+        st.setProperty('--ry', s.ry.toFixed(1) + 'deg');
         st.setProperty('--mx', mx.toFixed(1) + '%');
         st.setProperty('--my', my.toFixed(1) + '%');
         // foils: the holographic sheen also drifts slowly on its own, so it shimmers even when still.
@@ -238,14 +257,14 @@
         const amt = tiltLive() ? 0.35 : 1;   // with device tilt the motion comes mostly from your hand
         const dx = drift ? (Math.sin(t * 0.35) * 22 + Math.sin(t * 0.13) * 10) * amt : 0;
         const dy = drift ? Math.cos(t * 0.27) * 18 * amt : 0;
-        st.setProperty('--bx', clamp(50 + Hl[0] * 120 + dx, 0, 100).toFixed(2) + '%');
-        st.setProperty('--by', clamp(50 + Hl[1] * 120 + dy, 0, 100).toFixed(2) + '%');
-        st.setProperty('--hx', clamp(50 + Hl[0] * 200 + dx * 1.3, 0, 100).toFixed(2) + '%');
-        st.setProperty('--spec', spec.toFixed(3));
-        st.setProperty('--glare', glare.toFixed(3));
-        st.setProperty('--foil', foil.toFixed(3));
-        st.setProperty('--sx', (-s.ry * 0.6).toFixed(1));
-        st.setProperty('--sy', (s.rx * 0.6 + 6).toFixed(1));
+        st.setProperty('--bx', clamp(50 + Hl[0] * 120 + dx, 0, 100).toFixed(1) + '%');
+        st.setProperty('--by', clamp(50 + Hl[1] * 120 + dy, 0, 100).toFixed(1) + '%');
+        st.setProperty('--hx', clamp(50 + Hl[0] * 200 + dx * 1.3, 0, 100).toFixed(1) + '%');
+        st.setProperty('--spec', spec.toFixed(2));
+        st.setProperty('--glare', glare.toFixed(2));
+        st.setProperty('--foil', foil.toFixed(2));
+        st.setProperty('--sx', Math.round(-s.ry * 0.6).toString());   // whole pixels: shadows are costly to redraw
+        st.setProperty('--sy', Math.round(s.rx * 0.6 + 6).toString());
       }
     }
     requestAnimationFrame(frame);
