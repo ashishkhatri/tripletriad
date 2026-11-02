@@ -1377,3 +1377,10 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .overlay-x { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; padding: 0; border-radius: 50%; display: grid; place-items: center;
   font-size: 16px; line-height: 1; background: #0000; border: 1px solid currentColor; color: inherit; opacity: .55; cursor: pointer; box-shadow: none; }
 .overlay-x:hover { opacity: 1; }
+/* card detail: a fixed size whichever version is shown */
+.cd-panel { width: min(360px, 92vw); max-width: none; box-sizing: border-box; }
+.cd-panel .row { flex-wrap: nowrap; justify-content: center; }
+.cd-panel .row button { flex: 1 1 0; min-width: 0; white-space: nowrap; }
+.cd-panel #cd-name { min-height: 1.25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.cd-note { min-height: 2.8em; display: flex; align-items: center; justify-content: center; }
+#cd-meta { min-height: 2.6em; display: flex; align-items: center; justify-content: center; }

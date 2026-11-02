@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.1 — 2026-11-02
+### Fixed
+- The card detail popup in the Collection no longer changes size when you switch between Normal and Foil. The Craft and
+  Scrap buttons keep the same labels (the switch shows which version they act on), the popup has a fixed width, and
+  the info and note lines reserve their space.
+
 ## v0.4.0 — 2026-11-02
 ### Changed
 - **Version numbers restart at 0.4.0**, since the game isn't in production yet. From here, each minor version gets

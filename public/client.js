@@ -1090,9 +1090,12 @@
     $('#cd-normal').classList.toggle('on', !foil); $('#cd-foil').classList.toggle('on', foil);
     const cost = s.craft[c.level] * (foil ? s.foilMult : 1), value = s.scrap[c.level] * (foil ? s.foilMult : 1);
     const craft = $('#cd-craft'), scrap = $('#cd-scrap');
-    craft.innerHTML = `Craft${foil ? ' foil' : ''} <span class="shards">${cost}</span>`;
+    // same labels for both versions (the Normal / Foil switch says which), so the popup never changes size
+    craft.innerHTML = `Craft <span class="shards">${cost}</span>`;
+    craft.title = `Craft a ${foil ? 'foil' : 'normal'} copy`;
     craft.disabled = s.shards < cost;
-    scrap.innerHTML = `Scrap${foil ? ' foil' : ''} <span class="shards">+${value}</span>`;
+    scrap.innerHTML = `Scrap <span class="shards">+${value}</span>`;
+    scrap.title = `Scrap a ${foil ? 'foil' : 'normal'} copy`;
     scrap.disabled = have < 1 || s.copies - 1 < s.minCards;
     $('#cd-note').textContent = s.shards < cost ? `You have ${s.shards} shards — ${cost - s.shards} more to craft this.` :
       (have >= 1 && s.copies - 1 < s.minCards ? `You need at least ${s.minCards} cards in a set, so you can\u2019t scrap this one.` : '');
