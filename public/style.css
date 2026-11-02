@@ -1254,3 +1254,6 @@ button.big { padding: 14px 18px; font-size: 17px; }
   .mini-board .rk.on, .hist-steps li.lit .n, .mini-cell.cell-flash .mini-card, .mini-cell.cell-flash .mini-card::before,
   .mini-cell.cell-turn .mini-card, .mini-cell.cell-drop .mini-card { animation: none; }
 }
+.storm.decided .resp:not(.picked) { opacity: .3; transform: scale(.96); filter: grayscale(.6); }
+.storm.decided .resp.picked { animation: respChosen .9s ease-in-out infinite alternate; }
+@keyframes respChosen { from { box-shadow: 0 0 0 2px var(--st), 0 0 14px var(--st); } to { box-shadow: 0 0 0 3px #fff, 0 0 30px var(--st); transform: scale(1.03); } }

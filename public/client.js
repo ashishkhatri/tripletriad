@@ -150,6 +150,7 @@
     $('#name-theirs').textContent = names[opp] || 'Opponent';
     const turn = $('#turn');
     if (state.over) { turn.textContent = 'Game over'; turn.classList.remove('me'); }
+    else if (state.storm) { turn.textContent = state.storm.chooser === me ? 'A storm is coming — choose how to face it' : `${names[state.storm.chooser] || 'Opponent'} is facing the storm…`; turn.classList.toggle('me', state.storm.chooser === me); }
     else if (state.turn === me) { turn.textContent = selected === null ? 'Your turn — drag a card onto the board' : 'Place it on the board'; turn.classList.add('me'); }
     else { turn.textContent = `${names[opp] || 'Opponent'} is thinking…`; turn.classList.remove('me'); }
     const ruleBits = Object.keys(RULE_NAMES).filter((k) => state.rules[k]).map((k) => RULE_NAMES[k]);
@@ -237,11 +238,11 @@
     $('#board').classList.toggle('storming', !!st);
     if (!st) { panel.classList.remove('show'); clearInterval(stormTick); stormShownFor = null; return; }
     const key = st.seed;
-    if (stormShownFor === key) return;
+    if (stormShownFor === key) { markStormPick(st); return; }
     stormShownFor = key;
     const info = TT.STORMS[st.kind];
     const mine = st.chooser === me;
-    panel.className = 'storm show st-' + st.kind;
+    panel.className = 'storm show st-' + st.kind;   // also clears .decided
     $('#storm-icon').textContent = STORM_ICON[st.kind];
     $('#storm-name').textContent = info.name;
     $('#storm-text').textContent = info.text + (info.el && st.kind !== 'quake' && st.kind !== 'tide' && st.kind !== 'frost' ? ` ${cap(info.el)} cards are immune.` : '');
@@ -262,6 +263,16 @@
     const end = Date.now() + total, full = 25000;
     const tick = () => { const left = Math.max(0, end - Date.now()); bar.style.width = (100 * left / full) + '%'; if (!left) clearInterval(stormTick); };
     tick(); stormTick = setInterval(tick, 200);
+    markStormPick(st);
+  }
+  // Once a response is chosen (by anyone), highlight it and dim the rest until it resolves.
+  function markStormPick(st) {
+    const box = $('#storm-options');
+    if (!st.picked) return;
+    clearInterval(stormTick);
+    $('#storm').classList.add('decided');
+    box.querySelectorAll('.resp').forEach((b) => { b.disabled = true; b.classList.toggle('picked', b.classList.contains('resp-' + st.picked)); });
+    $('#storm-who').textContent = st.chooser === me ? `You chose ${TT.RESPONSES[st.picked].name}…` : `${names[st.chooser] || 'Opponent'} chose ${TT.RESPONSES[st.picked].name}…`;
   }
   // Plays a strike on the current board before the new state is drawn.
   async function stormFx(e) {
@@ -629,10 +640,9 @@
     const stormEv = events.find((e) => e.type === 'storm');
     if (stormEv) {
       $('#storm').classList.remove('show');
-      const rn = TT.RESPONSES[stormEv.choice].name;
-      sfx(stormEv.choice === 'ward' ? 'ward' : 'click');
-      await banner(`${stormEv.chooser === me ? 'You' : names[stormEv.chooser]}: ${rn}`);
+      if (stormEv.choice === 'ward') sfx('ward');
     }
+    if (events.some((e) => e.type === 'storm-pick') && newState.storm && newState.storm.chooser !== me) sfx('click');
     if (strikeEv && state) await stormFx(strikeEv);
     shiftedFrom = {};
     for (const e of events) if (e.type === 'shift') shiftedFrom[e.to] = e.from;

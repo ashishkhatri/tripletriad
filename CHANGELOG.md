@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.6.1 — 2026-11-02
+### Changed
+- The computer takes 4–6 seconds to weigh its storm response cards instead of about 3, so you can read what it was dealt.
+- Every storm pick (yours, the computer's or an online opponent's) is now shown for about two seconds before it
+  resolves: the chosen card glows and the others dim. This replaces the quick "Name: Response" banner.
+- The turn line says who is facing a storm while one is pending.
+
 ## v3.6.0 — 2026-11-02
 ### Added
 - Move history animations:

@@ -236,9 +236,25 @@ function beginStorm(room, events) {
   const pl = room.players[st.chooser];
   const auto = () => {
     if (room.phase !== 'storm' || !room.state.storm || !rooms.has(room.code)) return;
-    resolveStorm(room, st.chooser, TT.chooseStormResponse(room.state, pl && pl.ai ? pl.level : 'normal'));
+    pickStorm(room, st.chooser, TT.chooseStormResponse(room.state, pl && pl.ai ? pl.level : 'normal'));
   };
-  room.stormTimer = setTimeout(auto, pl && pl.ai ? 3200 : STORM_SECONDS * 1000);
+  // the computer takes a few seconds to "read" the cards, so you can see what it was dealt
+  room.stormTimer = setTimeout(auto, pl && pl.ai ? 4500 + Math.random() * 1500 : STORM_SECONDS * 1000);
+}
+// Shows everyone which response was picked, then resolves it after a short pause.
+const STORM_REVEAL_MS = 1800;
+function pickStorm(room, seat, choice) {
+  const st = room.state.storm;
+  if (!st || st.picked) return;
+  if (seat !== st.chooser) throw new Error('Your opponent is facing this storm');
+  if (!st.options.includes(choice)) throw new Error('Not one of your choices');
+  st.picked = choice;
+  clearTimeout(room.stormTimer);
+  pushState(room, [{ type: 'storm-pick', choice, chooser: seat }]);
+  room.stormTimer = setTimeout(() => {
+    if (room.phase !== 'storm' || room.state.storm !== st || !rooms.has(room.code)) return;
+    resolveStorm(room, seat, choice);
+  }, STORM_REVEAL_MS);
 }
 function resolveStorm(room, seat, choice) {
   const { state, events } = TT.resolveStorm(room.state, seat, choice);
@@ -392,7 +408,7 @@ function handle(ws, msg) {
     }
     case 'storm': {
       if (!room || room.phase !== 'storm' || !room.state || !room.state.storm) return;
-      try { resolveStorm(room, ws.seat, String(msg.choice)); }
+      try { pickStorm(room, ws.seat, String(msg.choice)); }
       catch (e) { send(ws, { t: 'error', msg: e.message }); }
       return;
     }
