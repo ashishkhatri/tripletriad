@@ -76,7 +76,7 @@
       else setView(loc);
     } finally { navFromPop = false; }
   }
-  const OVERLAYS = ['card-zoom', 'card-detail', 'auth', 'pack-pick', 'pack', 'history'];
+  const OVERLAYS = ['concede', 'card-zoom', 'card-detail', 'auth', 'pack-pick', 'pack', 'history'];
   const overlayOpen = () => OVERLAYS.find((id) => { const el = document.getElementById(id); return el && el.classList.contains('show'); });
   function closeOverlay(id) {
     if (id === 'history') { setHistory(false); return; }
@@ -828,7 +828,7 @@
       $('#result-xp-fill').style.width = pct + '%';
       let t = `+${r.gained} XP`;
       if (r.newPacks > 0) t += ` · ${r.newPacks === 1 ? 'A pack unlocked!' : r.newPacks + ' packs unlocked!'}`;
-      else t += ` · next pack in ${r.nextPackIn} XP`;
+      else t += ` · ${100 - r.nextPackIn} / 100 XP until the next pack reward`;
       $('#result-xp-text').textContent = t;
       sfx('xp', { delay: 0.6 });
       if (r.newPacks > 0) sfx('unlock', { delay: 1.1 });
@@ -963,7 +963,9 @@
         $('#result-note').textContent = `${names[1 - me]} wants a rematch.`;
         break;
       case 'opponent_left':
-        toast('Your opponent left the room.');
+        if (msg.conceded) toast(`Your opponent conceded. You win!${msg.rewards ? ` +${msg.rewards.gained} XP` : ''}`);
+        else toast('Your opponent left the room.');
+        if (msg.rewards) refreshProgress();
         disconnect(); show('menu');
         break;
       case 'error':
@@ -1130,7 +1132,7 @@
       const s = await api('GET', `/api/collection?deck=${encodeURIComponent($('#deck').value)}`);
       box.hidden = false;
       $('#menu-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
-      const xpText = `${s.xp} XP · next pack in ${s.nextPackIn} XP`;
+      const xpText = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP until the next pack reward`;
       $('#menu-xp-text').textContent = xpText; box.title = xpText;
       const b = $('#btn-packs');
       b.hidden = !(s.packs > 0);
@@ -1153,7 +1155,7 @@
     setShards(s.shards);
     $('#col-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
     // the bar is XP toward the next pack
-    $('#col-xp-text').textContent = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP to the next pack`;
+    $('#col-xp-text').textContent = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP until the next pack reward`;
     const ob = $('#btn-open-pack');
     ob.hidden = s.packs < 1;
     ob.textContent = `Open pack (${s.packs})`;
@@ -1187,7 +1189,7 @@
   function openCardDetail(deckId, id, foil) {
     const s = colSummary;
     const nf = s.foils[id] || 0, n = s.cards[id] || 0;
-    detail = { deckId, id, foil: foil !== undefined ? foil : (nf > 0 && !n) };
+    detail = { deckId, id, foil: typeof foil === 'boolean' ? foil : (nf > 0 && !n) };   // always exactly one of Normal/Foil selected
     renderCardDetail();
     $('#card-detail').classList.add('show');
   }
@@ -1196,7 +1198,8 @@
     const big = $('#cd-card'); big.innerHTML = '';
     big.appendChild(cardEl(playCard(c, foil), 'neutral', deck.elements));
     $('#cd-name').textContent = c.name;
-    $('#cd-meta').textContent = `${RARITY[c.level]} · ${cap(c.element)} · ${c.ranks.map(RANK).join(' / ')}`;
+    $('#cd-meta').textContent = `${RARITY[c.level]} · ${cap(c.element)}`;   // the numbers are on the card itself (and in its hover text)
+    $('#cd-meta').title = `Top / Right / Bottom / Left: ${c.ranks.map(RANK).join(' / ')}`;
     const have = (foil ? s.foils : s.cards)[id] || 0;
     $('#cd-owned').textContent = `You have ${s.cards[id] || 0} normal and ${s.foils[id] || 0} foil`;
     $('#cd-normal').classList.toggle('on', !foil); $('#cd-foil').classList.toggle('on', foil);
@@ -1377,7 +1380,7 @@
       };
       holder.appendChild(sb);
       holder.onclick = () => {
-        if (holder.classList.contains('revealed')) { zoomCard(playCard(c, pc.foil), deck.elements); return; }
+        if (holder.classList.contains('revealed')) { zoomCard(playCard(c, pc.foil), deck.elements, deckId, c.id); return; }
         holder.classList.add('revealed', `rarity-${c.level}`);
         // light bursts from behind the card as it turns: bigger and brighter for rarer cards, rainbow for foils
         const rb = document.createElement('div'); rb.className = `reveal-burst rb-${c.level}${pc.foil ? ' rb-foil' : ''}`;
@@ -1492,7 +1495,12 @@
   };
   $('#btn-cancel').onclick = () => { disconnect(); show('menu'); };
   const toMenu = () => { disconnect(); show('menu'); };
-  $('#btn-quit').onclick = toMenu;
+  $('#btn-quit').onclick = () => {
+    if (state && !state.over) $('#concede').classList.add('show'); else toMenu();
+  };
+  $('#btn-concede-yes').onclick = () => { $('#concede').classList.remove('show'); toMenu(); };
+  $('#btn-concede-no').onclick = () => $('#concede').classList.remove('show');
+  $('#concede').addEventListener('click', (e) => { if (e.target.id === 'concede') $('#concede').classList.remove('show'); });
   // ---------- card tilt settings (Account page) ----------
   function renderTilt() {
     const T = window.CardTilt;
@@ -1596,11 +1604,17 @@
   })();
 
   // ---------- large view of a card (tap an opened pack card) ----------
-  function zoomCard(card, glyphs) {
-    const z = $('#card-zoom'), box = $('#cz-card');
+  function zoomCard(card, glyphs, deckId, id) {
+    const z = $('#card-zoom'), box = $('#cz-card'), own = $('#cz-owned');
+    own.textContent = '';
+    // how many you own now (this pack and any scrapping included), like the collection's card view
+    if (deckId) api('GET', `/api/collection?deck=${encodeURIComponent(deckId)}`).then((s) => {
+      own.textContent = `You have ${s.cards[id] || 0} normal and ${s.foils[id] || 0} foil`;
+    }).catch(() => {});
     box.innerHTML = ''; box.appendChild(cardEl(card, 'neutral', glyphs));
     $('#cz-name').textContent = card.name;
-    $('#cz-meta').textContent = `${RARITY[card.level] || ''}${card.foil ? ' · Foil' : ''} · ${cap(card.el)} · ${card.r.map(RANK).join(' / ')}`;
+    $('#cz-meta').textContent = `${RARITY[card.level] || ''}${card.foil ? ' · Foil' : ''} · ${cap(card.el)}`;
+    $('#cz-meta').title = `Top / Right / Bottom / Left: ${card.r.map(RANK).join(' / ')}`;
     z.classList.add('show'); sfx('pick');
   }
   $('#card-zoom').addEventListener('click', () => $('#card-zoom').classList.remove('show'));

@@ -174,7 +174,7 @@
       <span id="rules-label" class="muted"></span>
       <button id="btn-show-result" class="ghost small" hidden>Result</button>
       <button id="btn-history" class="ghost small" aria-controls="history" aria-expanded="false" title="Every move, and why cards flipped">History <b>0</b></button>
-      <button id="btn-quit" class="ghost small">Quit</button>
+      <button id="btn-quit" class="ghost small">Concede</button>
     </div>
     <div id="banner" class="banner"></div>
     <div id="storm" class="storm" role="dialog" aria-labelledby="storm-name">
@@ -277,7 +277,15 @@
 
   <!-- CARD ZOOM (tap an opened pack card) -->
   <div id="card-zoom" class="overlay" aria-label="Card">
-    <div class="cz-wrap"><div id="cz-card" class="cz-card"></div><h2 id="cz-name"></h2><p id="cz-meta" class="muted"></p><p class="muted cz-hint">Tap anywhere to close</p></div>
+    <div class="cz-wrap"><div id="cz-card" class="cz-card"></div><h2 id="cz-name"></h2><p id="cz-meta" class="muted"></p><p id="cz-owned" class="cz-owned"></p><p class="muted cz-hint">Tap anywhere to close</p></div>
+  </div>
+
+  <div id="concede" class="overlay">
+    <div class="panel center">
+      <h2>Concede this match?</h2>
+      <p class="muted">Your opponent gets the win, and you won't get any XP.</p>
+      <div class="row"><button type="button" id="btn-concede-no">Keep playing</button><button type="button" id="btn-concede-yes" class="primary">Concede</button></div>
+    </div>
   </div>
 
   <!-- CARD DETAIL -->

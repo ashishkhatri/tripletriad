@@ -443,7 +443,14 @@ function handle(ws, msg) {
     case 'leave': {
       if (!room) return;
       const other = room.players[1 - ws.seat];
-      if (other && !other.ai) send(other.ws, { t: 'opponent_left' });
+      // conceding a match in progress: the opponent gets the win (and its XP); the one who left gets nothing
+      const live = !room.finished && (room.phase === 'playing' || room.phase === 'storm');
+      if (other && !other.ai) {
+        const u = live ? userOf(other) : null;
+        const rewards = u ? col.award(u, DECKS.get(room.deck), 'win') : null;
+        if (live) room.finished = true;
+        send(other.ws, { t: 'opponent_left', conceded: live, rewards });
+      }
       // Leaving mid-wager settles it so the winner still gets their card.
       if (room.phase === 'wager') settleWager(room, bestOption(room));
       clearTimeout(room.aiTimer); clearTimeout(room.wagerTimer); clearTimeout(room.stormTimer);

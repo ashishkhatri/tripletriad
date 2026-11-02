@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.9 — 2026-11-02
+
+- **Concede** replaces Quit during a match, and asks first: your opponent gets the win and you get no XP. An online opponent now receives the win's XP when you concede.
+- Tapping an opened pack card shows how many normal and foil copies you own, like the collection view.
+- Collection card view: the Normal / Foil switch is a borderless pill with a clear ✓ on the selected side; one side is always selected.
+- Card labels no longer repeat the four numbers (they're on the card, and still in the hover text).
+- The element icon on cards has no circle behind it.
+- XP wording everywhere (result screen, collection, top bar) reads "x / 100 XP until the next pack reward".
+- Fix: accounts with XP but no pack count could show no packs.
+
 ## v0.4.8 — 2026-11-02
 ### Changed
 - **XP is account-wide.** Every game adds to one XP total whatever set you play, and every 100 XP earns a pack
