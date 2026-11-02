@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.2 — 2026-11-02
+### Changed
+- Cards in a match only show their element icon when the Elemental rule is on. The Collection, packs and hand
+  builder still show it.
+
 ## v0.4.1 — 2026-11-02
 ### Fixed
 - The card detail popup in the Collection no longer changes size when you switch between Normal and Foil. The Craft and

@@ -1384,3 +1384,5 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .cd-panel #cd-name { min-height: 1.25em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .cd-note { min-height: 2.8em; display: flex; align-items: center; justify-content: center; }
 #cd-meta { min-height: 2.6em; display: flex; align-items: center; justify-content: center; }
+/* element icons are hidden in matches without the Elemental rule */
+#game.no-elements .card .el, body:has(#game.active.no-elements) .drag-ghost .el { display: none; }

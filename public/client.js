@@ -142,6 +142,8 @@
     if (!state) return;
     if (typeof Music !== 'undefined' && state.deck) Music.play(musicFor(state.deck.id));
     if (state.deck) applyTheme(state.deck.id);
+    // element icons only matter in Elemental matches
+    $('#game').classList.toggle('no-elements', !state.rules.elemental);
     const opp = 1 - me;
     const sc = TT.score(state);
     $('#score-mine').textContent = sc[me];
