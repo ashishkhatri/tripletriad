@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.4 — 2026-11-02
+
+- New rarity colours: Common white `#ffffff` (matte unless foil), Uncommon green `#1eff00`, Rare blue `#0070dd`, Epic purple `#a335ee`, Legendary orange `#ff8000`.
+- Epic frames have small cut facets (tiled light and dark shards) plus the twinkling sparkles; Legendary frames have one wide, very smooth bright sheen that glides with the light and tilt.
+- Pack reveal bursts and glows use the new colours.
+
 ## v0.5.3 — 2026-11-02
 
 - Epic (diamond) frames look like cut crystal: large angled facets in bright and deep blue with hard edges, a white glint that slides with the light and tilt, and four star sparkles that twinkle around the frame.
