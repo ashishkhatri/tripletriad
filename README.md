@@ -157,8 +157,8 @@ Players can create an account (name + password) from the menu. Accounts live on 
 progress follows a player to any device. Guests can still play with the **Balanced** hands rule.
 
 - **Starter collection:** the first time you use a set you get 7 of its cards (four level-1, two level-2, one level-3).
-- **XP is per set:** 10 XP for playing, +25 for a win, +13 for a draw (so a loss earns 10, a draw 23 and a win 35). Matches against the computer count.
-- **Packs:** every 100 XP in a set unlocks a 6-card pack from that set: 5 random cards and 1 guaranteed foil. Higher levels are rarer
+- **XP is account-wide:** every game adds to one XP total, whatever set you play — 10 XP for playing, +25 for a win, +13 for a draw (so a loss earns 10, a draw 23 and a win 35). Matches against the computer count.
+- **Packs:** every 100 XP earns a 6-card pack (5 random cards and 1 guaranteed foil); when you open one you choose which set it comes from. Higher levels are rarer
   (L1 40%, L2 30%, L3 18%, L4 9%, L5 3%). Open them from the menu, the Collection screen or the result screen.
 - **Hands rule** (in the Rules box; the room host's choice applies to both players):
   - *Balanced* — everyone is dealt a fair random hand; no account needed.

@@ -76,7 +76,7 @@
       else setView(loc);
     } finally { navFromPop = false; }
   }
-  const OVERLAYS = ['card-zoom', 'card-detail', 'auth', 'pack', 'history'];
+  const OVERLAYS = ['card-zoom', 'card-detail', 'auth', 'pack-pick', 'pack', 'history'];
   const overlayOpen = () => OVERLAYS.find((id) => { const el = document.getElementById(id); return el && el.classList.contains('show'); });
   function closeOverlay(id) {
     if (id === 'history') { setHistory(false); return; }
@@ -826,7 +826,7 @@
       $('#result-xp').hidden = false;
       const pct = ((100 - r.nextPackIn) / 100) * 100;
       $('#result-xp-fill').style.width = pct + '%';
-      let t = `+${r.gained} XP · ${r.xp} XP in ${(decks.get(roomDeck) || {}).name || 'this set'}`;
+      let t = `+${r.gained} XP`;
       if (r.newPacks > 0) t += ` · ${r.newPacks === 1 ? 'A pack unlocked!' : r.newPacks + ' packs unlocked!'}`;
       else t += ` · next pack in ${r.nextPackIn} XP`;
       $('#result-xp-text').textContent = t;
@@ -1130,12 +1130,13 @@
       const s = await api('GET', `/api/collection?deck=${encodeURIComponent($('#deck').value)}`);
       box.hidden = false;
       $('#menu-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
-      const xpText = `${decks.get($('#deck').value).name}: ${s.xp} XP · ${s.owned}/${s.total} cards · next pack in ${s.nextPackIn} XP`;
+      const xpText = `${s.xp} XP · next pack in ${s.nextPackIn} XP`;
       $('#menu-xp-text').textContent = xpText; box.title = xpText;
       const b = $('#btn-packs');
       b.hidden = !(s.packs > 0);
       b.innerHTML = `<span aria-hidden="true">🎁</span> ${s.packs}`;
-      b.title = s.packs > 1 ? `Open ${s.packs} packs` : 'Open your pack';
+      b.title = s.packs > 1 ? `You have ${s.packs} packs to open` : 'You have a pack to open';
+      packsLeft = s.packs;
     } catch (e) { box.hidden = true; $('#btn-packs').hidden = true; }
   }
   let colSummary = null;
@@ -1248,7 +1249,20 @@
 
   // the release this page was served for (stamped on the script URL), used to fetch matching pack art
   const ASSET_V = (() => { try { return new URL(document.querySelector('script[src*="client.js"]').src).searchParams.get('v') || Date.now(); } catch (e) { return Date.now(); } })();
-  let packDeck = null;
+  let packDeck = null, packsLeft = 0;
+  // Packs are earned with XP from any game and can be opened from any set: pick which set's pack to open.
+  async function openPackPicker() {
+    try { const s = await api('GET', `/api/collection?deck=${encodeURIComponent($('#deck').value)}`); packsLeft = s.packs; } catch (e) { /* keep last count */ }
+    $('#pick-count').textContent = packsLeft > 0 ? `You have ${packsLeft} pack${packsLeft > 1 ? 's' : ''} to open` : 'No packs to open — play games to earn XP';
+    const grid = $('#pick-grid'); grid.innerHTML = '';
+    for (const [id, d] of decks) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'pick-pack'; b.disabled = packsLeft < 1;
+      b.innerHTML = `<img src="packs/${encodeURIComponent(id)}.svg?v=${ASSET_V}" alt=""><span>${SET_ICON[id] || ''} ${d.name}</span>`;
+      b.onclick = () => { $('#pack-pick').classList.remove('show'); chooseSet(id); setTimeout(() => openPack(id), 0); };
+      grid.appendChild(b);
+    }
+    $('#pack-pick').classList.add('show');
+  }
   // Step 1: show the sealed pack. Nothing is spent until it's torn open.
   function openPack(deckId) {
     packDeck = deckId;
@@ -1377,6 +1391,7 @@
           $('#pack').appendChild(lb); setTimeout(() => lb.remove(), 2600);
         }
         if (++revealed === r.cards.length) {
+          packsLeft = r.summary.packs;
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
           $('#btn-pack-again').hidden = r.summary.packs < 1;
           $('#btn-pack-done').textContent = 'Done';
@@ -1518,7 +1533,7 @@
   };
   $('#btn-build-auto').onclick = autoPick;
   $('#btn-build-ready').onclick = () => { if (builder.picked.length === 5) { builder.locked = true; renderBuilder(); send({ t: 'hand', cards: builder.picked }); } };
-  $('#btn-result-packs').onclick = () => openPack(roomDeck);
+  $('#btn-result-packs').onclick = () => openPackPicker();
   $('#name').addEventListener('change', () => { try { localStorage.setItem('triad-name', $('#name').value); } catch (e) { /* ignore */ } });
 
   $('#btn-signin').onclick = openAuth;
@@ -1537,10 +1552,10 @@
   $('#btn-auth-cancel').onclick = () => $('#auth').classList.remove('show');
   $('#btn-signout').onclick = async () => { try { await api('POST', '/api/logout', {}); } catch (e) { /* ignore */ } account = null; renderAccount(); toast('Signed out.'); };
   $('#btn-collection').onclick = () => openCollection($('#deck').value);
-  $('#btn-packs').onclick = () => openPack($('#deck').value);
+  $('#btn-packs').onclick = () => openPackPicker();
   $('#btn-col-back').onclick = () => setView(currentView === 'collection' ? 'play' : currentView);
   $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };
-  $('#btn-open-pack').onclick = () => openPack($('#col-deck').value);
+  $('#btn-open-pack').onclick = () => openPackPicker();
   $('#btn-scrap-extras').onclick = async () => {
     try {
       const r = await api('POST', '/api/scrap/extras', { deck: $('#col-deck').value });
@@ -1553,6 +1568,15 @@
   $('#cd-scrap').onclick = () => detailAction('scrap');
   $('#cd-close').onclick = () => $('#card-detail').classList.remove('show');
   $('#card-detail').addEventListener('click', (e) => { if (e.target.id === 'card-detail') $('#card-detail').classList.remove('show'); });
+  // ---------- phones: the set picker sits in a top strip that scrolls away with the page (not a floating bar) ----------
+  (function placeSetBar() {
+    const bar = document.querySelector('.set-bar'), foot = document.querySelector('#nav .nav-foot');
+    const strip = document.createElement('div'); strip.id = 'mtop'; document.body.prepend(strip);
+    const mq = matchMedia('(max-width: 899px)');
+    const place = () => { if (mq.matches) strip.appendChild(bar); else foot.before(bar); };
+    mq.addEventListener('change', place); place();
+  })();
+
   // ---------- full screen (phones and tablets) ----------
   (function fullscreenButton() {
     const root = document.documentElement;
@@ -1580,6 +1604,8 @@
     z.classList.add('show'); sfx('pick');
   }
   $('#card-zoom').addEventListener('click', () => $('#card-zoom').classList.remove('show'));
+  $('#pick-close').onclick = () => $('#pack-pick').classList.remove('show');
+  $('#pack-pick').addEventListener('click', (e) => { if (e.target.id === 'pack-pick') $('#pack-pick').classList.remove('show'); });
 
   // ---------- closing popups: ✕ buttons and clicking outside ----------
   const closeResult = () => { $('#result').classList.remove('show'); $('#btn-show-result').hidden = !(state && state.over); };
@@ -1603,13 +1629,14 @@
   // Escape closes whichever popup is on top
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if ($('#card-zoom').classList.contains('show')) $('#card-zoom').classList.remove('show');
+    if ($('#pack-pick').classList.contains('show')) $('#pack-pick').classList.remove('show');
+    else if ($('#card-zoom').classList.contains('show')) $('#card-zoom').classList.remove('show');
     else if ($('#card-detail').classList.contains('show')) $('#card-detail').classList.remove('show');
     else if ($('#auth').classList.contains('show')) $('#auth').classList.remove('show');
     else if ($('#pack').classList.contains('show') && !document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) $('#btn-pack-done').click();
     else if ($('#result').classList.contains('show')) closeResult();
   });
-  $('#btn-pack-again').onclick = () => openPack(packDeck);
+  $('#btn-pack-again').onclick = () => { $('#pack').classList.remove('show'); openPackPicker(); };
   $('#btn-pack-done').onclick = () => {
     $('#pack').classList.remove('show');
     if (document.querySelector('#collection.active')) renderCollection();

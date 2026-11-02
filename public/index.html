@@ -119,7 +119,7 @@
         <h3>Rules</h3>
         <p>Pick extra rules under <b>Match rules</b> on the Play screen — rest your pointer on (or tap) each <b>i</b> to see what it does.</p>
         <h3>Collecting</h3>
-        <p>Signed-in players earn XP in each set: 10 for playing, 25 more for a win. Every 100 XP unlocks a card pack from that set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards.</p>
+        <p>Signed-in players earn XP from every game: 10 for playing, 25 more for a win. Every 100 XP earns a card pack, which you can open from any set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards.</p>
       </div>
     </div>
 
@@ -262,6 +262,17 @@
       </div>
       <button type="button" id="btn-auth-cancel" class="ghost">Cancel</button>
     </form>
+  </div>
+
+  <!-- PACK PICKER: choose which set's pack to open -->
+  <div id="pack-pick" class="overlay">
+    <div class="panel center pick-panel">
+      <button type="button" class="overlay-x" id="pick-close" aria-label="Close">✕</button>
+      <h2>Open a pack</h2>
+      <p id="pick-count" class="pick-count"></p>
+      <p class="muted">Packs come from XP in any game. Choose which set to open one from.</p>
+      <div id="pick-grid" class="pick-grid"></div>
+    </div>
   </div>
 
   <!-- CARD ZOOM (tap an opened pack card) -->

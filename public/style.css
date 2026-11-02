@@ -1570,3 +1570,29 @@ select option { color: #1a1a1a !important; background: #ffffff !important; }
 .col-xp-row { display: flex; align-items: center; gap: 10px; width: 100%; }
 .col-xp-row .xpbar { flex: 1; }
 .col-xp-label { font-family: var(--title); font-weight: 800; font-size: 13px; letter-spacing: .12em; color: var(--metal-2); }
+
+/* pack picker */
+#pack-pick { z-index: 41; }
+.pick-panel { width: min(760px, 94vw); max-width: none; box-sizing: border-box; gap: 8px !important; }
+.pick-panel h2 { margin: 0; font-family: var(--display); color: var(--accent); }
+.pick-count { margin: 0; font-size: 22px; font-weight: 800; color: var(--ink); }
+.pick-panel .muted { margin: 0 0 6px; font-size: 14px; }
+.pick-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; width: 100%; }
+.pick-pack { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px 8px !important; background: #0000 !important; border: 1px solid transparent !important; box-shadow: none !important; color: var(--ink) !important; text-shadow: none !important; clip-path: none !important; cursor: pointer; border-radius: 12px !important; transition: transform .15s, background .15s; }
+.pick-pack img { width: 100%; max-width: 150px; aspect-ratio: 300 / 460; filter: drop-shadow(0 8px 14px #0008); transition: transform .2s; }
+.pick-pack span { font-weight: 700; font-size: 14px; letter-spacing: normal; text-transform: none; }
+.pick-pack:not(:disabled):hover { background: #0001 !important; }
+.pick-pack:not(:disabled):hover img { transform: translateY(-6px) rotate(-2deg) scale(1.04); }
+.pick-pack:disabled { opacity: .45; cursor: default; }
+@media (max-width: 600px) { .pick-grid { gap: 8px; } .pick-pack span { font-size: 12px; } .pick-count { font-size: 18px; } }
+
+/* phones: no floating header — the top strip (logo, picker, sound icons) is part of the page and scrolls away */
+#mtop { display: none; }
+@media (max-width: 899px) {
+  body.with-nav #mtop { display: flex; position: absolute; top: 0; left: 50%; translate: -50% 0; height: 54px; align-items: center; z-index: 30; }
+  #mtop .set-bar { position: static; translate: none; height: auto; }
+  .mobile-head { position: absolute !important; box-shadow: none !important; background: none !important; border-bottom: 0 !important; }
+  body:not(.in-game) .music-ctl { position: absolute !important; }
+  body.with-nav #collection.screen.active { padding-top: 60px; }
+  body { position: relative; }
+}

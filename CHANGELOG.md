@@ -3,6 +3,15 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.8 — 2026-11-02
+### Changed
+- **XP is account-wide.** Every game adds to one XP total whatever set you play, and every 100 XP earns a pack
+  (shards were already shared). Existing accounts keep all their XP and unopened packs: per-set XP is added together.
+- **Choosing a pack:** the 🎁 button (top bar, Collection, result screen) opens a pack picker that shows how many
+  packs you have and every set's pack; tap one to open a pack from that set. "Open another" goes back to the picker.
+- Phones: no floating header. The top strip (logo, set picker, packs, sound icons) is part of the page and scrolls
+  away, so it never covers anything.
+
 ## v0.4.7 — 2026-11-02
 ### Changed
 - Pack art says **5 CARDS + 1 FOIL** (and "foil guaranteed" on the back).
