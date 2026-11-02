@@ -32,6 +32,7 @@
   function chooseSet(deckId) {
     if (!decks.has(deckId)) return;
     $('#deck').value = deckId; $('#col-deck').value = deckId;
+    const si = $('#set-icon'); if (si) si.textContent = SET_ICON[deckId] || '🃏';   // phones show just the icon
     try { localStorage.setItem('triad-deck', deckId); } catch (e) { /* ignore */ }
     const dd = $('#deck-desc'); if (dd) dd.textContent = decks.get(deckId).description || '';
     applyTheme(deckId);
@@ -46,6 +47,7 @@
     if (id === 'builder' && typeof Music !== 'undefined') Music.play(musicFor(roomDeck));
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     $('#result').classList.remove('show');
+    navRecord(id === 'menu' ? currentView : id);
     // the navigation belongs to the menu and the collection, not to matches
     const navOn = id === 'menu' || id === 'collection';
     document.body.classList.toggle('with-nav', navOn);
@@ -53,6 +55,74 @@
     markNav(id === 'collection' ? 'collection' : currentView);
     if (id === 'menu') { refreshProgress(); refreshDailies(); }
   }
+
+  // ---------- browser history: Back goes to the previous screen (or closes the open popup) ----------
+  // Each screen change adds a history entry; popups add one too, so Back closes them first.
+  let navFromPop = false;
+  const MATCH_SCREENS = ['lobby', 'builder', 'game'];
+  function navRecord(loc) {
+    if (navFromPop) return;
+    const cur = history.state || {};
+    if (cur.loc === loc && !cur.overlay) return;
+    // moving between match stages (lobby → hand builder → game) replaces the entry, so Back leaves the match
+    const replace = !cur.loc || (MATCH_SCREENS.includes(cur.loc) && MATCH_SCREENS.includes(loc)) || cur.overlay;
+    history[replace ? 'replaceState' : 'pushState']({ loc }, '', location.pathname + location.search);
+  }
+  function navGo(loc) {
+    navFromPop = true;
+    try {
+      if (loc === 'collection') openCollection($('#deck').value);
+      else if (MATCH_SCREENS.includes(loc)) { /* can't re-enter a finished match from history */ setView(currentView); }
+      else setView(loc);
+    } finally { navFromPop = false; }
+  }
+  const OVERLAYS = ['card-zoom', 'card-detail', 'auth', 'pack', 'history'];
+  const overlayOpen = () => OVERLAYS.find((id) => { const el = document.getElementById(id); return el && el.classList.contains('show'); });
+  function closeOverlay(id) {
+    if (id === 'history') { setHistory(false); return; }
+    if (id === 'pack') { $('#btn-pack-done').click(); return; }
+    document.getElementById(id).classList.remove('show');
+  }
+  let skipPop = false;   // set when the page itself steps back over a popup's entry
+  window.addEventListener('popstate', (e) => {
+    if (skipPop) { skipPop = false; return; }
+    const st = e.state || {};
+    const open = overlayOpen();
+    if (open) {   // Back closes the popup that's open
+      if (open === 'pack' && document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) { history.pushState({ loc: (history.state || {}).loc, overlay: 'pack' }, ''); return; }
+      navFromPop = true; try { closeOverlay(open); } finally { navFromPop = false; }
+      if (st.overlay) return;
+      if (st.loc && st.loc !== activeLoc()) navGo(st.loc);
+      return;
+    }
+    if (st.overlay) { history.back(); return; }   // a leftover popup entry: skip it
+    const here = activeLoc();
+    if (MATCH_SCREENS.includes(here) && !MATCH_SCREENS.includes(st.loc || '')) {
+      const inProgress = here === 'game' ? (state && !state.over) : true;
+      if (inProgress && !confirm('Leave this match?')) { history.pushState({ loc: here }, ''); return; }
+      navFromPop = true; try { disconnect(); show('menu'); setView(st.loc && !MATCH_SCREENS.includes(st.loc) && st.loc !== 'collection' ? st.loc : currentView); } finally { navFromPop = false; }
+      return;
+    }
+    if (st.loc) navGo(st.loc);
+  });
+  function activeLoc() {
+    const scr = document.querySelector('.screen.active');
+    return !scr ? null : scr.id === 'menu' ? currentView : scr.id;
+  }
+  // popups: opening one adds a history entry; closing it in the page removes that entry again
+  OVERLAYS.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let was = el.classList.contains('show');
+    new MutationObserver(() => {
+      const now = el.classList.contains('show');
+      if (now === was) return;
+      was = now;
+      if (navFromPop) return;
+      if (now) history.pushState({ loc: activeLoc(), overlay: id }, '');
+      else if ((history.state || {}).overlay === id) { skipPop = true; history.back(); }
+    }).observe(el, { attributes: true, attributeFilter: ['class'] });
+  });
 
   // ---------- navigation ----------
   let currentView = 'play';
@@ -69,7 +139,7 @@
     currentView = view;
     try { sessionStorage.setItem('triad-view', view); } catch (e) { /* ignore */ }
     document.querySelectorAll('#menu .view').forEach((v) => { v.hidden = v.dataset.view !== view; });
-    if (!document.querySelector('#menu.active')) show('menu'); else { document.body.classList.add('with-nav'); markNav(view); }
+    if (!document.querySelector('#menu.active')) show('menu'); else { document.body.classList.add('with-nav'); markNav(view); navRecord(view); }
     window.scrollTo(0, 0);
     if (view === 'challenges') refreshDailies();
   }
@@ -1560,13 +1630,6 @@
       o.dataset.full = `${SET_ICON[d.id] || '🃏'} ${d.name}`; o.dataset.icon = SET_ICON[d.id] || '🃏'; o.textContent = o.dataset.full;
       sel.appendChild(o);
     }
-    // phones: the top picker shows just the set's icon until it's opened
-    const compact = () => matchMedia('(max-width: 899px)').matches;
-    const labels = (full) => sel.querySelectorAll('option').forEach((o) => { o.textContent = full || !compact() ? o.dataset.full : o.dataset.icon; });
-    ['focus', 'pointerdown', 'touchstart', 'mousedown'].forEach((ev) => sel.addEventListener(ev, () => labels(true), { passive: true }));
-    ['blur', 'change'].forEach((ev) => sel.addEventListener(ev, () => setTimeout(() => labels(false), 0)));
-    matchMedia('(max-width: 899px)').addEventListener('change', () => labels(false));
-    labels(false);
     let saved = null;
     try { saved = localStorage.getItem('triad-deck'); } catch (e) { /* ignore */ }
     chooseSet(saved && decks.has(saved) ? saved : sel.value);

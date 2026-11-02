@@ -29,8 +29,8 @@
     <button type="button" class="nav-item" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.2-4 4.2-5.8 7.5-5.8s6.3 1.8 7.5 5.8"/></svg><span>Account</span><i class="nav-dot" hidden></i></button>
     <!-- card set picker: always at the top outside matches (icons only on phones until opened) -->
     <div class="set-bar">
-      <select id="deck" aria-label="Card set"></select>
-      <button id="btn-packs" class="pack-pill" hidden></button>
+      <span class="set-pick"><select id="deck" aria-label="Card set"></select><span class="set-icon" id="set-icon" aria-hidden="true"></span></span>
+      <button id="btn-packs" class="pack-pill" hidden></button><span class="pack-star" aria-hidden="true">✦</span>
       <div id="set-progress" class="set-progress" hidden><div class="xpbar"><span id="menu-xp-fill"></span></div><span id="menu-xp-text" class="sr-only"></span></div>
     </div>
     <div class="nav-foot">

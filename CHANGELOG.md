@@ -3,6 +3,21 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.5 — 2026-11-02
+### Added
+- **Browser Back works like an app:** it goes to the previous screen (Play, Collection, Challenges…) and closes an open
+  popup (pack, card view, card details, sign-in, move history) instead of leaving the site. During a match it asks
+  before leaving.
+### Changed
+- Phone top bar: logo on the left, the set picker (and packs button) centred, sound and full-screen icons on the right,
+  without circles behind them. The picker always shows just the set's icon; opening it lists the full names.
+- The full-screen button is now last, after the two sound icons.
+- The packs button no longer pulses; a small ✦ next to it shows there are packs to open.
+### Fixed
+- The set dropdown's names were invisible on dark themes (Hollow Lanterns, Starfall…); the list now always uses dark
+  text on light, and Starfall's picker shows its text.
+- On phones the picker stayed in its long form after opening and closing it without choosing.
+
 ## v0.4.4 — 2026-11-02
 ### Added
 - **Card set picker in the top bar**, everywhere outside a match (with a 🎁 button showing unopened packs and a thin XP

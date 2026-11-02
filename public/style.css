@@ -1446,7 +1446,10 @@ button.big { padding: 14px 18px; font-size: 17px; }
 /* ===================== card set picker in the top bar ===================== */
 .set-bar { position: relative; display: flex; align-items: center; gap: 8px; }
 .set-bar select { font-size: 15px; padding-top: 7px !important; padding-bottom: 7px !important; padding-left: 12px; min-width: 0; }
-.pack-pill { padding: 5px 10px !important; font-size: 14px !important; border-radius: 16px !important; white-space: nowrap; animation: pillPulse 1.6s ease-in-out infinite; }
+.pack-pill { position: relative; padding: 5px 10px !important; font-size: 14px !important; border-radius: 16px !important; white-space: nowrap; animation: none !important; }
+/* unopened packs: a small star beside the button instead of a flashing border */
+.pack-star { display: none; margin-left: -4px; align-self: flex-start; font-size: 13px; line-height: 1; color: var(--gold-hi, #ffd75a); text-shadow: 0 0 6px var(--gold-hi, #ffd75a); pointer-events: none; }
+.pack-pill:not([hidden]) + .pack-star { display: inline-block; }
 @keyframes pillPulse { 50% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold-hi) 45%, transparent), 0 0 14px var(--gold-hi); } }
 .set-bar .set-progress { position: absolute; left: 2px; right: 2px; bottom: -7px; margin: 0; }
 .set-bar .set-progress .xpbar { height: 3px; margin: 0; }
@@ -1532,3 +1535,35 @@ body.in-game { overflow: hidden; overscroll-behavior: none; }
   -webkit-mask: radial-gradient(circle, #000 20%, transparent 65%); mask: radial-gradient(circle, #000 20%, transparent 65%); }
 @keyframes craftBurst { 0% { opacity: 0; scale: .3; } 20% { opacity: 1; } 100% { opacity: 0; scale: 1.3; rotate: 40deg; } }
 #nav .nav-item span { white-space: nowrap; }
+
+/* dropdown lists: always dark text on light, whatever the theme (dark themes made the names invisible) */
+select option { color: #1a1a1a !important; background: #ffffff !important; }
+/* fullscreen button always last, after the two sound icons */
+.music-ctl .fs-btn { order: 9; }
+/* phones: the set picker shows the current set's icon on top of the (transparent) dropdown; the list itself has full names */
+.set-icon { display: none; }
+@media (max-width: 899px) {
+  .set-bar .set-pick { position: relative; display: inline-flex; }
+  .set-bar select { color: transparent !important; width: 64px; text-shadow: none; }
+  .set-icon { display: grid; place-items: center; position: absolute; left: 0; top: 0; bottom: 0; width: 38px; font-size: 20px; pointer-events: none; }
+  /* no circles behind the top icons, to save room */
+  .music-ctl .music-btn { background: none !important; border: 0 !important; box-shadow: none !important; width: 32px; height: 32px; color: var(--metal-2); filter: drop-shadow(0 1px 2px #000a); }
+  .set-bar { right: 108px; }
+  .mobile-head { padding-right: 230px; }
+}
+
+/* phones: top bar = logo left · set picker (+ packs) centred · sound / full-screen icons right */
+@media (max-width: 899px) {
+  .set-bar { left: 50%; right: auto; top: 0; height: 54px; translate: -50% 0; gap: 6px; }
+  .set-bar select { width: 58px; height: 34px; border-radius: 17px !important; }
+  .set-icon { width: 34px; }
+  .set-bar .pack-pill { height: 30px; display: inline-flex; align-items: center; gap: 4px; }
+  .mobile-head { padding-right: 12px; }
+  .mh-logo { font-size: 18px !important; letter-spacing: .12em; }
+  .music-ctl { top: 0; height: 54px; align-items: center; right: 6px; gap: 0; }
+  .music-ctl .music-btn { width: 32px; height: 40px; }
+}
+@media (max-width: 370px) { .mh-version { display: none; } .mh-logo .orn-m { display: none; } }
+/* the top-bar picker on dark-field themes: light text and arrow */
+:root[data-theme="starfall"] .set-bar select { color: var(--text); --chev: var(--text); }
+@media (max-width: 899px) { :root[data-theme="starfall"] .set-bar select { color: transparent !important; } }
