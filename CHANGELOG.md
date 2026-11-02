@@ -3,6 +3,18 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.1.1 — 2026-11-01
+### Fixed
+- Rule tooltips sometimes didn't appear or showed up far above their ⓘ. Cause: a stray brace in the stylesheet
+  (from v2.2.0) made browsers drop the rule that anchors each tooltip to its row. Tooltips are now a single
+  floating element placed next to the ⓘ by script — above it, or below if there's no room, always inside the
+  window — so no theme's panel shape can clip or shift them.
+- Right-clicking to put a card back also opened the browser's menu; it no longer does (right-click with nothing
+  selected still shows the normal menu).
+### Changed
+- Card frames show only rarity (iron, bronze, silver, gold, prismatic); the element colour rim is gone and the
+  element icon is back, in a small badge in the top-right corner.
+
 ## v3.1.0 — 2026-11-01
 ### Changed
 - Themes now differ in shape and material, not just colour:

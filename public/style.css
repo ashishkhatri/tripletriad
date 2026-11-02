@@ -352,7 +352,6 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   .banner { font-size: 96px; }
   .logo { font-size: 76px; }
 }
-}
 
 /* rule tooltips */
 .rules label.rule { position: relative; }
@@ -733,10 +732,17 @@ button.link:hover { color: var(--gold-hi); filter: none; }
     linear-gradient(115deg, #ff7a8a, #ffc46b calc(var(--mx, 50%) - 30%), #9cf5a0 calc(var(--mx, 50%) - 10%), #79d4ff var(--mx, 50%), #c49bff calc(var(--mx, 50%) + 20%), #ff8ad8 100%);
 }
 .card.mine::before, .card.theirs::before, .card::before {
-  box-shadow: inset 0 0 0 3px var(--elc, #8d95a0), inset 0 0 0 4px color-mix(in srgb, var(--elc, #8d95a0) 55%, #fff), inset 0 0 10px color-mix(in srgb, var(--elc, #8d95a0) 70%, transparent);
+  /* thin dark bevel between the rarity frame and the art (no element colour) */
+  box-shadow: inset 0 0 0 2px #0009, inset 0 0 0 3px #ffffff26;
 }
 .card.mine .art, .card.theirs .art, .card .art { background-color: #11141a; }
-.card .el { display: none; }
+/* element icon in a small badge, top right */
+.card .el {
+  display: flex; align-items: center; justify-content: center; top: 4.5%; right: 6%;
+  width: 1.15em; height: 1.15em; border-radius: 50%; font-size: .78em; line-height: 1;
+  background: radial-gradient(circle at 40% 35%, #ffffff33, #0009 70%); box-shadow: 0 0 0 1px #ffffff44, 0 1px 3px #000a;
+  filter: none;
+}
 /* owner shown on the name plate */
 .card.mine .nm { background: linear-gradient(180deg, #4a86ff, #1d4fb8); color: #fff; border-color: #a9c6ff; text-shadow: 0 1px 1px #0008; }
 .card.theirs .nm { background: linear-gradient(180deg, #ff6b62, #b5241f); color: #fff; border-color: #ffb4ad; text-shadow: 0 1px 1px #0008; }
@@ -819,3 +825,25 @@ button .shards { color: inherit; }
 .pack-card.revealed .scrap-btn { opacity: 1; pointer-events: auto; }
 .pack-card.scrapped .pack-inner { filter: grayscale(1) brightness(.45); transition: filter .4s; }
 .pack-cards { padding-bottom: 50px; }
+
+/* ===== floating tooltip (one element, positioned by script so nothing can clip or misplace it) ===== */
+.rule-tip { display: none !important; }
+#tooltip {
+  position: fixed; left: 0; top: 0; z-index: 100; max-width: min(280px, calc(100vw - 16px)); pointer-events: none;
+  padding: 10px 12px; border-radius: 6px;
+  font-family: var(--body); font-size: 15px; line-height: 1.35; color: #f4efe6; text-align: left;
+  background: #17120ef2; border: 1px solid color-mix(in srgb, var(--metal-3) 70%, transparent);
+  box-shadow: 0 10px 28px #000c;
+  opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s;
+}
+#tooltip.show { opacity: 1; transform: none; }
+#tooltip::after {
+  content: ""; position: absolute; left: var(--ax, 50%); width: 10px; height: 10px; background: inherit;
+  border: inherit; border-top: 0; border-left: 0; transform: translateX(-50%) rotate(45deg);
+}
+#tooltip:not(.below)::after { bottom: -6px; }
+#tooltip.below::after { top: -6px; transform: translateX(-50%) rotate(225deg); }
+
+/* rarity frame: a little thicker, so the metal reads at a glance */
+.card.lit:not(.back) .art { inset: 6%; }
+.card.lit:not(.back) { border-width: 2px; }

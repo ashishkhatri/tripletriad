@@ -105,6 +105,7 @@
     ranks.className = 'ranks';
     ['t', 'r', 'b', 'l'].forEach((k, i) => { const s = document.createElement('span'); s.className = k; s.textContent = RANK(card.r[i]); ranks.appendChild(s); });
     el.appendChild(ranks);
+    if (card.el) { const e = document.createElement('div'); e.className = 'el'; e.textContent = (glyphs || {})[card.el] || glyph(card.el); e.title = cap(card.el); el.appendChild(e); }
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = card.name; el.appendChild(nm);
     el.title = `${card.name} — ${RARITY[card.level] || ''} · ${cap(card.el)}${card.foil ? ' · Foil' : ''} — ${card.r.map(RANK).join(' / ')}`;
     return el;
@@ -186,6 +187,7 @@
   }
   // Cancels an in-progress drag (set while dragging) — used by right-click and Escape.
   let cancelDrag = null;
+  let swallowMenuUntil = 0;   // set when the right button cancels a card move
   function startDrag(e, i, el) {
     if (!myTurn() || (e.button !== undefined && e.button > 0)) return;
     e.preventDefault();
@@ -206,7 +208,7 @@
     const cancel = () => { cleanup(); selected = null; render(); sfx('cancel'); };
     const onContext = (ev) => { ev.preventDefault(); ev.stopPropagation(); cancel(); };
     const move = (ev) => {
-      if (ev.buttons & 2) return cancel();   // right button pressed while dragging
+      if (ev.buttons & 2) { swallowMenuUntil = Date.now() + 1500; return cancel(); }   // right button pressed while dragging
       if (!ghost) {
         if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
         sfx('pick');
@@ -258,8 +260,14 @@
     if (state && selected !== null) { selected = null; render(); sfx('cancel'); return true; }
     return false;
   }
+  // The right button cancels a drag on pointerdown/move, before the browser's contextmenu event
+  // arrives (on mouse-up on Windows), so remember that it was ours to swallow.
+  document.addEventListener('pointerdown', (e) => {
+    if (e.button === 2 && document.querySelector('#game.active') && (cancelDrag || selected !== null)) { swallowMenuUntil = Date.now() + 1500; resetCard(); }
+  }, true);
   document.addEventListener('contextmenu', (e) => {
-    if (document.querySelector('#game.active') && resetCard()) e.preventDefault();
+    if (!document.querySelector('#game.active')) return;
+    if (Date.now() < swallowMenuUntil || resetCard()) { e.preventDefault(); swallowMenuUntil = 0; }
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.querySelector('#game.active')) resetCard();
@@ -803,24 +811,60 @@
     if (b && !b.disabled && !b.classList.contains('music-btn') && !b.classList.contains('rule-info')) sfx('click');
   }, true);
 
+  // ---------- tooltips ----------
+  // One floating tooltip, placed next to the (i) by script: above it if there's room, otherwise below,
+  // and kept inside the window. Mouse: appears after resting 0.5s on the (i), hides as soon as it leaves.
+  // Touch: tap the (i) to toggle. Keyboard: shows while the (i) has keyboard focus.
+  const tipEl = $('#tooltip');
+  let tipFor = null, tipTimer = null;
+  function placeTip(icon) {
+    const r = icon.getBoundingClientRect(), t = tipEl.getBoundingClientRect(), m = 8;
+    let x = r.left + r.width / 2 - t.width / 2;
+    x = Math.max(m, Math.min(innerWidth - t.width - m, x));
+    let y = r.top - t.height - 10, below = false;
+    if (y < m) { y = r.bottom + 10; below = true; }
+    tipEl.classList.toggle('below', below);
+    tipEl.style.transform = '';
+    tipEl.style.left = `${Math.round(x)}px`; tipEl.style.top = `${Math.round(y)}px`;
+    tipEl.style.setProperty('--ax', `${Math.round(r.left + r.width / 2 - x)}px`);
+  }
+  function showTip(icon) {
+    clearTimeout(tipTimer);
+    const src = icon.parentElement.querySelector('.rule-tip');
+    if (!src) return;
+    tipFor = icon;
+    tipEl.textContent = src.textContent;
+    tipEl.classList.remove('show');
+    tipEl.style.left = '0px'; tipEl.style.top = '0px';
+    placeTip(icon);
+    icon.setAttribute('aria-describedby', 'tooltip');
+    requestAnimationFrame(() => tipEl.classList.add('show'));
+  }
+  function hideTip() {
+    clearTimeout(tipTimer); tipTimer = null;
+    if (tipFor) tipFor.removeAttribute('aria-describedby');
+    tipFor = null;
+    tipEl.classList.remove('show');
+  }
   document.querySelectorAll('.rule-info').forEach((b) => {
-    b.addEventListener('click', (e) => {
-      e.preventDefault(); e.stopPropagation();
-      const lab = b.closest('.rule'), open = !lab.classList.contains('tip-open');
-      document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
-      lab.classList.toggle('tip-open', open);
-      if (!open) b.blur();
+    b.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(tipTimer);
+      tipTimer = setTimeout(() => showTip(b), 500);
     });
+    b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hideTip(); });
+    b.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();            // don't toggle the rule's checkbox
+      if (tipFor === b && tipEl.classList.contains('show')) hideTip(); else showTip(b);
+    });
+    b.addEventListener('focus', () => { if (b.matches(':focus-visible')) showTip(b); });
+    b.addEventListener('blur', hideTip);
   });
-  // any click or tap outside an (i) button closes open tips, including clicks on checkboxes and dropdowns
-  const closeTips = (e) => {
-    if (e.target.closest && e.target.closest('.rule-info')) return;
-    document.querySelectorAll('.rule.tip-open').forEach((l) => l.classList.remove('tip-open'));
-    const f = document.activeElement;
-    if (f && f.classList && f.classList.contains('rule-info')) f.blur();
-  };
-  document.addEventListener('pointerdown', closeTips, true);
-  document.addEventListener('click', closeTips);
+  document.addEventListener('pointerdown', (e) => { if (!(e.target.closest && e.target.closest('.rule-info'))) hideTip(); }, true);
+  window.addEventListener('scroll', hideTip, true);
+  window.addEventListener('resize', hideTip);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
+
   ['#r-open', '#r-same', '#r-plus', '#r-elemental', '#r-hands', '#r-wager'].forEach((s) => $(s).addEventListener('change', syncRuleOptions));
 
   $('#btn-ai').onclick = () => startMatch('ai');

@@ -166,8 +166,8 @@ progress follows a player to any device. Guests can still play with the **Balanc
   The computer gets a hand of about the same total level as yours.
 - **Normal and foil cards:** every card exists as a normal and a rarer foil version (about 1 in 10 pack cards).
   Only foils get the holographic layer. Foil copies are played first when they're in your hand.
-- **Card frames:** the outer border shows rarity — iron (common), bronze, silver, gold, prismatic (legendary) —
-  and the inner border shows the element. On the board, the name plate shows whose card it is (blue / red).
+- **Card frames:** the border shows rarity — iron (common), bronze, silver, gold, prismatic (legendary) — and the
+  element is the icon in the top-right corner. On the board, the name plate shows whose card it is (blue / red).
 - **Shards** (one balance per account): earned from daily challenges and by scrapping cards; spent on crafting.
   | Rarity | Scrap | Craft |
   |---|---|---|
