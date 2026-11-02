@@ -25,7 +25,7 @@
     <p class="tag">A Four-Sided Card Duel</p>
     <div id="account" class="account">
       <span id="acct-guest">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> to collect cards</span>
-      <span id="acct-user" hidden>Signed in as <b id="acct-name"></b> · <button id="btn-collection" class="link">Collection</button> · <button id="btn-signout" class="link">Sign out</button></span>
+      <span id="acct-user" hidden>Signed in as <b id="acct-name"></b> · <span class="shards shard-balance" title="Shards">0</span> · <button id="btn-collection" class="link">Collection</button> · <button id="btn-signout" class="link">Sign out</button></span>
     </div>
 
     <div class="panel">
@@ -71,6 +71,10 @@
       </div>
       <p id="menu-error" class="error"></p>
     </div>
+    <section id="dailies" class="dailies" hidden>
+      <div class="dailies-head"><h3>Daily challenges</h3><span id="daily-reset" class="muted"></span></div>
+      <ul id="daily-list"></ul>
+    </section>
     <details class="howto">
       <summary>How to play</summary>
       <p>Take turns placing cards on the 3×3 board. When your card's side beats the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards (counting the one left in hand) wins.</p>
@@ -115,6 +119,7 @@
           <div class="xpbar"><span id="result-xp-fill"></span></div>
           <p id="result-xp-text"></p>
         </div>
+        <ul id="result-daily" class="result-daily" hidden></ul>
         <div id="result-wager" class="result-wager" hidden>
           <p id="result-wager-text"></p>
           <div id="result-wager-cards" class="wager-cards"></div>
@@ -142,6 +147,8 @@
         <span id="col-xp-text"></span>
         <span id="col-owned"></span>
         <span id="col-record"></span>
+        <span class="shards shard-balance" title="Shards">0</span>
+        <button id="btn-scrap-extras">Scrap extras</button>
         <button id="btn-open-pack" class="primary">Open pack</button>
       </div>
     </div>
@@ -178,6 +185,23 @@
       </div>
       <button type="button" id="btn-auth-cancel" class="ghost">Cancel</button>
     </form>
+  </div>
+
+  <!-- CARD DETAIL -->
+  <div id="card-detail" class="overlay">
+    <div class="panel center cd-panel">
+      <button type="button" id="cd-close" class="ghost small cd-close" aria-label="Close">✕</button>
+      <div id="cd-card" class="cd-card"></div>
+      <h2 id="cd-name"></h2>
+      <p id="cd-meta" class="muted"></p>
+      <div class="cd-toggle"><button type="button" id="cd-normal" class="small">Normal</button><button type="button" id="cd-foil" class="small">Foil</button></div>
+      <p id="cd-owned"></p>
+      <div class="row">
+        <button type="button" id="cd-craft" class="primary">Craft</button>
+        <button type="button" id="cd-scrap">Scrap</button>
+      </div>
+      <p id="cd-note" class="muted cd-note"></p>
+    </div>
   </div>
 
   <!-- PACK OPENING -->

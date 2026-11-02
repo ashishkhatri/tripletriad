@@ -11,7 +11,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
 - Online rooms with 4-letter codes and invite links, server-authoritative moves, reconnect on refresh, rematches
 - Six card sets with illustrated art, chosen from the menu (the room host's choice applies to both players):
   Wilds, Arcane Order, Starfall, Tidebound, Bloomwild, Hollow Lanterns
-- Accounts, per-set card collections, XP and card packs (see below)
+- Accounts, per-set card collections, XP, card packs, normal and foil cards, Shards for scrapping and crafting, and daily challenges (see below)
 - Trading-card-size cards on desktop with 3D tilt, swing, capture flips and a dynamic foil/glare lighting effect
 - A full visual theme per card set (colours and fonts), and sealed foil card packs you tear open
 - Works on phones
@@ -164,6 +164,24 @@ progress follows a player to any device. Guests can still play with the **Balanc
   - *Build from collection* — choose any 5 cards you own.
   - *Build — level budget 15* — choose 5 you own whose levels add up to 15 or less.
   The computer gets a hand of about the same total level as yours.
+- **Normal and foil cards:** every card exists as a normal and a rarer foil version (about 1 in 10 pack cards).
+  Only foils get the holographic layer. Foil copies are played first when they're in your hand.
+- **Card frames:** the outer border shows rarity — iron (common), bronze, silver, gold, prismatic (legendary) —
+  and the inner border shows the element. On the board, the name plate shows whose card it is (blue / red).
+- **Shards** (one balance per account): earned from daily challenges and by scrapping cards; spent on crafting.
+  | Rarity | Scrap | Craft |
+  |---|---|---|
+  | Common | 5 | 40 |
+  | Uncommon | 10 | 80 |
+  | Rare | 25 | 200 |
+  | Epic | 60 | 500 |
+  | Legendary | 150 | 1200 |
+  Foil copies are worth 4× either way. Scrap from the pack reveal or the Collection screen (click a card),
+  or use **Scrap extras** to keep one normal and one foil of each card. You can't scrap below 5 cards in a set.
+- **Collection:** every card in a set is shown, owned or not, with its crafting cost.
+- **Daily challenges:** three a day (e.g. "Win 2 games", "Trigger a Combo", "Beat the computer on Hard"),
+  worth 30–100 shards each, paid automatically when completed. They reset at midnight in the server's time zone
+  (`DAILY_TZ` overrides it; new containers use the Proxmox host's time zone).
 - **Wager rule:** the winner takes one card of their choice from the loser's hand into their collection
   (the computer always takes your highest-level card). Nobody can drop below 5 cards in a set —
   a spare level-1 card is added if needed.
@@ -259,6 +277,9 @@ see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
 | `public/themes.css` | Per-set themes |
 | `public/packs/` | Pack art (SVG) |
 | `tools/genpacks.js` | Pack art generator |
+| `public/backs/` | Card backs per set (SVG) |
+| `tools/genbacks.js` | Card back generator |
+| `lib/daily.js` | Daily challenges |
 | `ct/triad.sh` | Proxmox LXC installer (run on the host) |
 | `ct/update.sh` | In-container updater (`update`) |
 | `triad.service` | systemd unit |

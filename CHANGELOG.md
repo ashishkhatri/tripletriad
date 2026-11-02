@@ -3,6 +3,27 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.0.0 — 2026-11-01
+### Added
+- Normal and foil versions of every card. About 1 in 10 pack cards is a foil; only foils get the holographic
+  layer. Foil copies are played first in your hands, and a wager transfers the exact version that was played.
+- **Shards** currency (account-wide): earn it from daily challenges and by scrapping cards; spend it to craft any card.
+  Scrap 5/10/25/60/150 and craft 40/80/200/500/1200 by rarity; foils are worth 4×.
+- Scrapping from the pack reveal (with NEW / DUPLICATE / FOIL tags), per card on the Collection screen,
+  and **Scrap extras** to keep one normal and one foil of each card.
+- Card detail view on the Collection screen: switch between normal and foil, craft or scrap.
+- **Daily challenges:** three a day from a pool of 16, with progress bars on the menu, completion notices
+  on the result screen and after opening packs, and a countdown to the next set.
+- A card back for each set.
+### Changed
+- The Collection screen shows every card in the set — nothing is hidden — with crafting costs on the ones you don't own.
+- Card frames: the outer border shows rarity (iron, bronze, silver, gold, prismatic) and the inner border shows the
+  element, replacing the L1–L5 labels and element icons. Ownership is shown on the name plate (blue / red).
+- Element squares on the board use the same element colours.
+- New containers use the Proxmox host's time zone (for the daily reset).
+### Upgrading
+- Just run `update`. Existing collections keep all their cards (as normal copies) and start with 0 shards.
+
 ## v2.2.1 — 2026-11-01
 ### Changed
 - Card packs are real 3D objects: front and back faces with thickness between them, foil side walls,

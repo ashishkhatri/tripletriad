@@ -6,6 +6,7 @@
 
 /* Arcane Order — moonlit violet and silver, airy capitals */
 :root[data-theme="arcane"] {
+  --card-back: url("backs/arcane.svg");
   --night: #0d0a1a; --bg-top: #221849; --bg-glow: #6b4fd455;
   --wood: #2b2150; --wood-2: #1e173a; --wood-hi: #43357a; --wood-3: #120e24;
   --board-hi: #3d2f74; --board-lo: #140f2a; --slot-hover: #3b2e70;
@@ -22,6 +23,7 @@
 
 /* Starfall — deep space navy with chrome and cyan, technical type */
 :root[data-theme="starfall"] {
+  --card-back: url("backs/starfall.svg");
   --night: #03050d; --bg-top: #0b1733; --bg-glow: #23c8ff33;
   --wood: #0f1d3a; --wood-2: #0a1429; --wood-hi: #1c3260; --wood-3: #050a17;
   --board-hi: #17305e; --board-lo: #040915; --slot-hover: #163a6a;
@@ -38,6 +40,7 @@
 
 /* Tidebound — sea-glass teal, pearl sand and coral, rounded type */
 :root[data-theme="tidebound"] {
+  --card-back: url("backs/tidebound.svg");
   --night: #021417; --bg-top: #06343d; --bg-glow: #35d6c855;
   --wood: #0b3c46; --wood-2: #072b33; --wood-hi: #13566a; --wood-3: #041c21;
   --board-hi: #11505c; --board-lo: #031b20; --slot-hover: #136070;
@@ -54,6 +57,7 @@
 
 /* Bloomwild — deep forest green, cream and blossom pink, friendly round type */
 :root[data-theme="bloomwild"] {
+  --card-back: url("backs/bloomwild.svg");
   --night: #091307; --bg-top: #1d3616; --bg-glow: #a2d86044;
   --wood: #25421c; --wood-2: #192f13; --wood-hi: #37602a; --wood-3: #0f1e0b;
   --board-hi: #315626; --board-lo: #0e1b0a; --slot-hover: #3a6a2c;
@@ -70,6 +74,7 @@
 
 /* Hollow Lanterns — night indigo, bone and lantern orange, thin elegant type */
 :root[data-theme="hollow"] {
+  --card-back: url("backs/hollow.svg");
   --night: #07060c; --bg-top: #1b1529; --bg-glow: #ff9a3c33;
   --wood: #231b34; --wood-2: #171225; --wood-hi: #35294d; --wood-3: #0e0b17;
   --board-hi: #2c2343; --board-lo: #0b0914; --slot-hover: #3a2d55;

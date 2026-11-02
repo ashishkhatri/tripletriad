@@ -46,6 +46,7 @@
   --field-line: #9c7c45;
   --back-1: #3a1f4f;
   --back-2: #2a1640;
+  --card-back: url("backs/wilds.svg");
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -709,3 +710,112 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   .screen.active, #game.active { padding-bottom: 76px; }
   .music-ctl { left: 10px; right: 10px; justify-content: center; }
 }
+
+/* ===== card frames: outer = rarity, inner = element, name plate = owner ===== */
+.card.rar-1 { --rd: #3c4048; --rm: #6f7680; --rl: #d3d8de; }   /* iron */
+.card.rar-2 { --rd: #5a2f14; --rm: #b46a35; --rl: #f6c897; }   /* bronze */
+.card.rar-3 { --rd: #646e7c; --rm: #c3cbd6; --rl: #ffffff; }   /* silver */
+.card.rar-4 { --rd: #6b4d16; --rm: #c99a3a; --rl: #fff3c4; }   /* gold */
+.card.el-fire    { --elc: #ff5b2e; }  .card.el-ice     { --elc: #9ee9ff; }
+.card.el-thunder { --elc: #ffe048; }  .card.el-earth   { --elc: #b8854f; }
+.card.el-poison  { --elc: #a35cff; }  .card.el-wind    { --elc: #6ee7b7; }
+.card.el-water   { --elc: #2f7bff; }  .card.el-holy    { --elc: #fff4c8; }
+.card.el-none    { --elc: #8d95a0; }
+.card.lit:not(.back) {
+  border-color: var(--rl, #ddd);
+  background: linear-gradient(115deg, var(--rd, #555) 0%, var(--rm, #999) calc(var(--mx, 50%) - 34%), var(--rl, #eee) var(--mx, 50%), var(--rm, #999) calc(var(--mx, 50%) + 22%), var(--rd, #555) 100%);
+}
+/* legendary: prismatic metal that shifts with the light */
+.card.rar-5.lit:not(.back) {
+  border-color: #fff;
+  background:
+    linear-gradient(115deg, #0000 calc(var(--mx, 50%) - 14%), #ffffffcc var(--mx, 50%), #0000 calc(var(--mx, 50%) + 14%)),
+    linear-gradient(115deg, #ff7a8a, #ffc46b calc(var(--mx, 50%) - 30%), #9cf5a0 calc(var(--mx, 50%) - 10%), #79d4ff var(--mx, 50%), #c49bff calc(var(--mx, 50%) + 20%), #ff8ad8 100%);
+}
+.card.mine::before, .card.theirs::before, .card::before {
+  box-shadow: inset 0 0 0 3px var(--elc, #8d95a0), inset 0 0 0 4px color-mix(in srgb, var(--elc, #8d95a0) 55%, #fff), inset 0 0 10px color-mix(in srgb, var(--elc, #8d95a0) 70%, transparent);
+}
+.card.mine .art, .card.theirs .art, .card .art { background-color: #11141a; }
+.card .el { display: none; }
+/* owner shown on the name plate */
+.card.mine .nm { background: linear-gradient(180deg, #4a86ff, #1d4fb8); color: #fff; border-color: #a9c6ff; text-shadow: 0 1px 1px #0008; }
+.card.theirs .nm { background: linear-gradient(180deg, #ff6b62, #b5241f); color: #fff; border-color: #ffb4ad; text-shadow: 0 1px 1px #0008; }
+.card.neutral .nm { background: linear-gradient(180deg, #f3f0ea, #cfc8bb); color: #2a2620; border-color: #8f877a; }
+.board .card.mine { box-shadow: 0 0 0 2px #4a86ff, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b; }
+.board .card.theirs { box-shadow: 0 0 0 2px #ff6b62, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b; }
+/* normal cards: glossy, but only foils get the holographic layer */
+.card.lit:not(.holo) .glare-spot { opacity: calc(var(--glare, .3) * .7); }
+.card.lit:not(.holo) .glare-spot::after { opacity: calc(var(--spec, 0) * .55); }
+/* per-set card back */
+.card.back, .flip-face {
+  background: var(--card-back) center / 100% 100% no-repeat, var(--back-2);
+  border-color: var(--metal-2);
+}
+.card.back::before { box-shadow: none; }
+.card.back::after, .flip-face::after { content: none; }
+.flip-face { box-shadow: none; }
+/* element squares on the board use the same colours */
+.cell .elem {
+  width: 62%; aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cell) * .3); opacity: .75; filter: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--elc) 45%, transparent) 0%, color-mix(in srgb, var(--elc) 12%, transparent) 60%, transparent 72%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--elc) 60%, transparent);
+}
+.cell .elem.el-fire { --elc: #ff5b2e; } .cell .elem.el-ice { --elc: #9ee9ff; } .cell .elem.el-thunder { --elc: #ffe048; } .cell .elem.el-earth { --elc: #b8854f; }
+.cell .elem.el-poison { --elc: #a35cff; } .cell .elem.el-wind { --elc: #6ee7b7; } .cell .elem.el-water { --elc: #2f7bff; } .cell .elem.el-holy { --elc: #fff4c8; }
+/* collection badges */
+.grid-card .count.foil-count { right: auto; left: -6px; background: linear-gradient(135deg, #ff8ad8, #79d4ff, #9cf5a0); color: #1a1030; }
+.grid-card.unowned .card { filter: grayscale(.9) brightness(.55); }
+.grid-card .craft-tag {
+  position: absolute; z-index: 4; left: 50%; bottom: -10px; transform: translateX(-50%); white-space: nowrap;
+  font-family: var(--title); font-weight: 700; font-size: 13px; padding: 2px 9px; border-radius: 10px;
+  background: var(--wood-3); color: var(--metal-2); border: 1px solid var(--metal-4); box-shadow: 0 2px 4px #000a;
+}
+.grid-card { cursor: pointer; }
+.shards { font-family: var(--title); font-weight: 700; color: var(--metal-2); white-space: nowrap; }
+.shards::before { content: "\25C6"; margin-right: 4px; color: #9fe8ff; text-shadow: 0 0 6px #79d4ff; }
+
+/* daily challenges */
+.dailies {
+  width: 100%; max-width: 400px; margin-top: 14px; padding: 12px 16px 6px; border-radius: 8px;
+  background: color-mix(in srgb, var(--wood-3) 80%, transparent); border: 1px solid var(--metal-4); box-shadow: 0 6px 18px #0007;
+}
+.dailies-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.dailies h3 { margin: 0; font-family: var(--display); font-size: 18px; color: var(--metal-2); letter-spacing: .04em; }
+#daily-reset { font-size: 13px; font-style: italic; }
+#daily-list { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+#daily-list li { font-size: 15px; }
+#daily-list li.done { opacity: .6; }
+#daily-list li.done .xpbar span { background: linear-gradient(90deg, #2f8f4e, #8ff0a8); }
+.dl-top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.dl-prog { font-size: 12px; color: var(--muted); text-align: right; margin-top: 2px; }
+.result-daily { list-style: none; margin: 6px 0 0; padding: 0; width: 100%; }
+.result-daily li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; color: var(--ink); font-size: 15px; }
+
+/* card detail */
+#card-detail { z-index: 42; }
+.cd-panel { position: relative; max-width: 360px; }
+.cd-close { position: absolute; top: 6px; right: 6px; }
+.cd-card { width: 210px; aspect-ratio: 63 / 88; font-size: 40px; margin: 4px auto 6px; }
+.cd-card .card { width: 100%; height: 100%; font-size: 40px; }
+.cd-panel h2 { margin: 0; font-family: var(--display); color: var(--accent); }
+.cd-panel p { margin: 0; }
+.cd-toggle { display: inline-flex; border: 1px solid var(--field-line); border-radius: 6px; overflow: hidden; }
+.cd-toggle button { border: 0; border-radius: 0; box-shadow: none; background: transparent; color: var(--ink-soft); text-shadow: none; }
+.cd-toggle button.on { background: var(--accent); color: #fff; }
+.cd-note { min-height: 1.2em; font-size: 14px; font-style: italic; }
+.panel .shards { color: var(--accent); }
+.panel .shards::before { color: #3aa6d6; text-shadow: none; }
+button .shards { color: inherit; }
+
+/* pack reveal extras */
+.pack-card .dupe-badge { background: linear-gradient(180deg, #e5e5e5, #9a9a9a); border-color: #555; }
+.pack-card .foil-badge {
+  position: absolute; top: -10px; left: -10px; z-index: 5; padding: 2px 9px; border-radius: 10px; opacity: 0; transition: opacity .3s .5s;
+  font-family: var(--title); font-weight: 800; font-size: 13px; color: #1a1030; background: linear-gradient(135deg, #ff8ad8, #79d4ff, #9cf5a0, #ffc46b);
+}
+.pack-card.revealed .foil-badge { opacity: 1; }
+.pack-card .scrap-btn { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .3s .6s; }
+.pack-card.revealed .scrap-btn { opacity: 1; pointer-events: auto; }
+.pack-card.scrapped .pack-inner { filter: grayscale(1) brightness(.45); transition: filter .4s; }
+.pack-cards { padding-bottom: 50px; }

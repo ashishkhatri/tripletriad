@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 315 440" width="315" height="440">
+<defs>
+  <radialGradient id="bg" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#3a2457"/><stop offset="1" stop-color="#100c1c"/></radialGradient>
+  <pattern id="p" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0,14 H28 M14,0 V28" stroke="#ffb35c" stroke-width=".7" opacity=".25"/><circle cx="14" cy="14" r="3" fill="none" stroke="#ffb35c" stroke-width=".8" opacity=".35"/></pattern>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#ffb35c"/><stop offset=".65" stop-color="#ffb35c" stop-opacity=".6"/><stop offset="1" stop-color="#fff"/></linearGradient>
+</defs>
+<rect width="315" height="440" fill="url(#bg)"/>
+<rect width="315" height="440" fill="url(#p)"/>
+<rect x="14" y="14" width="287" height="412" rx="10" fill="none" stroke="url(#rim)" stroke-width="3"/>
+<rect x="22" y="22" width="271" height="396" rx="6" fill="none" stroke="#ffb35c" stroke-width="1" opacity=".55"/>
+<path d="M30,22 L38,30 L30,38 L22,30 Z" fill="#ffb35c"/><path d="M285,22 L293,30 L285,38 L277,30 Z" fill="#ffb35c"/><path d="M30,402 L38,410 L30,418 L22,410 Z" fill="#ffb35c"/><path d="M285,402 L293,410 L285,418 L277,410 Z" fill="#ffb35c"/>
+<circle cx="157.5" cy="220" r="92" fill="#ffb35c" opacity=".08"/>
+<g transform="translate(157.5 220)"><circle r="60" fill="#100c1c" stroke="#ffb35c" stroke-width="3"/><circle r="40" fill="#ffb35c" opacity=".18"/><rect x="-18" y="-30" width="36" height="52" rx="16" fill="none" stroke="#ffb35c" stroke-width="4"/><path d="M-10,-30 v-8 h20 v8 M-14,-12 h28 M-14,4 h28 M0,22 v12" stroke="#ffb35c" stroke-width="3" fill="none"/></g>
+<text x="157.5" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="8" fill="#ffb35c" text-anchor="middle" opacity=".85">TRIAD</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 315 440" width="315" height="440">
+<defs>
+  <radialGradient id="bg" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#3d2f80"/><stop offset="1" stop-color="#1c1546"/></radialGradient>
+  <pattern id="p" width="38" height="38" patternUnits="userSpaceOnUse"><path d="M19,9 l2,8 l8,2 l-8,2 l-2,8 l-2,-8 l-8,-2 l8,-2 Z" fill="#dfe6f7" opacity=".3"/><circle cx="5" cy="31" r="1.2" fill="#dfe6f7" opacity=".5"/><circle cx="33" cy="6" r="1" fill="#dfe6f7" opacity=".5"/></pattern>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#dfe6f7"/><stop offset=".65" stop-color="#dfe6f7" stop-opacity=".6"/><stop offset="1" stop-color="#fff"/></linearGradient>
+</defs>
+<rect width="315" height="440" fill="url(#bg)"/>
+<rect width="315" height="440" fill="url(#p)"/>
+<rect x="14" y="14" width="287" height="412" rx="10" fill="none" stroke="url(#rim)" stroke-width="3"/>
+<rect x="22" y="22" width="271" height="396" rx="6" fill="none" stroke="#dfe6f7" stroke-width="1" opacity=".55"/>
+<path d="M30,22 L38,30 L30,38 L22,30 Z" fill="#dfe6f7"/><path d="M285,22 L293,30 L285,38 L277,30 Z" fill="#dfe6f7"/><path d="M30,402 L38,410 L30,418 L22,410 Z" fill="#dfe6f7"/><path d="M285,402 L293,410 L285,418 L277,410 Z" fill="#dfe6f7"/>
+<circle cx="157.5" cy="220" r="92" fill="#dfe6f7" opacity=".08"/>
+<g transform="translate(157.5 220)"><circle r="60" fill="#1c1546" stroke="#dfe6f7" stroke-width="3"/><circle r="48" fill="none" stroke="#dfe6f7" stroke-width="1.5" stroke-dasharray="3 5"/><path d="M-44,0 Q0,-36 44,0 Q0,36 -44,0 Z" fill="none" stroke="#dfe6f7" stroke-width="4"/><circle r="13" fill="#dfe6f7"/><circle r="5" fill="#1c1546"/></g>
+<text x="157.5" y="396" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="8" fill="#dfe6f7" text-anchor="middle" opacity=".85">TRIAD</text>
+</svg>

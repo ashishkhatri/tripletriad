@@ -53,7 +53,7 @@
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (!document.hidden) {
-      const cards = document.querySelectorAll('.screen.active .card.foil, .overlay.show .foil, .drag-ghost.foil');
+      const cards = document.querySelectorAll('.screen.active .lit, .overlay.show .lit, .drag-ghost.lit');
       const vh = innerHeight, vw = innerWidth;
       for (const el of cards) {
         const r = el.getBoundingClientRect();

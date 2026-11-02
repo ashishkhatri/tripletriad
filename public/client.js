@@ -46,7 +46,7 @@
     if (id === 'builder' && typeof Music !== 'undefined') Music.play(musicFor(roomDeck));
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     $('#result').classList.remove('show');
-    if (id === 'menu') refreshProgress();
+    if (id === 'menu') { refreshProgress(); refreshDailies(); }
   }
   let toastTimer;
   function toast(msg) {
@@ -74,18 +74,21 @@
     return data;
   }
   // deck card (from JSON) -> play card shape used for rendering
-  const playCard = (c) => ({ id: c.id, name: c.name, level: c.level, r: c.ranks, el: c.element || null, img: c.image || null });
+  const playCard = (c, foil) => ({ id: c.id, name: c.name, level: c.level, r: c.ranks, el: c.element || null, img: c.image || null, foil: !!foil });
+  const RARITY = { 1: 'Common', 2: 'Uncommon', 3: 'Rare', 4: 'Epic', 5: 'Legendary' };
+  const cap = (t) => (t ? t[0].toUpperCase() + t.slice(1) : 'No element');
   const deckCard = (deckId, id) => (decks.get(deckId).cards.find((c) => c.id === Number(id)));
 
   // ---------- card rendering ----------
+  // side: 'mine' | 'theirs' | 'neutral'. Frame: outer = rarity metal, inner rim = element, name plate = owner.
   function cardEl(card, side, glyphs) {
     const el = document.createElement('div');
     if (!card || card.hidden) {
-      el.className = 'card back foil';
+      el.className = 'card back lit';
       const sh = document.createElement('div'); sh.className = 'glare-spot'; el.appendChild(sh);
       return el;
     }
-    el.className = 'card foil ' + side;
+    el.className = `card lit ${side} rar-${Math.min(5, Math.max(1, card.level || 1))} el-${card.el || 'none'}${card.foil ? ' holo' : ''}`;
     const art = document.createElement('div');
     art.className = 'art';
     if (card.img) art.style.backgroundImage = `url("${encodeURI(card.img)}")`;
@@ -94,7 +97,7 @@
       art.style.background = `radial-gradient(circle at 50% 45%, hsl(${h} 70% 62% / .9), hsl(${(h + 40) % 360} 60% 30% / .85) 70%)`;
       const s = document.createElement('div'); s.className = 'sigil'; s.textContent = initials(card.name); art.appendChild(s);
     }
-    const foil = document.createElement('div'); foil.className = 'foil-layer'; art.appendChild(foil);
+    if (card.foil) { const foil = document.createElement('div'); foil.className = 'foil-layer'; art.appendChild(foil); }
     const glare = document.createElement('div'); glare.className = 'glare-spot'; art.appendChild(glare);
     el.appendChild(art);
     const back = document.createElement('div'); back.className = 'flip-face'; el.appendChild(back);
@@ -102,9 +105,8 @@
     ranks.className = 'ranks';
     ['t', 'r', 'b', 'l'].forEach((k, i) => { const s = document.createElement('span'); s.className = k; s.textContent = RANK(card.r[i]); ranks.appendChild(s); });
     el.appendChild(ranks);
-    if (card.el) { const e = document.createElement('div'); e.className = 'el'; e.textContent = (glyphs || {})[card.el] || glyph(card.el); e.title = card.el; el.appendChild(e); }
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = card.name; el.appendChild(nm);
-    el.title = `${card.name} — level ${card.level || '?'} — ${card.r.map(RANK).join(' / ')}${card.el ? ' (' + card.el + ')' : ''}`;
+    el.title = `${card.name} — ${RARITY[card.level] || ''} · ${cap(card.el)}${card.foil ? ' · Foil' : ''} — ${card.r.map(RANK).join(' / ')}`;
     return el;
   }
 
@@ -149,7 +151,7 @@
       cell.dataset.cell = i;
       const slot = state.board[i];
       const elKey = state.elements[i];
-      if (elKey && !slot) { const e = document.createElement('div'); e.className = 'elem'; e.textContent = glyph(elKey) || '?'; cell.appendChild(e); }
+      if (elKey && !slot) { const e = document.createElement('div'); e.className = `elem el-${elKey}`; e.textContent = glyph(elKey) || '?'; e.title = `${cap(elKey)} square`; cell.appendChild(e); }
       if (slot) {
         const el = cardEl(slot.card, slot.owner === me ? 'mine' : 'theirs');
         const prev = prevBoard[i];
@@ -320,13 +322,18 @@
       $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%';
       $('#result-xp-text').textContent = 'Sign in to earn XP and card packs.';
     }
+    const dl = $('#result-daily'); dl.innerHTML = ''; dl.hidden = !(msg.daily && msg.daily.length);
+    (msg.daily || []).forEach((d) => { const li = document.createElement('li'); li.innerHTML = `<span>✔ ${d.text}</span><span class="shards">+${d.reward}</span>`; dl.appendChild(li); });
+    if (msg.daily && msg.daily.length) sfx('unlock', { delay: 1.6 });
+    if (typeof msg.shards === 'number') setShards(msg.shards);
     if (msg.wager) {
       $('#result-wager').hidden = false;
       const wc = $('#result-wager-cards'); wc.innerHTML = '';
       const id = msg.wager.won || msg.wager.lost;
       const c = deckCard(roomDeck, id);
-      wc.appendChild(cardEl(playCard(c), msg.wager.won ? 'mine' : 'theirs', glyphsFor(roomDeck)));
-      $('#result-wager-text').textContent = msg.wager.won ? `${c.name} joins your collection.` : `${names[1 - me]} took your ${c.name}.`;
+      wc.appendChild(cardEl(playCard(c, msg.wager.foil), msg.wager.won ? 'mine' : 'theirs', glyphsFor(roomDeck)));
+      const fname = `${msg.wager.foil ? 'foil ' : ''}${c.name}`;
+      $('#result-wager-text').textContent = msg.wager.won ? `Your new ${fname} joins your collection.` : `${names[1 - me]} took your ${fname}.`;
       sfx(msg.wager.won ? 'wager-win' : 'wager-lose', { delay: 0.3 });
       if (msg.wager.refill && msg.wager.refill.length) $('#result-wager-text').textContent += ' You got a spare level-1 card so you still have a full hand.';
     }
@@ -335,11 +342,11 @@
     $('#result-wager').hidden = false;
     $('#result-wager-text').textContent = 'You won the wager — pick one of their cards to keep:';
     const wc = $('#result-wager-cards'); wc.innerHTML = '';
-    options.forEach((id) => {
-      const el = cardEl(playCard(deckCard(roomDeck, id)), 'theirs', glyphsFor(roomDeck));
+    options.forEach((o, index) => {
+      const el = cardEl(playCard(deckCard(roomDeck, o.id), o.foil), 'theirs', glyphsFor(roomDeck));
       el.classList.add('pickable');
       el.onclick = () => {
-        send({ t: 'wager', card: id });
+        send({ t: 'wager', index });
         wc.querySelectorAll('.card').forEach((x) => x.classList.remove('pickable'));
         el.classList.add('picked');
         $('#result-wager-text').textContent = 'Taking it…';
@@ -352,7 +359,7 @@
     $('#result-wager').hidden = false;
     $('#result-wager-text').textContent = `${names[1 - me]} is choosing one of your cards to take…`;
     const wc = $('#result-wager-cards'); wc.innerHTML = '';
-    options.forEach((id) => wc.appendChild(cardEl(playCard(deckCard(roomDeck, id)), 'mine', glyphsFor(roomDeck))));
+    options.forEach((o) => wc.appendChild(cardEl(playCard(deckCard(roomDeck, o.id), o.foil), 'mine', glyphsFor(roomDeck))));
     $('#btn-rematch').disabled = true;
   }
 
@@ -463,7 +470,9 @@
   // ---------- hand builder ----------
   const builder = { mode: 'build', budget: 15, cards: {}, picked: [], locked: false };
   function openBuilder(msg) {
-    Object.assign(builder, { mode: msg.mode, budget: msg.budget, cards: msg.cards, picked: [], locked: !!msg.done });
+    const totals = { ...msg.cards };
+    for (const [id, n] of Object.entries(msg.foils || {})) totals[id] = (totals[id] || 0) + n;
+    Object.assign(builder, { mode: msg.mode, budget: msg.budget, cards: totals, foils: msg.foils || {}, picked: [], locked: !!msg.done });
     $('#build-status').textContent = msg.done ? 'Ready! Waiting for your opponent…' : '';
     $('#result').classList.remove('show');
     state = null; resultShown = false;
@@ -486,7 +495,8 @@
       const slot = document.createElement('div'); slot.className = 'tray-slot';
       const id = builder.picked[i];
       if (id !== undefined) {
-        const el = cardEl(playCard(deckCard(roomDeck, id)), 'mine', g);
+        const nth = builder.picked.slice(0, i + 1).filter((x) => x === id).length;   // foil copies are used first
+        const el = cardEl(playCard(deckCard(roomDeck, id), nth <= (builder.foils[id] || 0)), 'mine', g);
         if (!builder.locked) { el.classList.add('pickable'); el.onclick = () => { builder.picked.splice(i, 1); sfx('cancel'); renderBuilder(); }; el.title = 'Remove from hand'; }
         slot.appendChild(el);
       }
@@ -501,13 +511,12 @@
     const owned = decks.get(roomDeck).cards.filter((c) => builder.cards[c.id]).sort((a, b) => b.level - a.level || a.id - b.id);
     for (const c of owned) {
       const wrap = document.createElement('div'); wrap.className = 'grid-card';
-      const el = cardEl(playCard(c), 'mine', g);
+      const el = cardEl(playCard(c, (builder.foils[c.id] || 0) > 0), 'mine', g);
       const left = builder.cards[c.id] - builder.picked.filter((x) => x === c.id).length;
       if (canAdd(c.id)) { el.classList.add('pickable'); el.onclick = () => { builder.picked.push(c.id); sfx('place'); renderBuilder(); }; }
       else wrap.classList.add('unavailable');
       wrap.appendChild(el);
       const badge = document.createElement('span'); badge.className = 'count'; badge.textContent = `×${left}`; wrap.appendChild(badge);
-      const lvb = document.createElement('span'); lvb.className = 'lvl'; lvb.textContent = `L${c.level}`; wrap.appendChild(lvb);
       grid.appendChild(wrap);
     }
   }
@@ -531,9 +540,32 @@
     $('#acct-guest').hidden = !!account;
     $('#acct-user').hidden = !account;
     $('#name-field').hidden = !!account;
-    if (account) $('#acct-name').textContent = account.name;
+    if (account) { $('#acct-name').textContent = account.name; setShards(account.shards || 0); }
     syncRuleOptions();
     refreshProgress();
+    refreshDailies();
+  }
+  function setShards(n) {
+    if (account) account.shards = n;
+    document.querySelectorAll('.shard-balance').forEach((el) => { el.textContent = n.toLocaleString(); });
+  }
+  async function refreshDailies() {
+    const box = $('#dailies');
+    if (!account) { box.hidden = true; return; }
+    try {
+      const d = await api('GET', '/api/daily');
+      setShards(d.shards);
+      box.hidden = false;
+      const h = Math.floor(d.resetsIn / 3600e3), m = Math.floor((d.resetsIn % 3600e3) / 60e3);
+      $('#daily-reset').textContent = `New challenges in ${h}h ${m}m`;
+      const list = $('#daily-list'); list.innerHTML = '';
+      for (const c of d.challenges) {
+        const li = document.createElement('li'); li.className = c.done ? 'done' : '';
+        li.innerHTML = `<div class="dl-top"><span>${c.done ? '✔ ' : ''}${c.text}</span><span class="shards">${c.reward}</span></div>
+          <div class="xpbar"><span style="width:${(100 * c.progress) / c.goal}%"></span></div><div class="dl-prog">${c.progress} / ${c.goal}</div>`;
+        list.appendChild(li);
+      }
+    } catch (e) { box.hidden = true; }
   }
   function syncRuleOptions() {
     const sel = $('#r-hands');
@@ -588,29 +620,78 @@
     try { colSummary = await api('GET', `/api/collection?deck=${encodeURIComponent(deckId)}`); }
     catch (e) { toast(e.message); return; }
     const s = colSummary;
+    setShards(s.shards);
     $('#col-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
     $('#col-xp-text').textContent = `${s.xp} XP · next pack in ${s.nextPackIn} XP`;
-    $('#col-owned').textContent = `${s.owned} of ${s.total} cards found`;
+    $('#col-owned').textContent = `${s.owned} of ${s.total} cards`;
     $('#col-record').textContent = s.games ? `${s.wins} wins in ${s.games} games` : 'No games yet';
     const ob = $('#btn-open-pack');
     ob.disabled = s.packs < 1;
     ob.textContent = s.packs > 0 ? `Open pack (${s.packs})` : 'No packs yet';
+    // extras: everything beyond one normal and one foil copy of each card
+    let extraValue = 0, extraCount = 0;
+    for (const foil of [false, true]) for (const [id, n] of Object.entries(foil ? s.foils : s.cards)) if (n > 1) {
+      extraCount += n - 1; extraValue += (n - 1) * s.scrap[deckCard(deckId, id).level] * (foil ? s.foilMult : 1);
+    }
+    const xb = $('#btn-scrap-extras');
+    xb.disabled = !extraCount;
+    xb.innerHTML = extraCount ? `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>` : 'No extras to scrap';
     const grid = $('#col-grid'); grid.innerHTML = '';
     for (const c of deck.cards) {
       const wrap = document.createElement('div'); wrap.className = 'grid-card';
-      const n = s.cards[c.id] || 0;
-      if (n) {
-        wrap.appendChild(cardEl(playCard(c), 'mine', deck.elements));
-        if (n > 1) { const b = document.createElement('span'); b.className = 'count'; b.textContent = `×${n}`; wrap.appendChild(b); }
+      const n = s.cards[c.id] || 0, nf = s.foils[c.id] || 0;
+      wrap.appendChild(cardEl(playCard(c, nf > 0 && !n ? true : nf > 0), 'neutral', deck.elements));
+      if (n + nf === 0) {
+        wrap.classList.add('unowned');
+        const t = document.createElement('span'); t.className = 'craft-tag'; t.innerHTML = `Craft <span class="shards">${s.craft[c.level]}</span>`; wrap.appendChild(t);
       } else {
-        wrap.classList.add('locked');
-        const back = document.createElement('div'); back.className = 'card back'; wrap.appendChild(back);
-        const q = document.createElement('span'); q.className = 'unknown'; q.textContent = '?'; wrap.appendChild(q);
+        if (n) { const b = document.createElement('span'); b.className = 'count'; b.textContent = `×${n}`; b.title = `${n} normal`; wrap.appendChild(b); }
+        if (nf) { const b = document.createElement('span'); b.className = 'count foil-count'; b.textContent = `✦${nf}`; b.title = `${nf} foil`; wrap.appendChild(b); }
       }
-      const lvb = document.createElement('span'); lvb.className = 'lvl'; lvb.textContent = `L${c.level}`; wrap.appendChild(lvb);
+      wrap.onclick = () => openCardDetail(deckId, c.id);
       grid.appendChild(wrap);
     }
   }
+
+  // ---------- card detail: craft and scrap ----------
+  let detail = null;
+  function openCardDetail(deckId, id, foil) {
+    const s = colSummary;
+    const nf = s.foils[id] || 0, n = s.cards[id] || 0;
+    detail = { deckId, id, foil: foil !== undefined ? foil : (nf > 0 && !n) };
+    renderCardDetail();
+    $('#card-detail').classList.add('show');
+  }
+  function renderCardDetail() {
+    const { deckId, id, foil } = detail, s = colSummary, deck = decks.get(deckId), c = deckCard(deckId, id);
+    const big = $('#cd-card'); big.innerHTML = '';
+    big.appendChild(cardEl(playCard(c, foil), 'neutral', deck.elements));
+    $('#cd-name').textContent = c.name;
+    $('#cd-meta').textContent = `${RARITY[c.level]} · ${cap(c.element)} · ${c.ranks.map(RANK).join(' / ')}`;
+    const have = (foil ? s.foils : s.cards)[id] || 0;
+    $('#cd-owned').textContent = `You have ${s.cards[id] || 0} normal and ${s.foils[id] || 0} foil`;
+    $('#cd-normal').classList.toggle('on', !foil); $('#cd-foil').classList.toggle('on', foil);
+    const cost = s.craft[c.level] * (foil ? s.foilMult : 1), value = s.scrap[c.level] * (foil ? s.foilMult : 1);
+    const craft = $('#cd-craft'), scrap = $('#cd-scrap');
+    craft.innerHTML = `Craft${foil ? ' foil' : ''} <span class="shards">${cost}</span>`;
+    craft.disabled = s.shards < cost;
+    scrap.innerHTML = `Scrap${foil ? ' foil' : ''} <span class="shards">+${value}</span>`;
+    scrap.disabled = have < 1 || s.copies - 1 < s.minCards;
+    $('#cd-note').textContent = s.shards < cost ? `You have ${s.shards} shards — ${cost - s.shards} more to craft this.` :
+      (have >= 1 && s.copies - 1 < s.minCards ? `You need at least ${s.minCards} cards in a set, so you can\u2019t scrap this one.` : '');
+  }
+  async function detailAction(kind) {
+    const { deckId, id, foil } = detail;
+    try {
+      const r = await api('POST', kind === 'craft' ? '/api/craft' : '/api/scrap', { deck: deckId, card: id, foil });
+      colSummary = r.summary; setShards(r.shards);
+      sfx(kind === 'craft' ? `reveal-${Math.min(5, deckCard(deckId, id).level)}` : 'cancel');
+      toast(kind === 'craft' ? `Crafted ${foil ? 'a foil ' : ''}${deckCard(deckId, id).name}.` : `Scrapped for ${r.gained} shards.`);
+      renderCardDetail();
+      renderCollection();
+    } catch (e) { toast(e.message); sfx('error'); }
+  }
+
   let packDeck = null;
   // Step 1: show the sealed pack. Nothing is spent until it's torn open.
   function openPack(deckId) {
@@ -623,7 +704,7 @@
     // pillow shading and crinkles; it floats in a wrapper and tilts toward the pointer
     const float = document.createElement('div'); float.className = 'sealed-float';
     const sealed = document.createElement('div');
-    sealed.className = 'sealed foil';
+    sealed.className = 'sealed lit';
     sealed.dataset.tilt = '26';
     const src = `packs/${encodeURIComponent(deckId)}.svg`, backSrc = `packs/${encodeURIComponent(deckId)}-back.svg`;
     sealed.style.setProperty('--pack-art', `url("${src}")`);
@@ -681,11 +762,23 @@
       holder.style.animationDelay = `${i * 140}ms`;
       const inner = document.createElement('div'); inner.className = 'pack-inner';
       const back = cardEl(null, 'mine'); back.classList.add('face-back');
-      const front = cardEl(playCard(c), 'mine', deck.elements); front.classList.add('face-front');
+      const front = cardEl(playCard(c, pc.foil), 'neutral', deck.elements); front.classList.add('face-front');
       inner.append(back, front);
       holder.appendChild(inner);
       if (pc.isNew) { const nb = document.createElement('span'); nb.className = 'new-badge'; nb.textContent = 'NEW'; holder.appendChild(nb); }
-      const lv = document.createElement('span'); lv.className = 'lvl'; lv.textContent = `Level ${c.level}`; holder.appendChild(lv);
+      else { const db = document.createElement('span'); db.className = 'new-badge dupe-badge'; db.textContent = 'DUPLICATE'; holder.appendChild(db); }
+      if (pc.foil) { const fb = document.createElement('span'); fb.className = 'foil-badge'; fb.textContent = 'FOIL'; holder.appendChild(fb); }
+      const sb = document.createElement('button'); sb.type = 'button'; sb.className = 'small scrap-btn';
+      sb.innerHTML = `Scrap <span class="shards">+${pc.scrap}</span>`;
+      sb.onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          const res = await api('POST', '/api/scrap', { deck: deckId, card: c.id, foil: pc.foil });
+          setShards(res.shards); sfx('cancel');
+          holder.classList.add('scrapped'); sb.disabled = true; sb.innerHTML = `Scrapped <span class="shards">+${res.gained}</span>`;
+        } catch (err) { toast(err.message); sfx('error'); }
+      };
+      holder.appendChild(sb);
       holder.onclick = () => {
         if (holder.classList.contains('revealed')) return;
         holder.classList.add('revealed', `rarity-${c.level}`);
@@ -700,6 +793,8 @@
     });
     $('#pack-hint').textContent = 'Click each card to reveal it';
     $('#btn-pack-done').textContent = 'Done';
+    (r.daily || []).forEach((d, k) => setTimeout(() => { toast(`Daily challenge done: ${d.text} (+${d.reward} shards)`); sfx('unlock'); }, 600 + k * 2700));
+    if (r.daily && r.daily.length) refreshDailies();
   }
 
   // ---------- wiring ----------
@@ -765,6 +860,18 @@
   $('#btn-col-back').onclick = () => show('menu');
   $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };
   $('#btn-open-pack').onclick = () => openPack($('#col-deck').value);
+  $('#btn-scrap-extras').onclick = async () => {
+    try {
+      const r = await api('POST', '/api/scrap/extras', { deck: $('#col-deck').value });
+      setShards(r.shards); sfx('cancel'); toast(`Scrapped ${r.count} extra${r.count === 1 ? '' : 's'} for ${r.gained} shards.`); renderCollection();
+    } catch (e) { toast(e.message); sfx('error'); }
+  };
+  $('#cd-normal').onclick = () => { detail.foil = false; renderCardDetail(); };
+  $('#cd-foil').onclick = () => { detail.foil = true; renderCardDetail(); };
+  $('#cd-craft').onclick = () => detailAction('craft');
+  $('#cd-scrap').onclick = () => detailAction('scrap');
+  $('#cd-close').onclick = () => $('#card-detail').classList.remove('show');
+  $('#card-detail').addEventListener('click', (e) => { if (e.target.id === 'card-detail') $('#card-detail').classList.remove('show'); });
   $('#btn-pack-again').onclick = () => openPack(packDeck);
   $('#btn-pack-done').onclick = () => {
     $('#pack').classList.remove('show');
