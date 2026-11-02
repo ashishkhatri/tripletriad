@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.1.1 — 2026-11-01
+### Changed
+- Rule tooltips appear after 0.5 seconds of hovering the ⓘ (was 1 second).
+
 ## v2.1.0 — 2026-11-01
 ### Added
 - Sound effects (original, stored as MP3s in `public/sfx/`): card pick-up, placement, flips, putting a card back,
