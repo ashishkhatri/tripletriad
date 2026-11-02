@@ -1601,3 +1601,8 @@ select option { color: #1a1a1a !important; background: #ffffff !important; }
 .cz-owned { font-size: 14px; min-height: 1.2em; margin: 2px 0 6px; }
 #concede .panel { max-width: 380px; }
 #concede .row button { white-space: nowrap; }
+/* the phone logo strip sits outside the screens, so Collection shows it too; hidden in matches */
+body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !important; }
+.packs-ico { width: 1.35em; height: 1.35em; vertical-align: -.3em; margin-right: 1px; overflow: visible; }
+.packs-ico .pk-body { fill: var(--accent); stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; }
+.packs-ico .pk-line { fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: round; opacity: .8; }

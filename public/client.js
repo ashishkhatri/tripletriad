@@ -1125,6 +1125,10 @@
   }
 
   // ---------- progress, collection & packs ----------
+  // three card packs fanned out (the packs button)
+  const PACKS_ICON = '<svg class="packs-ico" viewBox="0 0 24 24" aria-hidden="true">'
+    + ['rotate(-28 12 23)', 'rotate(28 12 23)', ''].map((t) => `<g transform="${t}"><path d="M9 5h6v14H9z" class="pk-body"/><path d="M9 6.8h6M9 17.2h6" class="pk-line"/><path d="M9 5l.75-.9.75.9.75-.9.75.9.75-.9.75.9.75-.9.75.9" class="pk-line"/></g>`).join('')
+    + '</svg>';
   async function refreshProgress() {
     const box = $('#set-progress');
     if (!account || !decks.size) { box.hidden = true; $('#btn-packs').hidden = true; return; }
@@ -1136,7 +1140,7 @@
       $('#menu-xp-text').textContent = xpText; box.title = xpText;
       const b = $('#btn-packs');
       b.hidden = !(s.packs > 0);
-      b.innerHTML = `<span aria-hidden="true">🎁</span> ${s.packs}`;
+      b.innerHTML = `${PACKS_ICON} ${s.packs}`;
       b.title = s.packs > 1 ? `You have ${s.packs} packs to open` : 'You have a pack to open';
       packsLeft = s.packs;
     } catch (e) { box.hidden = true; $('#btn-packs').hidden = true; }

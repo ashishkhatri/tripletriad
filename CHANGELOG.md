@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.0 — 2026-11-02
+
+- Phones: the TRIAD logo and version now show on the Collection screen too (the top strip is shared by every screen outside matches).
+- The packs button uses a fanned-out packs icon instead of the gift.
+
 ## v0.4.9 — 2026-11-02
 
 - **Concede** replaces Quit during a match, and asks first: your opponent gets the win and you get no XP. An online opponent now receives the win's XP when you concede.
