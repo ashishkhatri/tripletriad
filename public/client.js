@@ -213,6 +213,7 @@
 
   function render() {
     if (!state) return;
+    $('#btn-quit').textContent = state.over ? 'Main Menu' : 'Concede';
     if (typeof Music !== 'undefined' && state.deck) Music.play(musicFor(state.deck.id));
     if (state.deck) applyTheme(state.deck.id);
     // element icons only matter in Elemental matches
@@ -458,7 +459,7 @@
       if (h.mod) lines.push({ html: `Placed on ${h.mod > 0 ? 'a matching' : 'a different'} element square: <b>${h.mod > 0 ? '+1' : '−1'}</b> to every side.`, cls: 'note' });
       if (h.storm) {
         const SN = TT.STORMS, R = TT.RESPONSES;
-        lines.push({ html: `<span class="tag tstorm">${R[h.choice].name}</span> ${h.choice === 'ward' ? 'The storm was blocked.' : R[h.choice].text}`, cls: 'note' });
+        lines.push({ html: `<span class="htag tstorm">${R[h.choice].name}</span> ${h.choice === 'ward' ? 'The storm was blocked.' : R[h.choice].text}`, cls: 'note' });
         if (h.kind !== h.original) lines.push({ html: `Fate turned ${SN[h.original].name} into <b>${SN[h.kind].name}</b>.`, cls: 'note' });
       }
       if (h.boosted) lines.push({ html: 'Harnessed: <b>+1</b> to every side.', cls: 'note' });
@@ -499,7 +500,7 @@
             return pair + (x.own ? ' <small>(already theirs: counts, doesn’t flip)</small>' : '');
           });
           const got = st.pairs.filter((x) => x.flip).map((x) => nm(x.n));
-          lines.push({ html: `<span class="tag ${st.k}">${st.k === 'same' ? 'Same' : 'Plus'}</span>${parts.join('<br>')}${got.length ? `<br>→ flips <b>${got.join(', ')}</b>` : ''}`, step: si, cls: st.k });
+          lines.push({ html: `<span class="htag ${st.k}">${st.k === 'same' ? 'Same' : 'Plus'}</span>${parts.join('<br>')}${got.length ? `<br>→ flips <b>${got.join(', ')}</b>` : ''}`, step: si, cls: st.k });
         } else {
           const od = (st.d + 2) % 4;
           const cls = st.k === 'combo' ? 'combo' : st.flip ? 'win' : 'hold';
@@ -509,7 +510,7 @@
           const b = `${nm(st.n)}’s ${SIDE[od]} ${num(st.b, st.flip ? 'lose' : 'strong')}${modTxt(st.bm, st.b)}`;
           lines.push({
             html: st.k === 'combo'
-              ? `<span class="tag combo">Combo</span> ${a} beats ${b} → <b>captured</b>`
+              ? `<span class="htag combo">Combo</span> ${a} beats ${b} → <b>captured</b>`
               : st.flip ? `${a} beats ${b} → <b>captured</b>` : st.ice ? `${a} beats ${b}, but it’s frozen → holds` : `${a} vs ${b} → ${st.a === st.b ? 'tie, ' : ''}holds`,
             step: si, cls,
           });
@@ -943,7 +944,7 @@
       case 'state': {
         const fresh = !state || msg.events.some((e) => e.type === 'start');
         me = msg.you; names = msg.names;
-        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); $('#btn-show-result').hidden = true; }
+        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); const sb = $('#btn-show-result'); sb.hidden = true; sb.disabled = false; sb.textContent = 'Rematch'; }
         if (!document.querySelector('#game.active')) show('game');
         busy = false;
         applyResult(msg.state, msg.events).then(() => {
@@ -1651,7 +1652,13 @@
   // ---------- closing popups: ✕ buttons and clicking outside ----------
   const closeResult = () => { $('#result').classList.remove('show'); $('#btn-show-result').hidden = !(state && state.over); };
   $('#btn-result-close').onclick = closeResult;
-  $('#btn-show-result').onclick = () => { $('#result').classList.add('show'); $('#btn-show-result').hidden = true; };
+  // after closing the result popup, the bar offers a straight Rematch (it never reopens the popup)
+  $('#btn-show-result').onclick = () => {
+    const rb = $('#btn-rematch');
+    if (rb.disabled) return;
+    rb.click();
+    if (mode === 'online') { const b = $('#btn-show-result'); b.disabled = true; b.textContent = 'Waiting…'; }
+  };
   $('#result').addEventListener('click', (e) => { if (e.target.id === 'result') closeResult(); });
   $('#auth').addEventListener('click', (e) => { if (e.target.id === 'auth') $('#auth').classList.remove('show'); });
   // the pack screen needs a decision (open, reveal, scrap), so clicking outside doesn't close it: use Later / Done

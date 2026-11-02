@@ -3,6 +3,21 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.6 — 2026-11-02
+
+Readability pass across all six sets (every screen checked automatically for text contrast):
+- Fix: the home tagline ("A Four-Sided Card Duel") was black on every set — a style meant for move history labels leaked onto it.
+- Headings, links and shard counts on dark panels (Arcane Order, Starfall, Hollow Lanterns) use a light tint of the set's accent instead of the dark accent, so they're readable everywhere: mode titles, How to play, popups, result, card view, pack picker.
+- "Playing as a guest" note and its Sign in link are light on the dark background.
+- Darker accents where white text sat on them (Tidebound buttons, Starfall and Hollow selected buttons, counts and badges); darker secondary text on Tidebound and Bloomwild panels; brighter muted text on Arcane and Bloomwild.
+- Text-only buttons in popups (✕, Menu, Cancel…) use the panel's text colour on every set.
+- Completed challenges, storm choices and "no flips" in history are less faded.
+
+Also:
+- After a match ends, Concede becomes **Main Menu**, and the button that used to reopen the result is now **Rematch** (starts a rematch straight away; online it waits for your opponent).
+- Popup close ✕ is a plain centred glyph (no circle).
+- Fix: the sound icons covered the move history's ✕ on desktop; they hide while the history is open.
+
 ## v0.5.5 — 2026-11-02
 
 - Epic frames are mostly solid `#a335ee`, with just a few faint facets, a soft glint and the twinkling sparkles.
