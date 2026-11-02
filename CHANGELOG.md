@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.6.2 — 2026-11-02
+### Changed
+- A draw now earns 23 XP, halfway between a loss (10) and a win (35), rounded up. It was 15.
+
 ## v3.6.1 — 2026-11-02
 ### Changed
 - The computer takes 4–6 seconds to weigh its storm response cards instead of about 3, so you can read what it was dealt.
