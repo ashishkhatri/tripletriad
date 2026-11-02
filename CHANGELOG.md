@@ -3,6 +3,22 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.2.0 — 2026-11-01
+### Added
+- 3D cards: tilt toward the pointer with a moving shadow; the dragged card lifts and swings with your motion;
+  captured cards flip over in 3D (showing their back) in the direction they were hit from; placed cards drop in.
+- Foil lighting on every card: pointer-as-light Blinn-Phong glare, a Fresnel-driven holographic foil layer
+  with grain over the art, and a gilt frame that catches the light. Slow drifting light on touch screens.
+- Per-set themes: each card set restyles the whole site (colours, backgrounds, board, buttons, frames,
+  card backs, fonts). Follows the set chosen in the menu or Collection screen and is remembered.
+- Sealed card packs with original foil art for each set: click to tear open, then click each card to reveal it.
+  Packs aren't used until they're torn open.
+### Changed
+- Cards use real trading-card proportions (63 × 88 mm) and scale up to 240 × 336 px on desktop.
+  On desktop both hands show as two-column blocks the same size as the board cards.
+- Bigger cards on the Collection screen, hand builder and pack reveal.
+- All fonts are now sans-serif.
+
 ## v2.1.1 — 2026-11-01
 ### Changed
 - Rule tooltips appear after 0.5 seconds of hovering the ⓘ (was 1 second).

@@ -1,0 +1,88 @@
+/*
+ * Per-set themes. The chosen card set's id goes on <html data-theme="...">.
+ * Each theme only redefines the palette and fonts from :root in style.css (Wilds is the default).
+ * A custom set without a theme here simply uses the default look.
+ */
+
+/* Arcane Order — moonlit violet and silver, airy capitals */
+:root[data-theme="arcane"] {
+  --night: #0d0a1a; --bg-top: #221849; --bg-glow: #6b4fd455;
+  --wood: #2b2150; --wood-2: #1e173a; --wood-hi: #43357a; --wood-3: #120e24;
+  --board-hi: #3d2f74; --board-lo: #140f2a; --slot-hover: #3b2e70;
+  --parch: #ece8f8; --parch-2: #d3cbec; --parch-3: #b6a9da;
+  --ink: #1f1736; --ink-soft: #564a84; --text: #ece7ff; --muted: #aaa0d2;
+  --metal-1: #ffffff; --metal-2: #e6ebf7; --metal-3: #b9c3dc; --metal-4: #6e7898; --metal-5: #262a42;
+  --accent: #5c3fc8; --accent-hi: #7b5ce6;
+  --field-1: #dcd5ef; --field-2: #f2effa; --field-line: #8f84bd;
+  --back-1: #26407a; --back-2: #172a57;
+  --display: "Julius Sans One", "Raleway", system-ui, sans-serif;
+  --title: "Raleway", system-ui, sans-serif;
+  --body: "Raleway", system-ui, sans-serif;
+}
+
+/* Starfall — deep space navy with chrome and cyan, technical type */
+:root[data-theme="starfall"] {
+  --night: #03050d; --bg-top: #0b1733; --bg-glow: #23c8ff33;
+  --wood: #0f1d3a; --wood-2: #0a1429; --wood-hi: #1c3260; --wood-3: #050a17;
+  --board-hi: #17305e; --board-lo: #040915; --slot-hover: #163a6a;
+  --parch: #e2f0fd; --parch-2: #bed8f1; --parch-3: #94b8db;
+  --ink: #0b1a2e; --ink-soft: #3a5b80; --text: #e4f4ff; --muted: #8fb2cf;
+  --metal-1: #ffffff; --metal-2: #ccf4ff; --metal-3: #6fd2f2; --metal-4: #2a7fa6; --metal-5: #0a2a40;
+  --accent: #0a8fc2; --accent-hi: #20bdf0;
+  --field-1: #cfe3f6; --field-2: #eef7ff; --field-line: #6c93ba;
+  --back-1: #0f3557; --back-2: #071c33;
+  --display: "Orbitron", "Exo 2", system-ui, sans-serif;
+  --title: "Exo 2", system-ui, sans-serif;
+  --body: "Exo 2", system-ui, sans-serif;
+}
+
+/* Tidebound — sea-glass teal, pearl sand and coral, rounded type */
+:root[data-theme="tidebound"] {
+  --night: #021417; --bg-top: #06343d; --bg-glow: #35d6c855;
+  --wood: #0b3c46; --wood-2: #072b33; --wood-hi: #13566a; --wood-3: #041c21;
+  --board-hi: #11505c; --board-lo: #031b20; --slot-hover: #136070;
+  --parch: #f5efe4; --parch-2: #e4d6bf; --parch-3: #cbb693;
+  --ink: #12303a; --ink-soft: #406b74; --text: #e6fbf8; --muted: #92c6c0;
+  --metal-1: #fffaf3; --metal-2: #ffe2d1; --metal-3: #f2a38b; --metal-4: #b45f4b; --metal-5: #4a2219;
+  --accent: #cf4f39; --accent-hi: #ee6e55;
+  --field-1: #e9dcc6; --field-2: #fbf6ee; --field-line: #b39c78;
+  --back-1: #0f6475; --back-2: #08424f;
+  --display: "Comfortaa", "Quicksand", system-ui, sans-serif;
+  --title: "Quicksand", system-ui, sans-serif;
+  --body: "Quicksand", system-ui, sans-serif;
+}
+
+/* Bloomwild — deep forest green, cream and blossom pink, friendly round type */
+:root[data-theme="bloomwild"] {
+  --night: #091307; --bg-top: #1d3616; --bg-glow: #a2d86044;
+  --wood: #25421c; --wood-2: #192f13; --wood-hi: #37602a; --wood-3: #0f1e0b;
+  --board-hi: #315626; --board-lo: #0e1b0a; --slot-hover: #3a6a2c;
+  --parch: #f8f2db; --parch-2: #e8deb3; --parch-3: #cfc186;
+  --ink: #24321a; --ink-soft: #5a6c3d; --text: #f2f9e7; --muted: #b4c99b;
+  --metal-1: #fff6f9; --metal-2: #ffdbe8; --metal-3: #f49bbd; --metal-4: #ad5277; --metal-5: #48192d;
+  --accent: #b83f73; --accent-hi: #db5c93;
+  --field-1: #ece2bb; --field-2: #fcf8ea; --field-line: #a99c64;
+  --back-1: #5c2b4d; --back-2: #3e1b35;
+  --display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --title: "Nunito", system-ui, sans-serif;
+  --body: "Nunito", system-ui, sans-serif;
+}
+
+/* Hollow Lanterns — night indigo, bone and lantern orange, thin elegant type */
+:root[data-theme="hollow"] {
+  --night: #07060c; --bg-top: #1b1529; --bg-glow: #ff9a3c33;
+  --wood: #231b34; --wood-2: #171225; --wood-hi: #35294d; --wood-3: #0e0b17;
+  --board-hi: #2c2343; --board-lo: #0b0914; --slot-hover: #3a2d55;
+  --parch: #eee8dc; --parch-2: #d8cfbb; --parch-3: #baad92;
+  --ink: #231b2e; --ink-soft: #5b4d67; --text: #f3edff; --muted: #aa9ebd;
+  --metal-1: #fff4df; --metal-2: #ffd89c; --metal-3: #ff9b3d; --metal-4: #b4561c; --metal-5: #3e1a08;
+  --accent: #d96e1c; --accent-hi: #f58b34;
+  --field-1: #e2d9c6; --field-2: #f8f4ec; --field-line: #a8987a;
+  --back-1: #3b1b42; --back-2: #251131;
+  --display: "Poiret One", "Josefin Sans", system-ui, sans-serif;
+  --title: "Josefin Sans", system-ui, sans-serif;
+  --body: "Didact Gothic", "Josefin Sans", system-ui, sans-serif;
+}
+
+/* smooth hand-over between themes */
+body, .panel, .board, .cell, button, input, select, .card { transition-property: background-color, color, border-color, box-shadow, transform; }

@@ -20,9 +20,28 @@
   const glyphsFor = (deckId) => ((decks.get(deckId) || {}).elements) || {};
   const glyph = (el) => (state && state.glyphs && state.glyphs[el]) || glyphsFor(roomDeck)[el] || '';
 
+  // ---------- theme (follows the chosen card set, site-wide) ----------
+  const THEME_COLOR = { wilds: '#3b2516', arcane: '#2b2150', starfall: '#0f1d3a', tidebound: '#0b3c46', bloomwild: '#25421c', hollow: '#231b34' };
+  function applyTheme(deckId) {
+    if (!deckId || document.documentElement.dataset.theme === deckId) return;
+    document.documentElement.dataset.theme = deckId;
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', THEME_COLOR[deckId] || '#3b2516');
+  }
+  // the set the player has chosen (menu and collection pickers stay in sync)
+  function chooseSet(deckId) {
+    if (!decks.has(deckId)) return;
+    $('#deck').value = deckId; $('#col-deck').value = deckId;
+    try { localStorage.setItem('triad-deck', deckId); } catch (e) { /* ignore */ }
+    $('#deck-desc').textContent = decks.get(deckId).description || '';
+    applyTheme(deckId);
+  }
+
   // ---------- helpers ----------
   function musicFor(deckId) { const d = decks.get(deckId); return d && d.music ? { ...d.music } : null; }
   function show(id) {
+    if (id === 'menu' || id === 'collection' || id === 'lobby') applyTheme($('#deck').value);
+    if (id === 'builder' && roomDeck) applyTheme(roomDeck);
     if ((id === 'menu' || id === 'collection') && typeof Music !== 'undefined') Music.play(musicFor(id === 'menu' ? $('#deck').value : $('#col-deck').value));
     if (id === 'builder' && typeof Music !== 'undefined') Music.play(musicFor(roomDeck));
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
@@ -61,8 +80,12 @@
   // ---------- card rendering ----------
   function cardEl(card, side, glyphs) {
     const el = document.createElement('div');
-    if (!card || card.hidden) { el.className = 'card back'; return el; }
-    el.className = 'card ' + side;
+    if (!card || card.hidden) {
+      el.className = 'card back foil';
+      const sh = document.createElement('div'); sh.className = 'glare-spot'; el.appendChild(sh);
+      return el;
+    }
+    el.className = 'card foil ' + side;
     const art = document.createElement('div');
     art.className = 'art';
     if (card.img) art.style.backgroundImage = `url("${encodeURI(card.img)}")`;
@@ -71,7 +94,10 @@
       art.style.background = `radial-gradient(circle at 50% 45%, hsl(${h} 70% 62% / .9), hsl(${(h + 40) % 360} 60% 30% / .85) 70%)`;
       const s = document.createElement('div'); s.className = 'sigil'; s.textContent = initials(card.name); art.appendChild(s);
     }
+    const foil = document.createElement('div'); foil.className = 'foil-layer'; art.appendChild(foil);
+    const glare = document.createElement('div'); glare.className = 'glare-spot'; art.appendChild(glare);
     el.appendChild(art);
+    const back = document.createElement('div'); back.className = 'flip-face'; el.appendChild(back);
     const ranks = document.createElement('div');
     ranks.className = 'ranks';
     ['t', 'r', 'b', 'l'].forEach((k, i) => { const s = document.createElement('span'); s.className = k; s.textContent = RANK(card.r[i]); ranks.appendChild(s); });
@@ -88,6 +114,7 @@
   function render() {
     if (!state) return;
     if (typeof Music !== 'undefined' && state.deck) Music.play(musicFor(state.deck.id));
+    if (state.deck) applyTheme(state.deck.id);
     const opp = 1 - me;
     const sc = TT.score(state);
     $('#score-mine').textContent = sc[me];
@@ -127,7 +154,13 @@
         const el = cardEl(slot.card, slot.owner === me ? 'mine' : 'theirs');
         const prev = prevBoard[i];
         if (!prev) el.classList.add('placed');
-        else if (prev.owner !== slot.owner) el.classList.add('flip');
+        else if (prev.owner !== slot.owner) {
+          const from = prevBoard.findIndex((p, k) => !p && state.board[k]);   // the card just played
+          const src = from >= 0 ? from : i;
+          const sameRow = Math.floor(src / 3) === Math.floor(i / 3);
+          el.classList.add('flip', sameRow ? 'flip-y' : 'flip-x');
+          el.style.setProperty('--fd', sameRow ? (i % 3 > src % 3 ? 1 : -1) : (i > src ? -1 : 1));
+        }
         cell.appendChild(el);
         if (elKey) {
           const up = slot.card.el === elKey;
@@ -156,7 +189,7 @@
     e.preventDefault();
     const sx = e.clientX, sy = e.clientY, rect = el.getBoundingClientRect();
     const offX = sx - rect.left, offY = sy - rect.top;
-    let ghost = null, over = null;
+    let ghost = null, over = null, lastX = sx, lastY = sy;
     const cleanup = () => {
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
@@ -176,14 +209,23 @@
         if (Math.hypot(ev.clientX - sx, ev.clientY - sy) < 6) return;
         sfx('pick');
         ghost = el.cloneNode(true);
-        ghost.classList.remove('selected', 'playable');
+        ghost.classList.remove('selected', 'playable', 'placed', 'flip');
         ghost.classList.add('drag-ghost');
         ghost.style.width = rect.width + 'px'; ghost.style.height = rect.height + 'px';
+        ghost._swing = { rx: 0, ry: 0 };
         document.body.appendChild(ghost);
+        lastX = ev.clientX; lastY = ev.clientY;
+        const decay = () => { if (!ghost) return; ghost._swing.rx *= 0.82; ghost._swing.ry *= 0.82; requestAnimationFrame(decay); };
+        requestAnimationFrame(decay);
         el.classList.add('dragging');
         markDrops(true);
       }
-      ghost.style.transform = `translate(${ev.clientX - offX}px, ${ev.clientY - offY}px) rotate(-3deg) scale(1.06)`;
+      ghost.style.setProperty('--gx', `${ev.clientX - offX}px`);
+      ghost.style.setProperty('--gy', `${ev.clientY - offY}px`);
+      // swing like a card held at the top: moving right tips it, moving fast tips it more
+      const vx = ev.clientX - lastX, vy = ev.clientY - lastY; lastX = ev.clientX; lastY = ev.clientY;
+      ghost._swing.ry = Math.max(-38, Math.min(38, ghost._swing.ry * 0.6 + vx * 1.8));
+      ghost._swing.rx = Math.max(-30, Math.min(30, ghost._swing.rx * 0.6 - vy * 1.4));
       const hit = document.elementFromPoint(ev.clientX, ev.clientY);
       const c = hit && hit.closest('#board .cell[data-cell]');
       const target = c && !state.board[Number(c.dataset.cell)] ? c : null;
@@ -537,7 +579,7 @@
   }
   let colSummary = null;
   async function openCollection(deckId) {
-    if (deckId) $('#col-deck').value = deckId;
+    if (deckId) chooseSet(deckId);
     show('collection');
     await renderCollection();
   }
@@ -570,20 +612,61 @@
     }
   }
   let packDeck = null;
-  async function openPack(deckId) {
+  // Step 1: show the sealed pack. Nothing is spent until it's torn open.
+  function openPack(deckId) {
     packDeck = deckId;
-    let r;
-    try { r = await api('POST', '/api/packs/open', { deck: deckId }); } catch (e) { toast(e.message); sfx('error'); return; }
-    sfx('pack-open');
+    const deck = decks.get(deckId);
+    applyTheme(deckId);
+    const box = $('#pack-cards'); box.innerHTML = '';
+    $('#pack-title').textContent = `${deck.name} pack`;
+    const sealed = document.createElement('div');
+    sealed.className = 'sealed foil';
+    const src = `packs/${encodeURIComponent(deckId)}.svg`;
+    sealed.style.setProperty('--pack-art', `url("${src}")`);
+    for (const part of ['pack-body', 'pack-top']) {
+      const d = document.createElement('div'); d.className = part;
+      const img = document.createElement('img'); img.src = src; img.alt = part === 'pack-body' ? `${deck.name} card pack` : '';
+      img.draggable = false;
+      d.appendChild(img); sealed.appendChild(d);
+    }
+    const foil = document.createElement('div'); foil.className = 'foil-layer'; sealed.appendChild(foil);
+    const glare = document.createElement('div'); glare.className = 'glare-spot'; sealed.appendChild(glare);
+    const burst = document.createElement('div'); burst.className = 'pack-burst'; box.appendChild(burst);
+    box.appendChild(sealed);
+    let opening = false;
+    sealed.onclick = async () => {
+      if (opening) return;
+      opening = true;
+      sealed.classList.add('shaking');
+      let r;
+      try { r = await api('POST', '/api/packs/open', { deck: deckId }); }
+      catch (e) { sealed.classList.remove('shaking'); opening = false; toast(e.message); sfx('error'); return; }
+      sfx('pack-open');
+      sealed.classList.remove('shaking');
+      sealed.classList.add('tearing');
+      burst.classList.add('go');
+      $('#pack-hint').textContent = '';
+      await sleep(950);
+      sealed.remove(); burst.remove();
+      revealPackCards(deckId, r);
+    };
+    $('#pack-hint').textContent = 'Click the pack to tear it open';
+    $('#btn-pack-again').hidden = true;
+    $('#btn-pack-done').textContent = 'Later';
+    $('#pack').classList.add('show');
+  }
+
+  // Step 2: the three cards come out face down; click each to reveal it.
+  function revealPackCards(deckId, r) {
     const box = $('#pack-cards'); box.innerHTML = '';
     const deck = decks.get(deckId);
     let revealed = 0;
     r.cards.forEach((pc, i) => {
       const c = deck.cards.find((x) => x.id === pc.id);
       const holder = document.createElement('div'); holder.className = 'pack-card';
-      holder.style.animationDelay = `${i * 120}ms`;
+      holder.style.animationDelay = `${i * 140}ms`;
       const inner = document.createElement('div'); inner.className = 'pack-inner';
-      const back = document.createElement('div'); back.className = 'card back face-back';
+      const back = cardEl(null, 'mine'); back.classList.add('face-back');
       const front = cardEl(playCard(c), 'mine', deck.elements); front.classList.add('face-front');
       inner.append(back, front);
       holder.appendChild(inner);
@@ -596,13 +679,13 @@
         if (++revealed === r.cards.length) {
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
           $('#btn-pack-again').hidden = r.summary.packs < 1;
+          $('#btn-pack-done').textContent = 'Done';
         }
       };
       box.appendChild(holder);
     });
-    $('#pack-hint').textContent = 'Tap each card to reveal it';
-    $('#btn-pack-again').hidden = true;
-    $('#pack').classList.add('show');
+    $('#pack-hint').textContent = 'Click each card to reveal it';
+    $('#btn-pack-done').textContent = 'Done';
   }
 
   // ---------- wiring ----------
@@ -666,7 +749,7 @@
   $('#btn-collection').onclick = () => openCollection($('#deck').value);
   $('#btn-packs').onclick = () => openPack($('#deck').value);
   $('#btn-col-back').onclick = () => show('menu');
-  $('#col-deck').onchange = () => { Music.play(musicFor($('#col-deck').value)); renderCollection(); };
+  $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };
   $('#btn-open-pack').onclick = () => openPack($('#col-deck').value);
   $('#btn-pack-again').onclick = () => openPack(packDeck);
   $('#btn-pack-done').onclick = () => {
@@ -687,10 +770,10 @@
       const o = document.createElement('option'); o.value = d.id; o.textContent = `${d.name} (${d.cards.length})`; sel.appendChild(o);
       csel.appendChild(o.cloneNode(true));
     }
-    try { const saved = localStorage.getItem('triad-deck'); if (saved && decks.has(saved)) sel.value = saved; } catch (e) { /* ignore */ }
-    const desc = () => { $('#deck-desc').textContent = (decks.get(sel.value) || {}).description || ''; };
-    sel.onchange = () => { desc(); refreshProgress(); if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value)); try { localStorage.setItem('triad-deck', sel.value); } catch (e) { /* ignore */ } };
-    desc();
+    let saved = null;
+    try { saved = localStorage.getItem('triad-deck'); } catch (e) { /* ignore */ }
+    chooseSet(saved && decks.has(saved) ? saved : sel.value);
+    sel.onchange = () => { chooseSet(sel.value); refreshProgress(); if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value)); };
     if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value));
   }
 

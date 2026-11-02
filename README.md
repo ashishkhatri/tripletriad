@@ -12,6 +12,8 @@ or against a friend online. No dependencies beyond Node.js 18+.
 - Six card sets with illustrated art, chosen from the menu (the room host's choice applies to both players):
   Wilds, Arcane Order, Starfall, Tidebound, Bloomwild, Hollow Lanterns
 - Accounts, per-set card collections, XP and card packs (see below)
+- Trading-card-size cards on desktop with 3D tilt, swing, capture flips and a dynamic foil/glare lighting effect
+- A full visual theme per card set (colours and fonts), and sealed foil card packs you tear open
 - Works on phones
 
 ## Run it
@@ -205,6 +207,22 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 "music": { "file": "music/my-theme.mp3", "title": "My Theme" }
 ```
 
+## Cards, foil and themes
+
+- **Size:** cards use real trading-card proportions (63 × 88 mm) and, on desktop, scale up to
+  2.5 × 3.5 in (240 × 336 px), shrinking to fit smaller windows. Phones keep the compact layout.
+- **3D:** cards tilt toward the pointer, a dragged card lifts and swings with your hand's motion,
+  and captured cards flip over in 3D (showing their back) in the direction they were hit from.
+- **Foil lighting** (`public/foil.js`): the pointer is treated as a point light above the screen.
+  Each card's surface normal comes from its tilt; Blinn-Phong shading places a specular glare at the
+  reflection point, and a Fresnel term drives a holographic foil layer (spectrum + grain) that is
+  colour-dodged over the art, so it works on any picture. Touch screens get a slow drifting light instead.
+- **Themes** (`public/themes.css`): each set restyles the whole site — background, board, panels,
+  buttons, card frames and backs, accent colours and its own sans-serif fonts. The theme follows the set
+  chosen in the menu or Collection screen and is remembered; a match uses its own set's theme.
+- **Card packs:** each set has its own sealed foil pack (`public/packs/`, made by `node tools/genpacks.js`).
+  Click it to tear it open, then click each card to reveal it. A pack is only used once it's torn.
+
 ## Sound effects
 
 Original sound effects live in `public/sfx/` (MP3, ~560 KB total): card pick-up, placement, flips,
@@ -237,6 +255,10 @@ see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
 | `public/sfx/` | Sound effects (MP3) |
 | `public/sfx.js` | Sound-effects player |
 | `tools/gensfx.py` | Sound-effects synthesizer |
+| `public/foil.js` | Card tilt and foil lighting |
+| `public/themes.css` | Per-set themes |
+| `public/packs/` | Pack art (SVG) |
+| `tools/genpacks.js` | Pack art generator |
 | `ct/triad.sh` | Proxmox LXC installer (run on the host) |
 | `ct/update.sh` | In-container updater (`update`) |
 | `triad.service` | systemd unit |
