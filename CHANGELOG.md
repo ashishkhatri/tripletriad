@@ -3,6 +3,20 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.1.0 — 2026-11-01
+### Changed
+- Themes now differ in shape and material, not just colour:
+  - **Arcane Order:** frosted-glass panels over a star field with a faint rune circle, pill buttons, a glowing rune-ringed board.
+  - **Starfall:** a starship HUD — cut-corner panels and buttons, uppercase labels, grid and scanline background,
+    corner brackets on the board, hexagonal score badges.
+  - **Tidebound:** sea glass and bubbles — very rounded glassy panels, glossy bubble buttons, waves along the bottom,
+    a sandy board with tide-pool slots.
+  - **Bloomwild:** a storybook garden — organic lopsided paper panels with stitched borders, leaf-shaped buttons,
+    a hedge-framed board with soil beds, leafy background.
+  - **Hollow Lanterns:** lantern-lit night — dark paper panels with thin glowing lines and a hanging lantern,
+    outlined buttons, a lacquered paper-screen board.
+  - Card corners are shaped per theme too.
+
 ## v3.0.0 — 2026-11-01
 ### Added
 - Normal and foil versions of every card. About 1 in 10 pack cards is a foil; only foils get the holographic

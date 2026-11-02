@@ -235,8 +235,11 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
   Each card's surface normal comes from its tilt; Blinn-Phong shading places a specular glare at the
   reflection point, and a Fresnel term drives a holographic foil layer (spectrum + grain) that is
   colour-dodged over the art, so it works on any picture. Touch screens get a slow drifting light instead.
-- **Themes** (`public/themes.css`): each set restyles the whole site — background, board, panels,
-  buttons, card frames and backs, accent colours and its own sans-serif fonts. The theme follows the set
+- **Themes** (`public/themes.css`): each set restyles the whole site with its own materials and shapes, not just
+  colours — Wilds: wood and parchment; Arcane Order: frosted astral glass and rune rings; Starfall: a cut-corner
+  starship HUD with grid lines and corner brackets; Tidebound: rounded sea glass, bubble buttons and tide-pool slots;
+  Bloomwild: a stitched storybook garden with leaf-shaped buttons and a hedge-framed board; Hollow Lanterns:
+  lantern-lit night paper with glowing lines and a lacquered paper-screen board. Each has its own fonts and card back. The theme follows the set
   chosen in the menu or Collection screen and is remembered; a match uses its own set's theme.
 - **Card packs:** each set has its own sealed foil pack (`public/packs/`, made by `node tools/genpacks.js`).
   Click it to tear it open, then click each card to reveal it. A pack is only used once it's torn.

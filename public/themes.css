@@ -91,3 +91,221 @@
 
 /* smooth hand-over between themes */
 body, .panel, .board, .cell, button, input, select, .card { transition-property: background-color, color, border-color, box-shadow, transform; }
+
+/* =====================================================================
+   Structural differences per theme (shapes, materials, decoration)
+   ===================================================================== */
+
+/* ---------- Arcane Order: astral glass ---------- */
+:root[data-theme="arcane"] body {
+  background:
+    radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 72% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 33% 64%, #e9e4ff 50%, transparent 51%), radial-gradient(1px 1px at 88% 52%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 54% 86%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 18% 82%, #cfc6ff 50%, transparent 51%),
+    radial-gradient(circle at 50% 38%, transparent 0 230px, #9b8cff14 231px 233px, transparent 234px 300px, #9b8cff0d 301px 302px, transparent 303px),
+    radial-gradient(ellipse at 50% 0%, #6b4fd455 0%, transparent 60%),
+    linear-gradient(180deg, #221849 0%, #0d0a1a 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="arcane"] .panel,
+:root[data-theme="arcane"] .dailies {
+  --ink: #f1edff; --ink-soft: #b9b0e6; --field-1: #ffffff14; --field-2: #ffffff1f; --field-line: #b9c3dc66;
+  background: linear-gradient(160deg, #ffffff1c, #ffffff08 60%, #9b8cff12);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid #e6ebf766; border-radius: 22px;
+  box-shadow: 0 0 0 1px #00000040, 0 0 40px #7b5ce633, inset 0 1px 0 #ffffff40, 0 18px 50px #000b;
+}
+:root[data-theme="arcane"] .panel::before, :root[data-theme="arcane"] .panel::after { content: "✧"; color: #dfe6f7; text-shadow: 0 0 8px #b9a8ff; }
+:root[data-theme="arcane"] input, :root[data-theme="arcane"] select { border-radius: 12px; box-shadow: inset 0 1px 3px #0006; color: var(--ink); }
+:root[data-theme="arcane"] select option { background: #1e173a; }
+:root[data-theme="arcane"] button { border-radius: 999px; border-width: 1px; background: linear-gradient(180deg, #43357a, #2b2150); box-shadow: 0 0 14px #7b5ce655, inset 0 1px 0 #ffffff33; }
+:root[data-theme="arcane"] button.primary { background: linear-gradient(180deg, #ffffff, #c9d1e8 60%, #9aa4c2); color: #1f1736; box-shadow: 0 0 20px #dfe6f788, inset 0 -2px 0 #0002; }
+:root[data-theme="arcane"] button.ghost, :root[data-theme="arcane"] button.link { background: transparent; box-shadow: none; }
+:root[data-theme="arcane"] .board {
+  border-radius: 26px; border: 1px solid #e6ebf777;
+  background: radial-gradient(circle at 50% 50%, #3d2f7499 0%, #140f2acc 75%);
+  box-shadow: 0 0 0 10px #ffffff08, 0 0 0 11px #e6ebf733, 0 0 60px #7b5ce655, inset 0 0 40px #000a;
+}
+:root[data-theme="arcane"] .cell { border-radius: 14px; background: #ffffff08; box-shadow: inset 0 0 0 1px #e6ebf733, inset 0 0 18px #7b5ce622; }
+:root[data-theme="arcane"] .card { border-radius: 12px; }
+:root[data-theme="arcane"] .logo { font-weight: 400; letter-spacing: .3em; filter: drop-shadow(0 0 14px #b9a8ff); }
+:root[data-theme="arcane"] .who b { box-shadow: 0 0 16px #b9a8ff88, inset 0 0 0 2px #fff6; }
+
+/* ---------- Starfall: starship HUD ---------- */
+:root[data-theme="starfall"] body {
+  background:
+    repeating-linear-gradient(0deg, #6fd2f20a 0 1px, transparent 1px 3px),
+    linear-gradient(#6fd2f214 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, #6fd2f214 1px, transparent 1px) 0 0 / 40px 40px,
+    radial-gradient(ellipse at 50% 30%, #123a6e 0%, #03050d 75%);
+  background-attachment: fixed;
+}
+:root[data-theme="starfall"] {
+  --chamfer: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+  --chamfer-s: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+:root[data-theme="starfall"] .panel,
+:root[data-theme="starfall"] .dailies {
+  --ink: #dff6ff; --ink-soft: #7fb6d6; --field-1: #06142a; --field-2: #0a1c38; --field-line: #2a7fa6;
+  background: linear-gradient(180deg, #0c1d3be6, #071228f0); border: 0; border-radius: 0;
+  clip-path: var(--chamfer);
+  box-shadow: inset 0 0 0 1px #6fd2f266, inset 0 0 30px #20bdf01a;
+}
+:root[data-theme="starfall"] .panel::before { content: ""; position: absolute; top: 0; left: 16px; right: 40%; height: 2px; background: linear-gradient(90deg, #6fd2f2, transparent); transform: none; }
+:root[data-theme="starfall"] .panel::after { content: ""; position: absolute; bottom: 0; right: 16px; left: 50%; height: 2px; background: linear-gradient(270deg, #6fd2f2, transparent); transform: none; }
+:root[data-theme="starfall"] .field, :root[data-theme="starfall"] .rules legend, :root[data-theme="starfall"] .divider { text-transform: uppercase; letter-spacing: .16em; font-size: 12px; }
+:root[data-theme="starfall"] input, :root[data-theme="starfall"] select {
+  border-radius: 0; border: 0; border-bottom: 2px solid #2a7fa6; background: #06142a; color: var(--ink); box-shadow: none;
+}
+:root[data-theme="starfall"] select option { background: #06142a; }
+:root[data-theme="starfall"] .rules { border-radius: 0; border-color: #2a7fa688; background: #6fd2f208; }
+:root[data-theme="starfall"] button {
+  clip-path: var(--chamfer-s); border-radius: 0; border: 0; text-transform: uppercase; letter-spacing: .14em; font-size: 13px;
+  background: linear-gradient(180deg, #0f3557, #0a2440); color: #ccf4ff; box-shadow: inset 0 0 0 1px #6fd2f299;
+}
+:root[data-theme="starfall"] button.primary { background: linear-gradient(180deg, #8ae4ff, #20bdf0); color: #031322; box-shadow: none; text-shadow: none; }
+:root[data-theme="starfall"] button.ghost, :root[data-theme="starfall"] button.link { clip-path: none; background: transparent; box-shadow: none; text-transform: none; letter-spacing: normal; }
+:root[data-theme="starfall"] .board {
+  border-radius: 0; border: 0; background: #040a17e6;
+  box-shadow: inset 0 0 0 1px #6fd2f244, 0 0 40px #20bdf022;
+  position: relative;
+}
+:root[data-theme="starfall"] .board::before, :root[data-theme="starfall"] .board::after {
+  content: ""; position: absolute; width: 34px; height: 34px; pointer-events: none;
+  border: 2px solid #6fd2f2; filter: drop-shadow(0 0 6px #20bdf0);
+}
+:root[data-theme="starfall"] .board::before { top: -6px; left: -6px; border-right: 0; border-bottom: 0; }
+:root[data-theme="starfall"] .board::after { bottom: -6px; right: -6px; border-left: 0; border-top: 0; }
+:root[data-theme="starfall"] .cell { border-radius: 0; background: repeating-linear-gradient(135deg, #6fd2f206 0 6px, transparent 6px 12px); box-shadow: inset 0 0 0 1px #6fd2f233; }
+:root[data-theme="starfall"] .card { border-radius: 3px; }
+:root[data-theme="starfall"] .who b { border-radius: 0; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); border: 0; width: 56px; }
+:root[data-theme="starfall"] .logo { letter-spacing: .4em; filter: drop-shadow(0 0 12px #20bdf0); }
+:root[data-theme="starfall"] .tag, :root[data-theme="starfall"] .turn { text-transform: uppercase; letter-spacing: .2em; font-style: normal; font-size: 13px; }
+
+/* ---------- Tidebound: sea glass and bubbles ---------- */
+:root[data-theme="tidebound"] body {
+  background:
+    radial-gradient(circle at 15% 70%, #ffffff22 0 6px, transparent 7px), radial-gradient(circle at 80% 40%, #ffffff1a 0 9px, transparent 10px),
+    radial-gradient(circle at 62% 82%, #ffffff1f 0 4px, transparent 5px), radial-gradient(circle at 30% 30%, #ffffff14 0 5px, transparent 6px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='120' viewBox='0 0 600 120'%3E%3Cpath d='M0 60 Q75 20 150 60 T300 60 T450 60 T600 60 V120 H0Z' fill='%2335d6c8' fill-opacity='.10'/%3E%3Cpath d='M0 80 Q75 50 150 80 T300 80 T450 80 T600 80 V120 H0Z' fill='%2335d6c8' fill-opacity='.10'/%3E%3C/svg%3E") bottom / 600px 120px repeat-x,
+    conic-gradient(from 200deg at 50% -10%, transparent 0deg, #ffffff10 8deg, transparent 16deg, #ffffff0c 26deg, transparent 34deg, #ffffff10 44deg, transparent 52deg),
+    linear-gradient(180deg, #0b5563 0%, #06343d 40%, #021417 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="tidebound"] .panel,
+:root[data-theme="tidebound"] .dailies {
+  border-radius: 30px; border: 0;
+  background: linear-gradient(165deg, #fffaf2f2, #e6f3efe8 55%, #cde7e2e0);
+  box-shadow: 0 0 0 6px #ffffff22, 0 20px 50px #0009, inset 0 2px 0 #ffffffcc, inset 0 -12px 30px #35d6c822;
+}
+:root[data-theme="tidebound"] .dailies { --ink: #12303a; --muted: #406b74; color: var(--ink); }
+:root[data-theme="tidebound"] .dailies h3 { color: #cf4f39; }
+:root[data-theme="tidebound"] .panel::before, :root[data-theme="tidebound"] .panel::after { content: "〰"; color: #35a6b4; text-shadow: none; }
+:root[data-theme="tidebound"] input, :root[data-theme="tidebound"] select { border-radius: 16px; border-color: #9fd4cd; background: #ffffffcc; }
+:root[data-theme="tidebound"] .rules { border-radius: 20px; border-color: #9fd4cd; }
+:root[data-theme="tidebound"] button {
+  border-radius: 999px; border: 0; background: linear-gradient(180deg, #2a8fa3, #0b5563);
+  box-shadow: inset 0 3px 0 #ffffff55, inset 0 -3px 6px #0004, 0 4px 10px #0006; color: #effffc;
+}
+:root[data-theme="tidebound"] button.primary { background: linear-gradient(180deg, #ffb39f, #ee6e55 55%, #cf4f39); color: #fff; text-shadow: 0 1px 0 #0004; }
+:root[data-theme="tidebound"] button.ghost, :root[data-theme="tidebound"] button.link { background: transparent; box-shadow: none; color: inherit; }
+:root[data-theme="tidebound"] .board {
+  border-radius: 34px; border: 0;
+  background: radial-gradient(ellipse at 50% 40%, #e9dcc6 0%, #cbb693 75%);
+  box-shadow: 0 0 0 8px #f5efe455, 0 18px 40px #000a, inset 0 0 30px #9b7a4a66;
+}
+:root[data-theme="tidebound"] .cell {
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 35%, #2fb3b8 0%, #0b5563 70%, #063741 100%);
+  box-shadow: inset 0 6px 14px #0007, inset 0 -2px 0 #ffffff33, 0 1px 0 #ffffff66;
+}
+:root[data-theme="tidebound"] .card { border-radius: 14px; }
+:root[data-theme="tidebound"] .who b { box-shadow: inset 0 4px 0 #ffffff66, 0 4px 12px #0007; border: 0; }
+
+/* ---------- Bloomwild: storybook garden ---------- */
+:root[data-theme="bloomwild"] body {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23a2d860' stroke-opacity='.13' stroke-width='2'%3E%3Cpath d='M20 30 C34 18 46 26 40 42 C30 46 22 40 20 30 Z M20 30 L40 42'/%3E%3Cpath d='M86 78 C100 66 112 74 106 90 C96 94 88 88 86 78 Z M86 78 L106 90'/%3E%3Cpath d='M78 18 c6 -6 14 -2 12 6 c-4 6 -12 4 -12 -6Z'/%3E%3Cpath d='M28 92 c6 -6 14 -2 12 6 c-4 6 -12 4 -12 -6Z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 70% -10%, #fff3b055 0%, transparent 55%),
+    linear-gradient(180deg, #2a4a20 0%, #1d3616 40%, #091307 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="bloomwild"] .panel,
+:root[data-theme="bloomwild"] .dailies {
+  border: 0;
+  border-radius: 34px 14px 38px 16px / 18px 36px 14px 34px;
+  background: radial-gradient(ellipse at 20% 10%, #fffdf2 0%, #f8f2db 50%, #ece2bb 100%);
+  box-shadow: 0 16px 40px #0009, 0 0 0 4px #37602a, 0 0 0 6px #f49bbd;
+  outline: 2px dashed #7aa45d; outline-offset: -12px;
+}
+:root[data-theme="bloomwild"] .dailies { --ink: #24321a; --muted: #5a6c3d; color: var(--ink); outline-offset: -8px; }
+:root[data-theme="bloomwild"] .dailies h3 { color: #b83f73; }
+:root[data-theme="bloomwild"] .panel::before, :root[data-theme="bloomwild"] .panel::after { content: "❀"; color: #db5c93; font-size: 26px; text-shadow: none; }
+:root[data-theme="bloomwild"] input, :root[data-theme="bloomwild"] select { border-radius: 14px 4px 14px 4px; border-color: #a99c64; }
+:root[data-theme="bloomwild"] .rules { border-radius: 18px 6px 18px 6px; border: 2px dashed #a2c27f; }
+:root[data-theme="bloomwild"] button {
+  border-radius: 20px 4px 20px 4px; border: 0; border-bottom: 4px solid #1d3616;
+  background: linear-gradient(180deg, #4f8a3a, #37602a); color: #f6ffe9; box-shadow: 0 4px 10px #0006;
+}
+:root[data-theme="bloomwild"] button.primary { background: linear-gradient(180deg, #ffbdd6, #f49bbd 55%, #db5c93); color: #48192d; border-bottom-color: #ad5277; text-shadow: none; }
+:root[data-theme="bloomwild"] button.ghost, :root[data-theme="bloomwild"] button.link { background: transparent; box-shadow: none; border-bottom: 0; color: inherit; }
+:root[data-theme="bloomwild"] .board {
+  border-radius: 40px 18px 44px 20px / 22px 42px 18px 40px; border: 0;
+  background:
+    repeating-radial-gradient(circle at 10% 20%, #315626 0 6px, #2a4a20 6px 12px),
+    #2a4a20;
+  box-shadow: 0 0 0 10px #3f6d2f, 0 0 0 12px #f49bbd99, 0 18px 40px #000a, inset 0 0 30px #000a;
+}
+:root[data-theme="bloomwild"] .cell {
+  border-radius: 16px 6px 16px 6px;
+  background: radial-gradient(ellipse at 50% 40%, #5a3f26 0%, #3a2816 80%);
+  box-shadow: inset 0 4px 10px #000a, 0 0 0 2px #6b9a52;
+}
+:root[data-theme="bloomwild"] .card { border-radius: 10px; }
+:root[data-theme="bloomwild"] .who b { border-radius: 50% 10% 50% 10%; }
+
+/* ---------- Hollow Lanterns: lantern-lit night ---------- */
+:root[data-theme="hollow"] body {
+  background:
+    radial-gradient(circle at 12% 22%, #ff9b3d33 0, transparent 70px), radial-gradient(circle at 86% 30%, #ff9b3d2a 0, transparent 90px),
+    radial-gradient(circle at 70% 78%, #ffb35c22 0, transparent 60px), radial-gradient(circle at 24% 84%, #ff9b3d1f 0, transparent 80px),
+    radial-gradient(ellipse at 50% 120%, #3a2d5588 0%, transparent 60%),
+    linear-gradient(180deg, #1b1529 0%, #07060c 100%);
+  background-attachment: fixed;
+}
+:root[data-theme="hollow"] .panel,
+:root[data-theme="hollow"] .dailies {
+  --ink: #f3ead9; --ink-soft: #c2a98a; --field-1: #120e1c; --field-2: #1b1529; --field-line: #b4561c88;
+  background: linear-gradient(180deg, #1d1729f2, #120e1cf5);
+  border: 1px solid #ff9b3d55; border-radius: 4px;
+  box-shadow: 0 0 0 4px #0b0914, 0 0 0 5px #ff9b3d33, 0 0 34px #ff9b3d22, 0 18px 50px #000c;
+  position: relative;
+}
+:root[data-theme="hollow"] .panel { margin-top: 26px; }
+:root[data-theme="hollow"] .panel::before {
+  content: ""; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 26px; height: 34px;
+  border-radius: 10px; background: radial-gradient(ellipse at 50% 45%, #fff1c9 0%, #ffb35c 40%, #b4561c 100%);
+  box-shadow: 0 0 22px #ff9b3d, 0 0 50px #ff9b3d77;
+}
+:root[data-theme="hollow"] .panel::after { content: ""; position: absolute; top: -44px; left: 50%; width: 1px; height: 14px; background: #ffb35c88; transform: none; }
+:root[data-theme="hollow"] input, :root[data-theme="hollow"] select { border-radius: 2px; color: var(--ink); box-shadow: none; border-color: #ff9b3d55; }
+:root[data-theme="hollow"] select option { background: #1b1529; }
+:root[data-theme="hollow"] .rules { border-radius: 2px; border-color: #ff9b3d44; background: transparent; }
+:root[data-theme="hollow"] button {
+  border-radius: 2px; border: 1px solid #ff9b3d88; background: transparent; color: #ffd89c; box-shadow: none; letter-spacing: .12em;
+}
+:root[data-theme="hollow"] button:hover { box-shadow: 0 0 16px #ff9b3d66, inset 0 0 12px #ff9b3d33; filter: none; }
+:root[data-theme="hollow"] button.primary { background: linear-gradient(180deg, #ffb35c, #d96e1c); color: #2a1206; border-color: #ffd89c; box-shadow: 0 0 18px #ff9b3d77; text-shadow: none; }
+:root[data-theme="hollow"] button.ghost, :root[data-theme="hollow"] button.link { border: 0; }
+:root[data-theme="hollow"] .board {
+  border-radius: 2px; border: 1px solid #ff9b3d44;
+  background:
+    linear-gradient(#ffb35c14 1px, transparent 1px) 0 0 / 100% 25%,
+    linear-gradient(90deg, #ffb35c14 1px, transparent 1px) 0 0 / 16.66% 100%,
+    linear-gradient(180deg, #1e1730, #0b0914);
+  box-shadow: 0 0 0 6px #0b0914, 0 0 0 7px #ff9b3d33, 0 0 50px #ff9b3d1a, inset 0 0 40px #000c;
+}
+:root[data-theme="hollow"] .cell { border-radius: 2px; background: #ffffff05; box-shadow: inset 0 0 0 1px #ff9b3d26, inset 0 0 18px #000a; }
+:root[data-theme="hollow"] .card { border-radius: 4px; }
+:root[data-theme="hollow"] .logo { font-weight: 400; letter-spacing: .32em; filter: drop-shadow(0 0 16px #ff9b3d); }
+:root[data-theme="hollow"] .who b { box-shadow: 0 0 18px #ff9b3d88; }
