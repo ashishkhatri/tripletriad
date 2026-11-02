@@ -9,6 +9,7 @@ window.Sfx = (() => {
     'pack-open': 0.65, 'reveal-1': 0.45, 'reveal-2': 0.5, 'reveal-3': 0.55, 'reveal-4': 0.65, 'reveal-5': 0.75,
     'storm-warn': 0.6, 'storm-fire': 0.65, 'storm-tide': 0.65, 'storm-wind': 0.6, 'storm-lightning': 0.75,
     'storm-frost': 0.6, 'storm-quake': 0.75, 'storm-dragon': 0.8, ward: 0.55,
+    'reveal-foil': 0.55, craft: 0.6, 'craft-big': 0.75, 'pack-charge': 0.55,
   };
   let ctx = null, out = null;
   const buffers = new Map();

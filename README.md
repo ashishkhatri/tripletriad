@@ -310,9 +310,13 @@ your own MP3 with the same name; a custom set without its own folder uses the ro
 
 ## Versions and releases
 
-The running version is shown at the bottom of the main menu and at `/version`.
+The running version is shown in the top bar on desktop, next to the logo on phones, and at `/version`.
 Each change gets a version bump and a [GitHub release](https://github.com/ashishkhatri/tripletriad/releases);
 see `CHANGELOG.md`. Run `update` in the container to move to the latest release.
+
+The game is pre-release, so versions are `0.x.y`: each minor version takes up to ten patch releases
+(0.4.0 … 0.4.9), then the minor version goes up (0.5.0). Older releases were numbered 1.0.0–3.9.2.
+Pushing to `main` with a new version in `package.json` publishes the release automatically.
 
 ## Files
 

@@ -3,6 +3,19 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.0 — 2026-11-02
+### Changed
+- **Version numbers restart at 0.4.0**, since the game isn't in production yet. From here, each minor version gets
+  up to ten patch releases (0.4.0 … 0.4.9, then 0.5.0). Everything below this entry was released as 1.0.0–3.9.2.
+### Added
+- Bigger sounds for the big moments, in every set's own sound kit:
+  - **Rare, Epic and Legendary reveals** now build up, hit with an impact and bloom into a chord with a shower of
+    sparkles; each tier is longer and grander, and Legendary ends with a short fanfare.
+  - **Foils** add a rainbow shimmer that sweeps up and sparkles out, on top of the reveal.
+  - **Crafting** sounds like magic gathering and a ringing strike forging the card; crafting a Rare or better, or a
+    foil, gets a bigger version with a low boom (plus the foil shimmer for foils).
+  - **Pack charge:** a rising rumble and shimmer under the pack's charge-up, cut off by the tear.
+
 ## v3.9.2 — 2026-11-02
 ### Changed
 - Set ornaments (the ❦ flourish, Arcane's ✧, Bloomwild's ❀, Tidebound's waves, Hollow's lanterns) no longer sit in

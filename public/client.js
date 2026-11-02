@@ -1102,7 +1102,11 @@
     try {
       const r = await api('POST', kind === 'craft' ? '/api/craft' : '/api/scrap', { deck: deckId, card: id, foil });
       colSummary = r.summary; setShards(r.shards);
-      sfx(kind === 'craft' ? `reveal-${Math.min(5, deckCard(deckId, id).level)}` : 'cancel');
+      if (kind === 'craft') {
+        const lvl = deckCard(deckId, id).level;
+        sfx(lvl >= 3 || foil ? 'craft-big' : 'craft');
+        if (foil) sfx('reveal-foil', { delay: 0.85 });
+      } else sfx('cancel');
       toast(kind === 'craft' ? `Crafted ${foil ? 'a foil ' : ''}${deckCard(deckId, id).name}.` : `Scrapped for ${r.gained} shards.`);
       renderCardDetail();
       renderCollection();
@@ -1153,6 +1157,7 @@
       opening = true;
       // 1. charge up: the pack shakes harder and light leaks from the seal
       sealed.classList.add('charging');
+      sfx('pack-charge');
       $('#pack-hint').textContent = '';
       let r;
       try { [r] = await Promise.all([api('POST', '/api/packs/open', { deck: deckId }), sleep(reduceMotion ? 0 : 900)]); }
@@ -1230,6 +1235,7 @@
         holder.prepend(rb);
         setTimeout(() => rb.remove(), 2200);
         sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
+        if (pc.foil) sfx('reveal-foil', { delay: c.level >= 3 ? 0.5 : 0.12 });
         if (++revealed === r.cards.length) {
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
           $('#btn-pack-again').hidden = r.summary.packs < 1;

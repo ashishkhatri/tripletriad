@@ -570,13 +570,97 @@ def fx_ward(K):
     place(x, 0, K.thump(300, 150, 0.12, 30) * 0.4)
     return K.room(x)
 
+# ---- big moments: rare / epic / legendary reveals, foils, crafting, pack charge ----
+def riser(d, lo=200, hi=3000):
+    """noise swell rising in pitch and volume, ending at d"""
+    tt = t(d)
+    x = band_sweep(noise(d), lo, hi, True, steps=18, q=(0.8, 1.25))
+    return x * (tt / d) ** 2.2
+def boom(K, f0=90, f1=32, d=1.4):
+    """sub drop + body thump + air"""
+    x = canvas(d)
+    place(x, 0, sweep(f0, f1, d, 2.6) * 0.9)
+    place(x, 0, K.thump(160, 55, 0.35, 10) * 0.6)
+    place(x, 0, lp(noise(0.5), 900) * env_exp(int(0.5 * SR), 7) * 0.4)
+    return x
+def shower(K, d=1.6, count=26, lo=84, hi=108, gain=0.16):
+    """falling sparkle shower: notes that descend in pitch over time"""
+    out = canvas(d + 1.0)
+    for i in range(count):
+        at = (i / count) * d + rng.uniform(0, 0.05)
+        m = int(hi - (hi - lo) * (i / count) + rng.integers(-3, 4))
+        place(out, at, K.tone(hz(K.mode(m)), 0.7, 5, 0.7) * rng.uniform(0.5, 1), gain)
+    return out
+def fx_reveal_big(K, level):
+    """Rare (3), Epic (4), Legendary (5): a build-up, an impact, then a chord that blooms."""
+    pre = {3: 0.35, 4: 0.6, 5: 0.95}[level]
+    x = canvas(pre + 4.2)
+    place(x, 0, riser(pre, 300, 2500 + 1500 * (level - 3)) * (0.35 + 0.1 * level))
+    place(x, 0, K.swish(pre, 400, 4000) * 0.3)
+    hit = pre
+    place(x, hit, K.flip() * 0.7)
+    place(x, hit, boom(K, 80 + 10 * level, 30, 1.0 + 0.3 * (level - 3)) * (0.35 + 0.15 * (level - 3)))
+    if K.name == 'hollow': place(x, hit, K.gong(hz(36 + (5 - level) * 2), 2.4) * (0.2 + 0.1 * (level - 3)))
+    chords = {3: [72, 76, 79, 84], 4: [67, 72, 76, 79, 84, 88], 5: [60, 67, 72, 76, 79, 84, 88, 91, 96]}
+    place(x, hit + 0.02, chord(K, chords[level], 0.035 if level < 5 else 0.05, 2.2 + 0.3 * (level - 3), 0.3, 1.0 + 0.1 * level))
+    for m in ([48, 55] if level >= 4 else []) + ([36, 43] if level == 5 else []):
+        place(x, hit, K.tone(hz(m), 2.6, 1.0, 0.25) * 0.25)
+    place(x, hit + 0.1, shower(K, 0.9 + 0.4 * (level - 3), 12 + 10 * (level - 3), 86, 106, 0.1 + 0.03 * (level - 3)))
+    if level == 5:   # a short triumphant phrase on top
+        for i, m in enumerate([79, 84, 88, 91]):
+            place(x, hit + 0.55 + i * 0.12, K.pluck(hz(K.mode(m)), 0.8, 4) * 0.35)
+        place(x, hit + 1.05, chord(K, [84, 88, 91, 96], 0.02, 2.4, 0.22, 1.3))
+    return K.room(x, K.room_s * 1.5, min(0.5, K.room_wet + 0.08))
+def fx_reveal_foil(K):
+    """layered on top of a reveal: a rainbow shimmer that sweeps up and sparkles out"""
+    x = canvas(3.2)
+    tt = t(1.2)
+    shimmer = sum(np.sin(2 * np.pi * hz(K.mode(m)) * tt + rng.uniform(0, 6)) * (0.5 + 0.5 * np.sin(2 * np.pi * (3 + k) * tt))
+                  for k, m in enumerate([84, 88, 91, 95, 98]))
+    place(x, 0, hp(shimmer, 800) * np.sin(np.pi * np.clip(tt / 1.2, 0, 1)) ** 1.5 * 0.08)
+    for i, m in enumerate([72, 76, 79, 83, 86, 88, 91, 95, 98, 100]):   # sweeping glissando of chimes
+        place(x, 0.05 + i * 0.045, K.tone(hz(K.mode(m)), 1.2, 3.5, 1.2) * (0.5 - i * 0.025), 0.4)
+    place(x, 0.3, shower(K, 1.2, 22, 90, 110, 0.12))
+    place(x, 0, K.swish(0.6, 2000, 12000) * 0.25)
+    return K.room(x, K.room_s * 1.4, min(0.5, K.room_wet + 0.1))
+def fx_craft(K):
+    """crafting: magic gathers, then a ringing strike forges the card"""
+    x = canvas(2.6)
+    place(x, 0, riser(0.55, 600, 5000) * 0.35)
+    for i in range(7): place(x, 0.05 + i * 0.07, K.pluck(hz(K.mode(76 + i * 2)), 0.25, 18) * (0.12 + 0.03 * i))
+    hit = 0.55
+    place(x, hit, K.thump(240, 110, 0.18, 30) * 0.7)                             # strike
+    place(x, hit, K.tone(hz(K.mode(84)), 1.8, 1.6, 1.4) * 0.45)                 # ring
+    place(x, hit, K.tone(hz(K.mode(91)), 1.4, 2.2, 1.0) * 0.25)
+    place(x, hit + 0.05, shower(K, 0.6, 10, 88, 104, 0.1))
+    return K.room(x)
+def fx_craft_big(K):
+    """crafting a Rare+ or a foil: the same forge, bigger, with a bloom"""
+    x = canvas(3.6)
+    place(x, 0, riser(0.8, 300, 6000) * 0.45)
+    for i in range(10): place(x, 0.05 + i * 0.07, K.pluck(hz(K.mode(72 + i * 2)), 0.3, 16) * (0.1 + 0.03 * i))
+    hit = 0.8
+    place(x, hit, boom(K, 110, 35, 1.2) * 0.5)
+    place(x, hit, K.thump(260, 120, 0.2, 26) * 0.6)
+    place(x, hit + 0.02, chord(K, [67, 72, 76, 79, 84, 88], 0.03, 2.4, 0.28, 1.3))
+    place(x, hit + 0.1, shower(K, 1.1, 20, 86, 108, 0.12))
+    return K.room(x, K.room_s * 1.4, min(0.5, K.room_wet + 0.08))
+def fx_pack_charge(K):
+    """under the pack's charge-up: a building rumble and shimmer, cut off by the tear"""
+    x = canvas(1.0)
+    place(x, 0, riser(0.9, 150, 3500) * 0.5)
+    place(x, 0, lp(noise(0.9), 260) * (t(0.9) / 0.9) * 0.6)
+    for i in range(10): place(x, 0.1 + i * 0.075, K.pluck(hz(K.mode(70 + i * 2)), 0.12, 30) * (0.05 + 0.025 * i))
+    return x
+
 EFFECTS = {
     'pick': fx_pick, 'place': fx_place, 'flip': fx_flip, 'cancel': fx_cancel,
     'same': fx_same, 'plus': fx_plus, 'combo': fx_combo, 'turn': fx_turn,
     'win': fx_win, 'lose': fx_lose, 'draw': fx_draw,
     'xp': fx_xp, 'unlock': fx_unlock, 'wager-win': fx_wager_win, 'wager-lose': fx_wager_lose,
     'pack-open': fx_pack_open, 'click': fx_click, 'error': fx_error,
-    **{f'reveal-{l}': (lambda K, l=l: fx_reveal(K, l)) for l in range(1, 6)},
+    **{f'reveal-{l}': (lambda K, l=l: fx_reveal(K, l) if l < 3 else fx_reveal_big(K, l)) for l in range(1, 6)},
+    'reveal-foil': fx_reveal_foil, 'craft': fx_craft, 'craft-big': fx_craft_big, 'pack-charge': fx_pack_charge,
     'storm-warn': fx_storm_warn, 'storm-fire': fx_storm_fire, 'storm-tide': fx_storm_tide, 'storm-wind': fx_storm_wind,
     'storm-lightning': fx_storm_lightning, 'storm-frost': fx_storm_frost, 'storm-quake': fx_storm_quake,
     'storm-dragon': fx_storm_dragon, 'ward': fx_ward,
