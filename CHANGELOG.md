@@ -3,6 +3,19 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.9.1 — 2026-11-02
+### Fixed
+- The sealed pack sat to the left on the pack screen (it was placed in the first column of the six-card layout).
+  It's centred again; the cards still use one row of six or two rows of three once they're out.
+### Changed
+- Removed the "<Set> pack" title above the pack (still read out by screen readers).
+- The end-of-match popup can be closed (✕, clicking outside it, or Escape) to look at the final board; a **Result**
+  button under the board brings it back. It reopens by itself if a wager needs your pick.
+- Every popup closes when you click or tap outside it: sign-in, card details, the pack screen (except while a pack is
+  being torn open) and the move history panel. Escape closes them too.
+- Dropdowns have their own arrow, set in from the right edge instead of pressed against the border.
+- Placeholder hints like CODE are much lighter, so they read as hints rather than filled-in text.
+
 ## v3.9.0 — 2026-11-02
 ### Added
 - Pack opening is now a full sequence:

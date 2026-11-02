@@ -174,6 +174,7 @@
     </div>
     <div class="footer">
       <span id="rules-label" class="muted"></span>
+      <button id="btn-show-result" class="ghost small" hidden>Result</button>
       <button id="btn-history" class="ghost small" aria-controls="history" aria-expanded="false" title="Every move, and why cards flipped">History <b>0</b></button>
       <button id="btn-quit" class="ghost small">Quit</button>
     </div>
@@ -192,6 +193,7 @@
     </aside>
     <div id="result" class="overlay">
       <div class="panel center">
+        <button type="button" id="btn-result-close" class="overlay-x" aria-label="Close to see the board" title="Close to see the board">✕</button>
         <h2 id="result-title"></h2>
         <p id="result-score" class="muted"></p>
         <div id="result-xp" class="result-xp" hidden>
@@ -287,7 +289,7 @@
   <!-- PACK OPENING -->
   <div id="pack" class="overlay">
     <div class="pack-stage">
-      <h2 id="pack-title">A new pack!</h2>
+      <h2 id="pack-title" class="sr-only">A new pack!</h2>
       <div id="pack-cards" class="pack-cards"></div>
       <p class="muted" id="pack-hint"></p>
       <div class="row pack-actions">

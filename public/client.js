@@ -745,6 +745,7 @@
     }
   }
   function showWagerPick(options) {
+    $('#result').classList.add('show'); $('#btn-show-result').hidden = true;   // a choice is needed: bring the popup back
     $('#result-wager').hidden = false;
     $('#result-wager-text').textContent = 'You won the wager — pick one of their cards to keep:';
     const wc = $('#result-wager-cards'); wc.innerHTML = '';
@@ -830,7 +831,7 @@
       case 'state': {
         const fresh = !state || msg.events.some((e) => e.type === 'start');
         me = msg.you; names = msg.names;
-        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); }
+        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); $('#btn-show-result').hidden = true; }
         if (!document.querySelector('#game.active')) show('game');
         busy = false;
         applyResult(msg.state, msg.events).then(() => {
@@ -1116,6 +1117,7 @@
     applyTheme(deckId);
     const box = $('#pack-cards'); box.innerHTML = '';
     $('#pack-title').textContent = `${deck.name} pack`;
+    box.classList.add('sealed-stage');
     // a real 3D pack: front and back faces with thickness between them, foil side walls,
     // pillow shading and crinkles; it floats in a wrapper and tilts toward the pointer
     const float = document.createElement('div'); float.className = 'sealed-float';
@@ -1194,6 +1196,7 @@
   // Step 2: the six cards fly out face down (the foil last); click each to reveal it.
   function revealPackCards(deckId, r, origin) {
     const box = $('#pack-cards'); box.innerHTML = '';
+    box.classList.remove('sealed-stage');
     const deck = decks.get(deckId);
     let revealed = 0;
     r.cards.forEach((pc, i) => {
@@ -1404,6 +1407,33 @@
   $('#cd-scrap').onclick = () => detailAction('scrap');
   $('#cd-close').onclick = () => $('#card-detail').classList.remove('show');
   $('#card-detail').addEventListener('click', (e) => { if (e.target.id === 'card-detail') $('#card-detail').classList.remove('show'); });
+  // ---------- closing popups: ✕ buttons and clicking outside ----------
+  const closeResult = () => { $('#result').classList.remove('show'); $('#btn-show-result').hidden = !(state && state.over); };
+  $('#btn-result-close').onclick = closeResult;
+  $('#btn-show-result').onclick = () => { $('#result').classList.add('show'); $('#btn-show-result').hidden = true; };
+  $('#result').addEventListener('click', (e) => { if (e.target.id === 'result') closeResult(); });
+  $('#auth').addEventListener('click', (e) => { if (e.target.id === 'auth') $('#auth').classList.remove('show'); });
+  // the pack screen: clicking empty space closes it, except while a pack is being torn open
+  $('#pack').addEventListener('click', (e) => {
+    const t = e.target;
+    if (!(t.id === 'pack' || t.classList.contains('pack-stage') || t.id === 'pack-cards')) return;
+    if (document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) return;
+    $('#btn-pack-done').click();
+  });
+  // the move history drawer closes when you click or tap anywhere else
+  document.addEventListener('pointerdown', (e) => {
+    if (!historyOpen) return;
+    if (e.target.closest('#history, #btn-history, #btn-result-history')) return;
+    setHistory(false);
+  }, true);
+  // Escape closes whichever popup is on top
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if ($('#card-detail').classList.contains('show')) $('#card-detail').classList.remove('show');
+    else if ($('#auth').classList.contains('show')) $('#auth').classList.remove('show');
+    else if ($('#pack').classList.contains('show') && !document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) $('#btn-pack-done').click();
+    else if ($('#result').classList.contains('show')) closeResult();
+  });
   $('#btn-pack-again').onclick = () => openPack(packDeck);
   $('#btn-pack-done').onclick = () => {
     $('#pack').classList.remove('show');
