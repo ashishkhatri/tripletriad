@@ -1286,7 +1286,11 @@
   // ---------- card tilt settings (Account page) ----------
   function renderTilt() {
     const T = window.CardTilt;
-    if (!T) return;
+    if (!T) {
+      const err = (window.__errs || []).find((x) => /foil/.test(x));
+      $('#tilt-text').textContent = err ? `The tilt code hit an error: ${err}` : 'The tilt code didn’t load (an old cached copy?). Close the app fully and reopen it.';
+      $('#tilt-dot').className = 'tilt-dot bad'; return;
+    }
     const st = T.status();
     $('#tilt-text').textContent = st.text;
     $('#tilt-dot').className = 'tilt-dot ' + ({ on: 'ok', idle: 'ok', waiting: 'wait', permission: 'wait' }[st.code] || (st.code === 'mouse' || st.code === 'off' ? 'off' : 'bad'));
@@ -1304,7 +1308,8 @@
     T.setEnabled(turnOn).then(renderTilt);
     renderTilt();
   };
-  setInterval(() => { if (!$('#view-account').hidden && document.querySelector('#menu.active')) renderTilt(); }, 300);
+  setInterval(() => { if (!$('#view-account').hidden) renderTilt(); }, 300);
+  renderTilt();
   if (window.CardTilt) window.CardTilt.onChange(renderTilt);
   $('#btn-history').onclick = () => setHistory(!historyOpen);
   $('#btn-history-close').onclick = () => setHistory(false);

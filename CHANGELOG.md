@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.3 — 2026-11-02
+### Fixed
+- Browsers, installed apps and Cloudflare could keep using an old cached copy of the game's scripts after an update
+  (so new features like Card tilt showed up in the page but didn't run). Script and stylesheet links now carry the
+  version number, so every update loads matching files; unchanged files are still cached for speed.
+- The Card tilt panel says so if the tilt code failed to load or hit an error, instead of staying blank.
+
 ## v3.8.2 — 2026-11-02
 ### Fixed
 - Card tilt now also works from the gravity sensor (`devicemotion`) when a browser doesn't deliver orientation angles,

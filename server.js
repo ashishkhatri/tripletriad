@@ -116,7 +116,15 @@ const server = http.createServer((req, res) => {
   if (!file.startsWith(PUBLIC + path.sep)) { res.writeHead(403); return res.end(); }
   fs.readFile(file, (err, data) => {
     if (err) { res.writeHead(404); return res.end('Not found'); }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
+    if (p === '/index.html') {
+      // stamp scripts and stylesheets with the version so browsers, installed apps and proxies (Cloudflare)
+      // always load the files that match this release instead of an older cached copy
+      const html = data.toString('utf8').replace(/(src|href)="([\w./-]+\.(?:js|css))"/g, `$1="$2?v=${VERSION}"`);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(html);
+    }
+    const versioned = url.searchParams.get('v') === VERSION;
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': versioned ? 'public, max-age=31536000, immutable' : 'no-cache' });
     res.end(data);
   });
 });

@@ -141,9 +141,9 @@
       <div class="panel tilt-panel" id="tilt-panel">
         <h3>Card tilt <small class="muted">phones &amp; tablets</small></h3>
         <p class="muted">Tilt your device and the cards turn with it, with the shine sliding across them.</p>
-        <p class="tilt-status"><span id="tilt-dot" class="tilt-dot"></span> <span id="tilt-text"></span></p>
+        <p class="tilt-status"><span id="tilt-dot" class="tilt-dot wait"></span> <span id="tilt-text">Checking…</span></p>
         <div class="tilt-meter" id="tilt-meter" hidden><span id="tilt-ball"></span></div>
-        <div class="row"><button type="button" id="btn-tilt"></button></div>
+        <div class="row"><button type="button" id="btn-tilt">Turn on</button></div>
       </div>
     </div>
   </section>
@@ -299,6 +299,7 @@
 
   <div id="tooltip" role="tooltip"></div>
   <div id="toast" class="toast"></div>
+  <script>window.__errs=[];addEventListener("error",function(e){__errs.push((e.filename||"").split("/").pop()+": "+e.message)});</script>
   <script src="game.js"></script>
   <script src="music.js"></script>
   <script src="sfx.js"></script>
