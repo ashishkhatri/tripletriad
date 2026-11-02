@@ -91,6 +91,7 @@
       turn: rng() < 0.5 ? 0 : 1,
       over: false,
       winner: null,
+      history: [],
     };
   }
 
@@ -129,6 +130,10 @@
     const events = [{ type: 'place', cell, player: p }];
     const flipped = new Set();
     const comboQueue = [];
+    // Move history: what was placed, every check that mattered and why each card flipped.
+    const mod = (c) => elementMod(s, c);
+    const steps = [];
+    const log = { p, cell, card: clone(card), steps, owners: null };
 
     const flip = (n, by) => {
       if (s.board[n].owner === p || flipped.has(n)) return false;
@@ -151,7 +156,9 @@
       const m = nb.filter((x) => x.mine === x.theirs);
       if (m.length >= 2 && m.some((x) => s.board[x.n].owner !== p)) {
         events.push({ type: 'rule', rule: 'same' });
-        for (const x of m) if (flip(x.n, 'same')) comboQueue.push(x.n);
+        const pairs = m.map((x) => ({ n: x.n, d: x.d, a: x.mine, b: x.theirs, own: s.board[x.n].owner === p, flip: false }));
+        m.forEach((x, i) => { if (flip(x.n, 'same')) { comboQueue.push(x.n); pairs[i].flip = true; } });
+        steps.push({ k: 'same', pairs });
       }
     }
     // Plus: 2+ adjacent pairs with the same sum.
@@ -162,12 +169,17 @@
       for (const group of Object.values(sums)) {
         if (group.length < 2 || !group.some((x) => s.board[x.n].owner !== p)) continue;
         if (!announced) { events.push({ type: 'rule', rule: 'plus' }); announced = true; }
-        for (const x of group) if (flip(x.n, 'plus')) comboQueue.push(x.n);
+        const pairs = group.map((x) => ({ n: x.n, d: x.d, a: x.mine, b: x.theirs, own: s.board[x.n].owner === p, flip: false }));
+        group.forEach((x, i) => { if (flip(x.n, 'plus')) { comboQueue.push(x.n); pairs[i].flip = true; } });
+        steps.push({ k: 'plus', sum: group[0].mine + group[0].theirs, pairs });
       }
     }
     // Basic captures (elemental modifiers apply).
     for (const x of nb) {
-      if (s.board[x.n].owner !== p && value(s, cell, x.d) > value(s, x.n, opposite(x.d))) flip(x.n, 'basic');
+      if (s.board[x.n].owner === p) continue;
+      const a = value(s, cell, x.d), b = value(s, x.n, opposite(x.d)), won = a > b;
+      if (won) flip(x.n, 'basic');
+      steps.push({ k: 'basic', from: cell, n: x.n, d: x.d, a, b, am: mod(cell), bm: mod(x.n), flip: won });
     }
     // Combo: cards flipped by Same/Plus capture neighbours with basic rules, cascading.
     let comboAnnounced = false;
@@ -178,10 +190,17 @@
         if (n < 0 || !s.board[n] || s.board[n].owner === p) continue;
         if (value(s, c, d) > value(s, n, opposite(d))) {
           if (!comboAnnounced) { events.push({ type: 'rule', rule: 'combo' }); comboAnnounced = true; }
-          if (flip(n, 'combo')) comboQueue.push(n);
+          if (flip(n, 'combo')) {
+            comboQueue.push(n);
+            steps.push({ k: 'combo', from: c, n, d, a: value(s, c, d), b: value(s, n, opposite(d)), am: mod(c), bm: mod(n), flip: true });
+          }
         }
       }
     }
+
+    log.owners = s.board.map((x) => (x ? x.owner : null));
+    log.mod = mod(cell);
+    s.history = (s.history || []).concat([log]);
 
     s.turn = 1 - p;
     if (s.board.every(Boolean)) {

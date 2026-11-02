@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.4.0 — 2026-11-01
+### Added
+- **Move history:** a panel you open from the **History** button under the board (or **Move history** on the result
+  screen). Every move is listed newest first, with:
+  - a mini board showing the position after the move, with the placed card outlined and flipped cards marked ↻;
+  - each check that mattered, explained in words, with the numbers highlighted on the mini cards: which side beat
+    which (green / red), which held (grey), Same pairs (gold), Plus sums (blue) and each Combo step (pink);
+  - element-square bonuses and penalties shown next to the printed number.
+  Hover or tap a line to pick out just its numbers. Works against the computer and online, and survives reconnects.
+
 ## v3.3.0 — 2026-11-01
 ### Added
 - Every card set has its own sound effects, matching its theme:

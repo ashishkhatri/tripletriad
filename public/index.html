@@ -166,9 +166,16 @@
     </div>
     <div class="footer">
       <span id="rules-label" class="muted"></span>
+      <button id="btn-history" class="ghost small" aria-controls="history" aria-expanded="false" title="Every move, and why cards flipped">History <b>0</b></button>
       <button id="btn-quit" class="ghost small">Quit</button>
     </div>
     <div id="banner" class="banner"></div>
+    <aside id="history" class="history" aria-label="Move history">
+      <header><h3>Move history</h3><button id="btn-history-close" class="ghost small" aria-label="Close">✕</button></header>
+      <p class="muted hist-hint">Newest first. Hover or tap a line to pick out the numbers it compares.</p>
+      <p class="hist-legend"><b class="n win">8</b> wins <b class="n lose">6</b> beaten <b class="n weak">4</b><b class="n strong">7</b> holds <b class="n same">5</b> Same <b class="n plus">3</b> Plus <b class="n combo">9</b> Combo <i class="flip-badge static">↻</i> flipped</p>
+      <ol id="history-list"></ol>
+    </aside>
     <div id="result" class="overlay">
       <div class="panel center">
         <h2 id="result-title"></h2>
@@ -186,6 +193,7 @@
         <div class="row">
           <button id="btn-rematch" class="primary">Rematch</button>
           <button id="btn-result-packs" hidden>Open packs</button>
+          <button id="btn-result-history" class="ghost">Move history</button>
           <button id="btn-menu" class="ghost">Menu</button>
         </div>
       </div>

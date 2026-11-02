@@ -201,7 +201,128 @@
       board.appendChild(cell);
     }
     prevBoard = state.board.map((s) => (s ? { owner: s.owner, id: s.card.id } : null));
+    renderHistory();
   }
+
+  // ---------- move history ----------
+  const SIDE = ['top', 'right', 'bottom', 'left'];
+  const RAR_COLOR = { 1: '#8d939c', 2: '#b77d47', 3: '#d4dbe4', 4: '#e9c55a', 5: '#c58cff' };
+  let historyOpen = false;
+  function setHistory(open) {
+    historyOpen = open;
+    $('#history').classList.toggle('show', open);
+    $('#btn-history').setAttribute('aria-expanded', String(open));
+    if (open) renderHistory();
+  }
+  function miniCard(card, owner, cellIdx, marks) {
+    const el = document.createElement('div');
+    el.className = `mini-card ${owner === me ? 'mine' : 'theirs'}${card.level === 5 ? ' r5' : ''}`;
+    el.style.setProperty('--rar', RAR_COLOR[card.level] || RAR_COLOR[1]);
+    if (card.img) el.style.backgroundImage = `url("${encodeURI(card.img)}")`;
+    el.title = card.name;
+    SIDE.forEach((sd, d) => {
+      const r = document.createElement('span');
+      r.className = `rk ${sd}`; r.textContent = RANK(card.r[d]);
+      const m = marks.filter((x) => x.cell === cellIdx && x.d === d);
+      if (m.length) { r.classList.add('hl', m[m.length - 1].cls); r.dataset.steps = m.map((x) => x.step).join(' '); }
+      el.appendChild(r);
+    });
+    return el;
+  }
+  function renderHistory() {
+    const hist = (state && state.history) || [];
+    const btn = $('#btn-history');
+    if (btn) btn.querySelector('b').textContent = hist.length;
+    if (!historyOpen) return;
+    const list = $('#history-list'); list.innerHTML = '';
+    if (!hist.length) { const li = document.createElement('li'); li.className = 'muted hist-empty'; li.textContent = 'No moves yet.'; list.appendChild(li); return; }
+    const glyphs = (state && state.glyphs) || {};
+    const who = (p) => (p === me ? 'You' : (names[p] || 'Opponent'));
+    const cards = Array(9).fill(null);
+    const entries = [];
+    hist.forEach((h, i) => {
+      cards[h.cell] = h.card;
+      const snapshot = cards.slice();
+      entries.push({ h, i, snapshot });
+    });
+    for (const { h, i, snapshot } of entries.reverse()) {
+      const li = document.createElement('li');
+      li.className = `hist-move ${h.p === me ? 'mine' : 'theirs'}`;
+      const nm = (c) => (snapshot[c] ? snapshot[c].name : '?');
+      const marks = [];   // highlighted numbers on the mini board
+      const lines = [];
+      const flips = new Set();
+      const num = (v, cls) => `<b class="n ${cls}">${RANK(v)}</b>`;
+      const modTxt = (m, v) => (m ? ` <small>(${RANK(v - m)} ${m > 0 ? '+ 1' : '− 1'} element)</small>` : '');
+      if (h.mod) lines.push({ html: `Placed on ${h.mod > 0 ? 'a matching' : 'a different'} element square: <b>${h.mod > 0 ? '+1' : '−1'}</b> to every side.`, cls: 'note' });
+      h.steps.forEach((st, si) => {
+        if (st.k === 'same' || st.k === 'plus') {
+          const parts = st.pairs.map((x) => {
+            marks.push({ cell: h.cell, d: x.d, cls: st.k, step: si }, { cell: x.n, d: (x.d + 2) % 4, cls: st.k, step: si });
+            if (x.flip) flips.add(x.n);
+            const od = SIDE[(x.d + 2) % 4];
+            const pair = st.k === 'same'
+              ? `${SIDE[x.d]} ${num(x.a, st.k)} = ${nm(x.n)}’s ${od} ${num(x.b, st.k)}`
+              : `${SIDE[x.d]} ${num(x.a, st.k)} + ${nm(x.n)}’s ${od} ${num(x.b, st.k)} = <b>${st.sum}</b>`;
+            return pair + (x.own ? ' <small>(already theirs: counts, doesn’t flip)</small>' : '');
+          });
+          const got = st.pairs.filter((x) => x.flip).map((x) => nm(x.n));
+          lines.push({ html: `<span class="tag ${st.k}">${st.k === 'same' ? 'Same' : 'Plus'}</span>${parts.join('<br>')}${got.length ? `<br>→ flips <b>${got.join(', ')}</b>` : ''}`, step: si, cls: st.k });
+        } else {
+          const od = (st.d + 2) % 4;
+          const cls = st.k === 'combo' ? 'combo' : st.flip ? 'win' : 'hold';
+          marks.push({ cell: st.from, d: st.d, cls: st.flip ? cls : 'weak', step: si }, { cell: st.n, d: od, cls: st.flip ? 'lose' : 'strong', step: si });
+          if (st.flip) flips.add(st.n);
+          const a = `${st.k === 'combo' ? nm(st.from) + '’s ' : ''}${SIDE[st.d]} ${num(st.a, st.flip ? 'win' : 'weak')}${modTxt(st.am, st.a)}`;
+          const b = `${nm(st.n)}’s ${SIDE[od]} ${num(st.b, st.flip ? 'lose' : 'strong')}${modTxt(st.bm, st.b)}`;
+          lines.push({
+            html: st.k === 'combo'
+              ? `<span class="tag combo">Combo</span> ${a} beats ${b} → <b>captured</b>`
+              : st.flip ? `${a} beats ${b} → <b>captured</b>` : `${a} vs ${b} → ${st.a === st.b ? 'tie, ' : ''}holds`,
+            step: si, cls,
+          });
+        }
+      });
+      if (!h.steps.length) {
+        const around = [0, 1, 2, 3].map((d) => TT.neighbor(h.cell, d)).filter((n) => n >= 0 && h.owners[n] !== null);
+        lines.push({ html: i === 0 ? 'First card on the board.' : around.length ? 'Only its own side’s cards next to it, so nothing to capture.' : 'Nothing next to it yet.', cls: 'note' });
+      }
+
+      const head = document.createElement('div'); head.className = 'hist-head';
+      head.innerHTML = `<span class="hist-no">${i + 1}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>`;
+      li.appendChild(head);
+      const body = document.createElement('div'); body.className = 'hist-body';
+      const mb = document.createElement('div'); mb.className = 'mini-board';
+      for (let c = 0; c < 9; c++) {
+        const cell = document.createElement('div'); cell.className = 'mini-cell';
+        const ek = state.elements && state.elements[c];
+        if (ek) { cell.classList.add('elem'); cell.dataset.el = glyphs[ek] || glyph(ek) || ''; }
+        if (snapshot[c]) {
+          cell.classList.add(h.owners[c] === me ? 'own-mine' : 'own-theirs');
+          const mc = miniCard(snapshot[c], h.owners[c], c, marks);
+          if (c === h.cell) mc.classList.add('placed');
+          if (flips.has(c)) { mc.classList.add('flipped'); const f = document.createElement('i'); f.className = 'flip-badge'; f.textContent = '↻'; mc.appendChild(f); }
+          cell.appendChild(mc);
+        }
+        mb.appendChild(cell);
+      }
+      body.appendChild(mb);
+      const ul = document.createElement('ul'); ul.className = 'hist-steps';
+      for (const ln of lines) {
+        const sli = document.createElement('li'); sli.className = ln.cls || ''; sli.innerHTML = ln.html;
+        if (ln.step !== undefined) {
+          const on = (v) => { mb.classList.toggle('focus', v); mb.querySelectorAll('.rk.hl').forEach((r) => r.classList.toggle('on', v && r.dataset.steps.split(' ').includes(String(ln.step)))); };
+          sli.addEventListener('pointerenter', () => on(true));
+          sli.addEventListener('pointerleave', () => on(false));
+        }
+        ul.appendChild(sli);
+      }
+      body.appendChild(ul);
+      li.appendChild(body);
+      list.appendChild(li);
+    }
+  }
+  const SIDE_CELL = ['top left', 'top', 'top right', 'left', 'centre', 'right', 'bottom left', 'bottom', 'bottom right'];
 
   // ---------- drag & drop (mouse and touch); a plain click still selects ----------
   function markDrops(on) {
@@ -917,6 +1038,10 @@
   $('#btn-cancel').onclick = () => { disconnect(); show('menu'); };
   const toMenu = () => { disconnect(); show('menu'); };
   $('#btn-quit').onclick = toMenu;
+  $('#btn-history').onclick = () => setHistory(!historyOpen);
+  $('#btn-history-close').onclick = () => setHistory(false);
+  $('#btn-result-history').onclick = () => setHistory(true);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && historyOpen) setHistory(false); });
   $('#btn-menu').onclick = toMenu;
   $('#btn-build-quit').onclick = toMenu;
   $('#btn-rematch').onclick = () => {

@@ -13,6 +13,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
   Wilds, Arcane Order, Starfall, Tidebound, Bloomwild, Hollow Lanterns
 - Accounts, per-set card collections, XP, card packs, normal and foil cards, Shards for scrapping and crafting, and daily challenges (see below)
 - Trading-card-size cards on desktop with 3D tilt, swing, capture flips and a dynamic foil/glare lighting effect
+- Move history panel that explains every capture (which numbers were compared, Same/Plus/Combo) on mini boards
 - A full visual theme per card set (colours and fonts), and sealed foil card packs you tear open
 - A menu with Play, Collection, Challenges, How to play and Account sections (top bar on desktop, tab bar on phones)
 - Works on phones
