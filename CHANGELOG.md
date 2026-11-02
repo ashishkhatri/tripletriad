@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.9.2 — 2026-11-02
+### Changed
+- Set ornaments (the ❦ flourish, Arcane's ✧, Bloomwild's ❀, Tidebound's waves, Hollow's lanterns) no longer sit in
+  the corners of every box. Each set's ornament now appears once: on both sides of the big TRIAD title, and before
+  TRIAD in the phone header. Starfall keeps its HUD edge lines on panels, and Starfall gets a ✦.
+### Fixed
+- In the Starfall and Tidebound themes, v3.9.1's new dropdown arrow filled the whole dropdown and hid its text.
+
 ## v3.9.1 — 2026-11-02
 ### Fixed
 - The sealed pack sat to the left on the pack screen (it was placed in the first column of the six-card layout).

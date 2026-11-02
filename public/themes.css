@@ -326,11 +326,41 @@ select {
 :root[data-theme="starfall"] select {
   background-image: linear-gradient(45deg, transparent 50%, var(--chev) 50%), linear-gradient(135deg, var(--chev) 50%, transparent 50%);
   background-color: #06142a;
+  background-position: calc(100% - 1.25em) 55%, calc(100% - .9em) 55%;
+  background-size: .36em .36em, .36em .36em;
+  background-repeat: no-repeat;
 }
 :root[data-theme="tidebound"] select {
   background-image: linear-gradient(45deg, transparent 50%, var(--chev) 50%), linear-gradient(135deg, var(--chev) 50%, transparent 50%);
   background-color: #ffffffcc;
+  background-position: calc(100% - 1.25em) 55%, calc(100% - .9em) 55%;
+  background-size: .36em .36em, .36em .36em;
+  background-repeat: no-repeat;
 }
 /* placeholder hints (like CODE) clearly lighter than typed text */
 input::placeholder { color: var(--ink-soft); opacity: .45; font-style: italic; }
 #join-code::placeholder { font-style: normal; opacity: .35; }
+
+/* ---------- set ornaments: once, beside the title, instead of in the corners of every box ---------- */
+.panel::before, .panel::after { content: none !important; }
+:root[data-theme="starfall"] .panel::before, :root[data-theme="starfall"] .panel::after { content: "" !important; }  /* HUD edge lines, not ornaments */
+:root[data-theme="hollow"] .panel { margin-top: 0; }
+:root { --orn: "❦"; --orn-color: var(--gold-lo); --orn-glow: #fff6; --orn-rot: -90deg; }
+:root[data-theme="arcane"] { --orn: "✧"; --orn-color: #dfe6f7; --orn-glow: #b9a8ff; --orn-rot: 0deg; }
+:root[data-theme="starfall"] { --orn: "✦"; --orn-color: #9be8ff; --orn-glow: #20bdf0; --orn-rot: 0deg; }
+:root[data-theme="tidebound"] { --orn: "〰"; --orn-color: #35a6b4; --orn-glow: #9fe6ff; --orn-rot: 0deg; }
+:root[data-theme="bloomwild"] { --orn: "❀"; --orn-color: #db5c93; --orn-glow: #ffd1e4; --orn-rot: 0deg; }
+:root[data-theme="hollow"] { --orn: ""; --orn-color: #ffb35c; --orn-glow: #ff9b3d; --orn-rot: 0deg; }
+.logo-row { display: flex; align-items: center; justify-content: center; gap: .5em; }
+.logo-row .logo { margin-left: .14em; }
+.orn { display: inline-flex; align-items: center; justify-content: center; line-height: 1; flex: none; }
+.orn::before { content: var(--orn); color: var(--orn-color); text-shadow: 0 0 10px var(--orn-glow); display: inline-block; }
+.logo-row .orn { font-size: 34px; margin-top: 18px; }
+.logo-row .orn-l::before { transform: rotate(var(--orn-rot)); }
+.logo-row .orn-r::before { transform: rotate(calc(var(--orn-rot) * -1)) scaleX(-1); }
+.orn-m { font-size: 18px; margin-right: 8px; vertical-align: middle; }
+.orn-m::before { transform: rotate(var(--orn-rot)); }
+/* Hollow Lanterns: a small glowing lantern instead of a glyph */
+:root[data-theme="hollow"] .orn::before { content: ""; width: .55em; height: .72em; border-radius: .22em;
+  background: radial-gradient(ellipse at 50% 45%, #fff1c9 0%, #ffb35c 40%, #b4561c 100%); box-shadow: 0 0 .5em #ff9b3d, 0 0 1.1em #ff9b3d77; }
+:root[data-theme="hollow"] .logo-row .orn-r::before { transform: none; }
