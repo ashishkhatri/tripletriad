@@ -263,6 +263,9 @@
         st.setProperty('--spec', spec.toFixed(2));
         st.setProperty('--glare', glare.toFixed(2));
         st.setProperty('--foil', foil.toFixed(2));
+        // thickness: the side of the card that faces you when it tilts (normal points one way, that edge shows the other way)
+        st.setProperty('--ex', clamp(-N[0] * 4, -1.2, 1.2).toFixed(1));
+        st.setProperty('--ey', clamp(-N[1] * 4, -1.2, 1.2).toFixed(1));
         st.setProperty('--sx', Math.round(-s.ry * 0.6).toString());   // whole pixels: shadows are costly to redraw
         st.setProperty('--sy', Math.round(s.rx * 0.6 + 6).toString());
       }

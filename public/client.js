@@ -1133,7 +1133,7 @@
       img.draggable = false;
       d.appendChild(img); front.appendChild(d);
     }
-    for (const layer of ['pack-bulge', 'pack-crinkle', 'foil-layer', 'glare-spot']) {
+    for (const layer of ['pack-bulge', 'pack-crinkle', 'foil-layer', 'glare-spot', 'pack-seam']) {
       const d = document.createElement('div'); d.className = layer; front.appendChild(d);
     }
     const back = document.createElement('div'); back.className = 'pack-face pack-back';
@@ -1149,18 +1149,23 @@
     sealed.onclick = async () => {
       if (opening) return;
       opening = true;
-      sealed.classList.add('shaking');
+      // 1. charge up: the pack shakes harder and light leaks from the seal
+      sealed.classList.add('charging');
+      $('#pack-hint').textContent = '';
       let r;
-      try { r = await api('POST', '/api/packs/open', { deck: deckId }); }
-      catch (e) { sealed.classList.remove('shaking'); opening = false; toast(e.message); sfx('error'); return; }
+      try { [r] = await Promise.all([api('POST', '/api/packs/open', { deck: deckId }), sleep(reduceMotion ? 0 : 900)]); }
+      catch (e) { sealed.classList.remove('charging'); opening = false; toast(e.message); sfx('error'); $('#pack-hint').textContent = 'Click the pack to tear it open'; return; }
+      // 2. burst: the top tears off in a flash, light rays and sparks fly, the pack drops away
       sfx('pack-open');
-      sealed.classList.remove('shaking');
+      sealed.classList.remove('charging');
       sealed.classList.add('tearing');
       burst.classList.add('go');
-      $('#pack-hint').textContent = '';
-      await sleep(950);
+      packFx(box, float);
+      await sleep(reduceMotion ? 200 : 900);
+      const origin = float.getBoundingClientRect();
       float.remove(); burst.remove();
-      revealPackCards(deckId, r);
+      // 3. the cards fly out of the pack to their places
+      revealPackCards(deckId, r, origin);
     };
     $('#pack-hint').textContent = 'Click the pack to tear it open';
     $('#btn-pack-again').hidden = true;
@@ -1168,15 +1173,33 @@
     $('#pack').classList.add('show');
   }
 
-  // Step 2: the six cards come out face down (the foil last); click each to reveal it.
-  function revealPackCards(deckId, r) {
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // flash, light rays and sparks when a pack bursts open
+  function packFx(box, float) {
+    const fr = float.getBoundingClientRect(), br = box.getBoundingClientRect();
+    const fx = document.createElement('div'); fx.className = 'pack-fx';
+    fx.style.left = (fr.left - br.left + fr.width / 2) + 'px'; fx.style.top = (fr.top - br.top + fr.height * 0.35) + 'px';
+    fx.innerHTML = '<div class="pack-rays"></div><div class="pack-flash"></div>';
+    for (let k = 0; k < 22; k++) {
+      const sp = document.createElement('i'); sp.className = 'spark';
+      const a = (k / 22) * Math.PI * 2 + Math.random() * 0.3, d = 110 + Math.random() * 170;
+      sp.style.setProperty('--dx', (Math.cos(a) * d).toFixed(0) + 'px'); sp.style.setProperty('--dy', (Math.sin(a) * d - 40).toFixed(0) + 'px');
+      sp.style.animationDelay = (Math.random() * 0.12).toFixed(2) + 's';
+      fx.appendChild(sp);
+    }
+    box.appendChild(fx);
+    setTimeout(() => fx.remove(), 1800);
+  }
+
+  // Step 2: the six cards fly out face down (the foil last); click each to reveal it.
+  function revealPackCards(deckId, r, origin) {
     const box = $('#pack-cards'); box.innerHTML = '';
     const deck = decks.get(deckId);
     let revealed = 0;
     r.cards.forEach((pc, i) => {
       const c = deck.cards.find((x) => x.id === pc.id);
       const holder = document.createElement('div'); holder.className = 'pack-card';
-      holder.style.animationDelay = `${i * 140}ms`;
+      holder.style.animationDelay = `${i * 110}ms`;
       const inner = document.createElement('div'); inner.className = 'pack-inner';
       const back = cardEl(null, 'mine'); back.classList.add('face-back');
       const front = cardEl(playCard(c, pc.foil), 'neutral', deck.elements); front.classList.add('face-front');
@@ -1199,6 +1222,10 @@
       holder.onclick = () => {
         if (holder.classList.contains('revealed')) return;
         holder.classList.add('revealed', `rarity-${c.level}`);
+        // light bursts from behind the card as it turns: bigger and brighter for rarer cards, rainbow for foils
+        const rb = document.createElement('div'); rb.className = `reveal-burst rb-${c.level}${pc.foil ? ' rb-foil' : ''}`;
+        holder.prepend(rb);
+        setTimeout(() => rb.remove(), 2200);
         sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
         if (++revealed === r.cards.length) {
           $('#pack-hint').textContent = r.summary.packs > 0 ? `${r.summary.packs} more pack${r.summary.packs > 1 ? 's' : ''} to open` : 'All cards added to your collection';
@@ -1208,6 +1235,16 @@
       };
       box.appendChild(holder);
     });
+    if (origin && !reduceMotion) {
+      const ox = origin.left + origin.width / 2, oy = origin.top + origin.height / 2;
+      box.querySelectorAll('.pack-card').forEach((h, k) => {
+        const hr = h.getBoundingClientRect();
+        h.style.setProperty('--fx', (ox - (hr.left + hr.width / 2)).toFixed(0) + 'px');
+        h.style.setProperty('--fy', (oy - (hr.top + hr.height / 2)).toFixed(0) + 'px');
+        h.style.setProperty('--fr', ((k % 2 ? 1 : -1) * (8 + Math.random() * 14)).toFixed(0) + 'deg');
+        h.classList.add('fly');
+      });
+    }
     $('#pack-hint').textContent = 'Click each card to reveal it';
     $('#btn-pack-done').textContent = 'Done';
     (r.daily || []).forEach((d, k) => setTimeout(() => { toast(`Daily challenge done: ${d.text} (+${d.reward} shards)`); sfx('unlock'); }, 600 + k * 2700));

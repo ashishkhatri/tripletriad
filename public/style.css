@@ -208,7 +208,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .hand .card:first-child { margin-top: 0; }
 .hand.mine .card.playable { cursor: pointer; }
 @media (hover: hover) { .hand.mine .card.playable:hover { --tx: -8px; } }
-.hand.mine .card.selected { --tx: -18px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 18px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 6px 18px #000a; z-index: 5; }
+.hand.mine .card.selected { --tx: -18px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 18px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 6px 18px #000a, var(--edge); z-index: 5; }
 
 /* gilt card frame; inner rim colour shows the owner */
 .card {
@@ -317,7 +317,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .hand.mine .card.dragging { opacity: .35; }
 .drag-ghost {
   position: fixed !important; top: 0; left: 0; margin: 0 !important; z-index: 60; pointer-events: none;
-  box-shadow: 0 0 0 2px var(--gold-hi), 0 0 24px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 18px 30px #000c !important; transition: none !important;
+  box-shadow: 0 0 0 2px var(--gold-hi), 0 0 24px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 18px 30px #000c, var(--edge) !important; transition: none !important;
 }
 .cell.drop-over { background: radial-gradient(ellipse at 50% 40%, var(--slot-hover) 0%, var(--wood-2) 100%); box-shadow: inset 0 3px 8px #000c, 0 0 0 3px var(--gold-hi), 0 0 22px color-mix(in srgb, var(--metal-2) 80%, transparent); }
 
@@ -446,8 +446,8 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .grid-card .unknown { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 40px; color: color-mix(in srgb, var(--metal-3) 53%, transparent); z-index: 2; }
 .grid-card.unavailable .card { filter: grayscale(.6) brightness(.55); }
 .card.pickable { cursor: pointer; }
-.card.pickable:hover { --ty: -4px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 16px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 8px 18px #000a; }
-.card.picked { box-shadow: 0 0 0 3px var(--gold-hi), 0 0 22px var(--metal-2); }
+.card.pickable:hover { --ty: -4px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 16px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 8px 18px #000a, var(--edge); }
+.card.picked { box-shadow: 0 0 0 3px var(--gold-hi), 0 0 22px var(--metal-2), var(--edge); }
 
 .tray { display: grid; grid-template-columns: repeat(5, minmax(0, 120px)); gap: 12px; justify-content: center; margin: 4px 0 12px; }
 .tray-slot { aspect-ratio: 63 / 88; border-radius: 6px; background: radial-gradient(ellipse at 50% 40%, var(--wood-2), var(--wood-3)); box-shadow: inset 0 3px 8px #000c, 0 0 0 1px color-mix(in srgb, var(--metal-4) 53%, transparent); font-size: 22px; }
@@ -479,8 +479,8 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .pack-card .new-badge { position: absolute; top: -10px; right: -10px; z-index: 5; padding: 2px 9px; border-radius: 10px; font-family: var(--title); font-weight: 900; font-size: 13px; color: var(--metal-5); background: linear-gradient(180deg, var(--metal-1), var(--metal-3)); border: 1px solid var(--metal-4); opacity: 0; transition: opacity .3s .5s; }
 .pack-card .lvl { bottom: -12px; left: 50%; transform: translateX(-50%); background: var(--parch); color: var(--ink); opacity: 0; transition: opacity .3s .5s; }
 .pack-card.revealed .new-badge, .pack-card.revealed .lvl { opacity: 1; }
-.pack-card.revealed.rarity-4 .face-front { box-shadow: 0 0 24px #9fc6ff, 0 4px 12px #000b; }
-.pack-card.revealed.rarity-5 .face-front { box-shadow: 0 0 34px var(--metal-2), 0 0 70px color-mix(in srgb, var(--metal-3) 53%, transparent), 0 4px 12px #000b; }
+.pack-card.revealed.rarity-4 .face-front { box-shadow: 0 0 24px #9fc6ff, 0 4px 12px #000b, var(--edge); }
+.pack-card.revealed.rarity-5 .face-front { box-shadow: 0 0 34px var(--metal-2), 0 0 70px color-mix(in srgb, var(--metal-3) 53%, transparent), 0 4px 12px #000b, var(--edge); }
 .pack-actions { justify-content: center; margin-top: 22px; gap: 12px; }
 .pack-actions > * { flex: 0 0 auto; }
 @keyframes dealIn { from { transform: translateY(40px) scale(.8); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -523,7 +523,17 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   transform: translate3d(var(--tx, 0px), var(--ty, 0px), 0) perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transform-style: preserve-3d;
   transition: transform .1s linear, box-shadow .2s;
-  box-shadow: inset 0 0 0 1px var(--metal-4), calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, 0 2px 4px #0008;
+  /* card thickness: stacked solid layers under the card, pushed toward the edge you'd see at this tilt (--ex/--ey from foil.js) */
+  --eu: .065em;
+  --edge-1: color-mix(in srgb, var(--rl, var(--metal-2)) 70%, #000);
+  --edge-2: color-mix(in srgb, var(--rm, var(--metal-3)) 55%, #000);
+  --edge-3: color-mix(in srgb, var(--rd, var(--metal-4)) 35%, #000);
+  --edge:
+    calc(var(--ex, 0) * var(--eu)) calc((var(--ey, 0) + .7) * var(--eu)) 0 var(--edge-1),
+    calc(var(--ex, 0) * var(--eu) * 2) calc((var(--ey, 0) + .7) * var(--eu) * 2) 0 var(--edge-2),
+    calc(var(--ex, 0) * var(--eu) * 3) calc((var(--ey, 0) + .7) * var(--eu) * 3) 0 var(--edge-2),
+    calc(var(--ex, 0) * var(--eu) * 4) calc((var(--ey, 0) + .7) * var(--eu) * 4) 0 var(--edge-3);
+  box-shadow: inset 0 0 0 1px var(--metal-4), var(--edge), calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px + var(--eu) * 3) 18px #000b, 0 2px 4px #0008;
   will-change: transform;
 }
 /* gilt frame catches the light: a bright band follows the reflection */
@@ -601,7 +611,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .drag-ghost {
   transform: translate3d(var(--gx, 0px), var(--gy, 0px), 0) perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
   animation: ghostGrow .18s cubic-bezier(.2,1.2,.4,1) both !important;
-  box-shadow: 0 0 0 2px var(--gold-hi), calc(var(--sx, 0) * 2px) calc(var(--sy, 6) * 2px + 18px) 34px #000c !important;
+  box-shadow: 0 0 0 2px var(--gold-hi), calc(var(--sx, 0) * 2px) calc(var(--sy, 6) * 2px + 18px) 34px #000c, var(--edge) !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .card.placed, .card.flip { animation-duration: .01s; }
@@ -744,8 +754,8 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .card.mine .nm { background: linear-gradient(180deg, #4a86ff, #1d4fb8); color: #fff; border-color: #a9c6ff; text-shadow: 0 1px 1px #0008; }
 .card.theirs .nm { background: linear-gradient(180deg, #ff6b62, #b5241f); color: #fff; border-color: #ffb4ad; text-shadow: 0 1px 1px #0008; }
 .card.neutral .nm { background: linear-gradient(180deg, #f3f0ea, #cfc8bb); color: #2a2620; border-color: #8f877a; }
-.board .card.mine { box-shadow: 0 0 0 2px #4a86ff, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b; }
-.board .card.theirs { box-shadow: 0 0 0 2px #ff6b62, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b; }
+.board .card.mine { box-shadow: 0 0 0 2px #4a86ff, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge); }
+.board .card.theirs { box-shadow: 0 0 0 2px #ff6b62, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge); }
 /* normal cards: glossy, but only foils get the holographic layer */
 .card.lit:not(.holo) .glare-spot { opacity: calc(var(--glare, .3) * .7); }
 .card.lit:not(.holo) .glare-spot::after { opacity: calc(var(--spec, 0) * .55); }
@@ -998,7 +1008,7 @@ button.big { padding: 14px 18px; font-size: 17px; }
   background-position: var(--bx, 50%) var(--by, 50%), 0 0;
   background-blend-mode: color-dodge, normal;
   border-color: #fff;
-  box-shadow: 0 0 0 1px #ffffff99, 0 0 14px hsl(calc(var(--hue-shift, 200) * 1deg) 100% 70% / .45), calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b;
+  box-shadow: 0 0 0 1px #ffffff99, 0 0 14px hsl(calc(var(--hue-shift, 200) * 1deg) 100% 70% / .45), calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
 }
 .card.rar-5.holo.lit:not(.back) { background-blend-mode: overlay, normal, normal; }
 /* normal cards: plain gloss only (no rainbow, no glitter) */
@@ -1185,7 +1195,7 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .card.scorched .art { filter: sepia(.5) saturate(.8) brightness(.8) contrast(1.1); }
 .card.scorched::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2;
   background: radial-gradient(circle at 30% 80%, #0008, transparent 40%), radial-gradient(circle at 75% 20%, #2a0d0066, transparent 35%); box-shadow: inset 0 0 18px #ff5a1e66; }
-.card.empowered { box-shadow: 0 0 0 2px #ffe58a, 0 0 20px #ffd54acc; }
+.card.empowered { box-shadow: 0 0 0 2px #ffe58a, 0 0 20px #ffd54acc, var(--edge); }
 .card.scorch-anim { animation: scorchFlash .8s ease-out; }
 @keyframes scorchFlash { 0% { filter: brightness(2.2) sepia(1) hue-rotate(-20deg); } 100% { filter: none; } }
 .card.spun { animation: spunIn .6s cubic-bezier(.3,1.4,.5,1); }
@@ -1275,15 +1285,15 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .hand.mine .card { scale: var(--sc, 1); transition: scale .25s cubic-bezier(.2,1.4,.4,1), filter .2s; }
 .hand.mine .card.selected { --sc: 1.14; z-index: 6; animation: selPulse 1.1s ease-in-out infinite alternate; }
 @keyframes selPulse {
-  from { box-shadow: 0 0 0 3px var(--gold-hi), 0 0 16px color-mix(in srgb, var(--gold-hi) 60%, transparent), 0 10px 22px #000b; }
-  to   { box-shadow: 0 0 0 4px #fff, 0 0 30px color-mix(in srgb, var(--gold-hi) 85%, transparent), 0 14px 28px #000c; }
+  from { box-shadow: 0 0 0 3px var(--gold-hi), var(--edge), 0 0 16px color-mix(in srgb, var(--gold-hi) 60%, transparent), 0 10px 22px #000b; }
+  to   { box-shadow: 0 0 0 4px #fff, var(--edge), 0 0 30px color-mix(in srgb, var(--gold-hi) 85%, transparent), 0 14px 28px #000c; }
 }
 .hand.mine.has-selected .card:not(.selected) { filter: brightness(.6) saturate(.7); --sc: .94; }
 @media (hover: hover) { .hand.mine.has-selected .card.playable:not(.selected):hover { filter: brightness(.85); } }
 @media (max-width: 640px) {
   .hand.mine .card.selected { --sc: 1.25; --ty: -20px; }
 }
-@media (prefers-reduced-motion: reduce) { .hand.mine .card.selected { animation: none; box-shadow: 0 0 0 4px var(--gold-hi), 0 10px 22px #000b; } }
+@media (prefers-reduced-motion: reduce) { .hand.mine .card.selected { animation: none; box-shadow: 0 0 0 4px var(--gold-hi), 0 10px 22px #000b, var(--edge); } }
 @media (min-width: 900px) and (min-height: 560px) and (hover: hover) { .hand.mine .card.playable:hover { --tx: 0px; --ty: -8px; } }
 
 /* card tilt settings */
@@ -1299,3 +1309,63 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .tilt-meter span { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; background: var(--gold-hi, #f0c96a); box-shadow: 0 0 10px var(--gold-hi, #f0c96a); }
 @keyframes ghostGrow { from { scale: var(--g0, 1); } to { scale: 1; } }
 .mh-version { margin-left: 10px; font-family: var(--title); font-weight: 600; font-size: 11px; letter-spacing: .1em; color: var(--muted); text-decoration: none; vertical-align: middle; }
+
+/* ---------- pack opening sequence ---------- */
+/* 1. charge: shake that builds, light leaking along the tear seal */
+.sealed.charging { animation: packCharge .9s ease-in both; }
+@keyframes packCharge {
+  0% { translate: 0 0; rotate: 0deg; }
+  10% { translate: -1px 0; } 20% { translate: 2px -1px; rotate: -.6deg; } 30% { translate: -2px 1px; rotate: .6deg; }
+  40% { translate: 3px 0; rotate: -1deg; } 50% { translate: -3px -1px; rotate: 1deg; } 60% { translate: 4px 1px; rotate: -1.4deg; }
+  70% { translate: -5px -1px; rotate: 1.6deg; } 80% { translate: 5px 1px; rotate: -2deg; scale: 1.02; } 90% { translate: -6px 0; rotate: 2deg; scale: 1.04; }
+  100% { translate: 0 -4px; rotate: 0deg; scale: 1.06; }
+}
+.pack-seam { position: absolute; left: 4%; right: 4%; top: 12.4%; height: 2.4%; pointer-events: none; opacity: 0; border-radius: 50%;
+  background: radial-gradient(ellipse at center, #fff 0%, #fff6c8 30%, color-mix(in srgb, var(--metal-2) 80%, transparent) 55%, transparent 75%);
+  filter: blur(1px); mix-blend-mode: screen; }
+.sealed.charging .pack-seam { animation: seamGlow .9s ease-in forwards; }
+.sealed.tearing .pack-seam { opacity: 1; scale: 1.4 4; transition: opacity .3s .1s, scale .3s; opacity: 0; }
+@keyframes seamGlow { 0% { opacity: 0; scale: .6 1; } 60% { opacity: .8; } 100% { opacity: 1; scale: 1.05 2.6; box-shadow: 0 0 30px 10px #fff6c8aa; } }
+/* 2. burst: flash, spinning rays, sparks */
+.pack-fx { position: absolute; width: 0; height: 0; z-index: 5; pointer-events: none; }
+.pack-flash { position: absolute; left: -260px; top: -260px; width: 520px; height: 520px; border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #fffbe6d0 18%, color-mix(in srgb, var(--metal-2) 50%, transparent) 40%, transparent 70%);
+  animation: packFlash .8s ease-out forwards; mix-blend-mode: screen; }
+@keyframes packFlash { 0% { opacity: 0; scale: .2; } 15% { opacity: 1; } 100% { opacity: 0; scale: 1.6; } }
+.pack-rays { position: absolute; left: -340px; top: -340px; width: 680px; height: 680px; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, #fff0 0deg 7deg, color-mix(in srgb, var(--metal-1) 55%, transparent) 9deg, #fff0 11deg 22deg);
+  -webkit-mask: radial-gradient(circle, #000 0%, #0008 40%, transparent 70%); mask: radial-gradient(circle, #000 0%, #0008 40%, transparent 70%);
+  animation: packRays 1.6s ease-out forwards; mix-blend-mode: screen; }
+@keyframes packRays { 0% { opacity: 0; scale: .3; rotate: 0deg; } 20% { opacity: 1; } 100% { opacity: 0; scale: 1.2; rotate: 50deg; } }
+.spark { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%;
+  background: #fffbe0; box-shadow: 0 0 8px 2px color-mix(in srgb, var(--metal-1) 80%, #fff); animation: spark 1s cubic-bezier(.15,.7,.3,1) forwards; }
+.spark:nth-child(3n) { width: 4px; height: 4px; } .spark:nth-child(4n) { background: color-mix(in srgb, var(--metal-2) 70%, #fff); }
+@keyframes spark { 0% { translate: 0 0; opacity: 1; scale: 1.4; } 70% { opacity: 1; } 100% { translate: var(--dx) calc(var(--dy) + 60px); opacity: 0; scale: .3; } }
+/* 3. cards fly out of the pack to their places, spinning and settling */
+.pack-card.fly { animation: packFly .75s cubic-bezier(.2,.9,.25,1.12) both; }
+@keyframes packFly {
+  0% { transform: translate(var(--fx), var(--fy)) scale(.3) rotate(calc(var(--fr) * 3)); opacity: 0; }
+  12% { opacity: 1; }
+  70% { transform: translate(0, -10px) scale(1.04) rotate(calc(var(--fr) * -.15)); }
+  100% { transform: none; opacity: 1; }
+}
+/* 4. reveal: the card lifts as it turns, light bursts from behind it */
+.pack-card.revealed { animation: revealLift .7s cubic-bezier(.3,1.4,.5,1); z-index: 3; }
+@keyframes revealLift { 0% { transform: none; } 45% { transform: translateY(-18px) scale(1.08); } 100% { transform: none; } }
+.reveal-burst { position: absolute; left: 50%; top: 50%; width: 260%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; z-index: -1; pointer-events: none;
+  --rc: #d8dde6;
+  background: radial-gradient(circle, color-mix(in srgb, var(--rc) 90%, #fff) 0%, color-mix(in srgb, var(--rc) 70%, transparent) 22%, color-mix(in srgb, var(--rc) 25%, transparent) 40%, transparent 60%);
+  animation: revealBurst 1.4s ease-out forwards; }
+.reveal-burst::before { content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, transparent 0deg 8deg, color-mix(in srgb, var(--rc) 70%, transparent) 10deg, transparent 12deg 24deg);
+  -webkit-mask: radial-gradient(circle, #000 10%, transparent 65%); mask: radial-gradient(circle, #000 10%, transparent 65%); opacity: 0; }
+.reveal-burst.rb-2 { --rc: #e0a36a; } .reveal-burst.rb-3 { --rc: #b9d6ff; } .reveal-burst.rb-4 { --rc: #ffd75a; }
+.reveal-burst.rb-5 { --rc: #ff9de1; width: 300%; }
+.reveal-burst.rb-3::before, .reveal-burst.rb-4::before, .reveal-burst.rb-5::before, .reveal-burst.rb-foil::before { opacity: 1; animation: revealRays 1.6s linear forwards; }
+.reveal-burst.rb-foil::before { background: repeating-conic-gradient(from 0deg, #ff6b6b00 0deg 6deg, #ff6b9acc 8deg, #ffd36bcc 10deg, #6bffb5cc 12deg, #6bc8ffcc 14deg, #c58cffcc 16deg, #c58cff00 18deg 30deg); }
+@keyframes revealBurst { 0% { opacity: 0; scale: .5; } 15% { opacity: 1; } 55% { opacity: .9; } 100% { opacity: 0; scale: 1.15; } }
+@keyframes revealRays { from { rotate: 0deg; } to { rotate: 70deg; } }
+.pack-card { isolation: isolate; }
+@media (prefers-reduced-motion: reduce) {
+  .sealed.charging, .pack-card.fly, .pack-card.revealed, .pack-rays, .spark { animation: none !important; }
+}

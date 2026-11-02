@@ -3,6 +3,18 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.9.0 — 2026-11-02
+### Added
+- Pack opening is now a full sequence:
+  1. **Charge:** the pack shakes harder and harder while light leaks out along the tear seal.
+  2. **Burst:** the top tears off in a flash of light, with spinning light rays and a spray of sparks; the pack falls away.
+  3. **Fly-out:** the six cards fly out of the pack, spinning, and land in their places one after another.
+  4. **Reveal:** each card lifts as it turns over, with a burst of light behind it in its rarity's colour
+     (light rays for Rare and up, rainbow rays for foils).
+### Changed
+- Cards everywhere have real thickness: a solid layered edge in the card's rarity metal, which shifts to whichever side
+  you'd see as the card tilts (mouse, drag, or phone tilt). It scales with the card, so small cards get a thinner edge.
+
 ## v3.8.6 — 2026-11-02
 ### Fixed
 - The version number was missing on phones (it lived in the desktop top bar, which phones hide). It now sits next
