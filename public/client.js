@@ -1354,7 +1354,7 @@
     setTimeout(() => fx.remove(), 1800);
   }
 
-  // Step 2: the six cards fly out face down (the foil last); click each to reveal it.
+  // Step 2: the six cards fly out face down, in random order; click each to reveal it.
   function revealPackCards(deckId, r, origin) {
     const box = $('#pack-cards'); box.innerHTML = '';
     box.classList.remove('sealed-stage');
@@ -1379,7 +1379,7 @@
         try {
           const res = await api('POST', '/api/scrap', { deck: deckId, card: c.id, foil: pc.foil });
           setShards(res.shards); sfx('cancel');
-          holder.classList.add('scrapped'); sb.disabled = true; sb.innerHTML = `Scrapped <span class="shards">+${res.gained}</span>`;
+          holder.classList.add('scrapped'); sb.disabled = true; sb.classList.add('scrap-done'); sb.innerHTML = `Scrapped <span class="shards">+${res.gained}</span>`;
         } catch (err) { toast(err.message); sfx('error'); }
       };
       holder.appendChild(sb);
@@ -1631,13 +1631,7 @@
   $('#btn-show-result').onclick = () => { $('#result').classList.add('show'); $('#btn-show-result').hidden = true; };
   $('#result').addEventListener('click', (e) => { if (e.target.id === 'result') closeResult(); });
   $('#auth').addEventListener('click', (e) => { if (e.target.id === 'auth') $('#auth').classList.remove('show'); });
-  // the pack screen: clicking empty space closes it, except while a pack is being torn open
-  $('#pack').addEventListener('click', (e) => {
-    const t = e.target;
-    if (!(t.id === 'pack' || t.classList.contains('pack-stage') || t.id === 'pack-cards')) return;
-    if (document.querySelector('#pack .sealed.charging, #pack .sealed.tearing')) return;
-    $('#btn-pack-done').click();
-  });
+  // the pack screen needs a decision (open, reveal, scrap), so clicking outside doesn't close it: use Later / Done
   // the move history drawer closes when you click or tap anywhere else
   document.addEventListener('pointerdown', (e) => {
     if (!historyOpen) return;

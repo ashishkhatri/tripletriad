@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.1 — 2026-11-02
+
+- Every pack has at least one Rare or better card (if none comes up, one card is re-rolled from Rare and up).
+- Pack cards come out in random order: no longer sorted by rarity, and the guaranteed foil isn't always last.
+- Commons have a plain dark-grey, matte frame (no moving shine unless foil), so they look clearly different from Rares.
+- The pack screen no longer closes when you click outside it; use Later / Done.
+- After scrapping a card while opening a pack, its button turns red ("Scrapped +N").
+
 ## v0.5.0 — 2026-11-02
 
 - Phones: the TRIAD logo and version now show on the Collection screen too (the top strip is shared by every screen outside matches).

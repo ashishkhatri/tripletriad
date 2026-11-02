@@ -731,6 +731,11 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   border-color: var(--rl, #ddd);
   background: linear-gradient(115deg, var(--rd, #555) 0%, var(--rm, #999) calc(var(--mx, 50%) - 34%), var(--rl, #eee) var(--mx, 50%), var(--rm, #999) calc(var(--mx, 50%) + 22%), var(--rd, #555) 100%);
 }
+/* common: plain dark-grey frame, matte (no moving shine) unless it's a foil */
+.card.rar-1.lit:not(.back):not(.holo) {
+  border-color: #50545b;
+  background: linear-gradient(180deg, #3a3d43, #2a2c31);
+}
 /* legendary: prismatic metal that shifts with the light */
 .card.rar-5.lit:not(.back) {
   border-color: #fff;
@@ -849,6 +854,12 @@ button .shards { color: inherit; }
 @keyframes slashIn { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes stampIn { from { opacity: 0; scale: 1.8; } to { opacity: 1; scale: 1; } }
 .pack-cards { padding-bottom: 50px; }
+/* the button after scrapping: red, so it reads as "this card is gone" */
+.pack-card .scrap-btn.scrap-done, .pack-card .scrap-btn.scrap-done:disabled {
+  opacity: 1; background: linear-gradient(180deg, #c8382c, #8e1f17) !important; background-image: linear-gradient(180deg, #c8382c, #8e1f17) !important;
+  border-color: #ff8a7f !important; color: #fff !important; text-shadow: 0 1px 1px #0008; box-shadow: 0 2px 8px #0008; cursor: default; filter: none;
+}
+.pack-card .scrap-btn.scrap-done .shards { color: #ffe1dc; }
 
 /* ===== floating tooltip (one element, positioned by script so nothing can clip or misplace it) ===== */
 .rule-tip { display: none !important; }
