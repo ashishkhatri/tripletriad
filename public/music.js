@@ -1,5 +1,6 @@
 'use strict';
-/* Background music: plays each card set's track as a gapless loop with crossfades. */
+/* Background music: plays each card set's track as a gapless loop with crossfades.
+   Starts on its own as soon as the browser allows sound, unless the player has turned music off. */
 window.Music = (() => {
   let ctx = null, master = null;
   let current = null;           // { key, src, gain }
@@ -21,6 +22,8 @@ window.Music = (() => {
     master = ctx.createGain();
     master.gain.value = enabled ? volume : 0;
     master.connect(ctx.destination);
+    // whenever the browser lets audio run (now, or after the first click/tap/key), start the wanted track
+    ctx.addEventListener('statechange', () => { if (ctx.state === 'running' && wanted) start(wanted); });
     return ctx;
   }
 
@@ -46,7 +49,12 @@ window.Music = (() => {
   }
 
   async function start(track) {
-    if (!ensureCtx() || ctx.state !== 'running') return;   // waits for a user gesture
+    if (!enabled || !ensureCtx()) return;
+    if (ctx.state === 'suspended') {
+      // allowed straight away on sites the browser trusts for media; otherwise this waits for the first gesture
+      ctx.resume().catch(() => {});
+      if (ctx.state !== 'running') return;
+    }
     const key = track.file;
     if (current && current.key === key) return;
     let buf;
@@ -81,7 +89,7 @@ window.Music = (() => {
     if (ctx.state === 'suspended') ctx.resume().then(() => wanted && start(wanted));
     else if (wanted) start(wanted);
   }
-  ['pointerdown', 'keydown', 'touchend'].forEach((ev) => window.addEventListener(ev, unlock, { passive: true }));
+  ['pointerdown', 'mousedown', 'touchstart', 'touchend', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, unlock, { passive: true, capture: true }));
 
   function setEnabled(on) {
     enabled = on; save();
@@ -91,6 +99,7 @@ window.Music = (() => {
       master.gain.setValueAtTime(master.gain.value, t);
       master.gain.linearRampToValueAtTime(on ? volume : 0, t + 0.4);
     }
+    if (on && wanted) start(wanted);
     updateUI();
   }
   function setVolume(v) {
@@ -101,7 +110,7 @@ window.Music = (() => {
   }
 
   // ---------- control ----------
-  let btn, slider, label;
+  let btn, slider;
   function buildUI() {
     const box = document.createElement('div');
     box.className = 'music-ctl';
@@ -112,9 +121,7 @@ window.Music = (() => {
     slider.type = 'range'; slider.min = 0; slider.max = 1; slider.step = 0.01; slider.value = volume;
     slider.setAttribute('aria-label', 'Music volume');
     slider.oninput = () => setVolume(Number(slider.value));
-    label = document.createElement('span');
-    label.className = 'music-title';
-    box.append(btn, slider, label);
+    box.append(btn, slider);
     document.body.appendChild(box);
     updateUI();
   }
@@ -124,9 +131,10 @@ window.Music = (() => {
     btn.title = enabled ? 'Music on — click to mute' : 'Music off — click to play';
     btn.classList.toggle('off', !enabled);
     slider.value = volume;
-    label.textContent = enabled && wanted ? wanted.title : '';
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildUI); else buildUI();
+  // try right away (works where the browser allows autoplay, e.g. an installed app or a site you play often)
+  window.addEventListener('load', () => { if (enabled && wanted) start(wanted); });
 
   return { play, setEnabled, setVolume };
 })();

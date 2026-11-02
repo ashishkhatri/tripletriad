@@ -111,11 +111,15 @@
         st.setProperty('--ry', s.ry.toFixed(2) + 'deg');
         st.setProperty('--mx', mx.toFixed(1) + '%');
         st.setProperty('--my', my.toFixed(1) + '%');
-        // foils: the holographic bands also drift slowly on their own, so they shimmer even when still
-        const drift = el.classList.contains('holo') && !reduceMotion ? Math.sin(now / 1900 + s.seed) * 26 + (now / 90 + s.seed * 40) % 200 : 0;
-        st.setProperty('--bx', (50 + Hl[0] * 220 + drift).toFixed(1) + '%');
-        st.setProperty('--by', (50 + Hl[1] * 220 + drift * 0.6).toFixed(1) + '%');
-        st.setProperty('--hx', (50 + Hl[0] * 420 + drift * 1.4).toFixed(1) + '%');
+        // foils: the holographic sheen also drifts slowly on its own, so it shimmers even when still.
+        // Smooth sine motion kept inside 0–100% so the oversized gradient never shows an edge or jumps.
+        const t = now / 1000 + s.seed * 7;
+        const drift = el.classList.contains('holo') && !reduceMotion;
+        const dx = drift ? Math.sin(t * 0.35) * 22 + Math.sin(t * 0.13) * 10 : 0;
+        const dy = drift ? Math.cos(t * 0.27) * 18 : 0;
+        st.setProperty('--bx', clamp(50 + Hl[0] * 120 + dx, 0, 100).toFixed(2) + '%');
+        st.setProperty('--by', clamp(50 + Hl[1] * 120 + dy, 0, 100).toFixed(2) + '%');
+        st.setProperty('--hx', clamp(50 + Hl[0] * 200 + dx * 1.3, 0, 100).toFixed(2) + '%');
         st.setProperty('--spec', spec.toFixed(3));
         st.setProperty('--glare', glare.toFixed(3));
         st.setProperty('--foil', foil.toFixed(3));

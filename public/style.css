@@ -956,17 +956,21 @@ button.big { padding: 14px 18px; font-size: 17px; }
 /* 1. full-card rainbow bands over the art (no mask), sweeping with the light and drifting on their own */
 .card.holo .foil-layer {
   -webkit-mask-image: none; mask-image: none;
+  /* one oversized, seamless rainbow (no repeating tiles, so no hard edges) plus a soft white sheen band */
   background-image:
     url("foil-grain.svg"),
-    repeating-linear-gradient(118deg,
-      hsl(0 100% 64%) 0%, hsl(45 100% 60%) 3.5%, hsl(90 100% 58%) 7%, hsl(165 100% 55%) 10.5%,
-      hsl(200 100% 60%) 14%, hsl(250 100% 68%) 17.5%, hsl(300 100% 66%) 21%, hsl(340 100% 64%) 24.5%, hsl(360 100% 64%) 28%),
-    repeating-linear-gradient(62deg, #fff0 0 18px, #ffffff40 22px, #fff0 26px 44px);
-  background-size: 120px 120px, 300% 300%, 220% 220%;
-  background-position: var(--bx, 50%) var(--by, 50%), var(--bx, 50%) var(--by, 50%), var(--hx, 50%) 0;
-  background-blend-mode: overlay, normal, screen;
+    linear-gradient(115deg, #fff0 30%, #ffffff55 45%, #ffffffaa 50%, #ffffff55 55%, #fff0 70%),
+    linear-gradient(118deg,
+      hsl(0 100% 64%), hsl(35 100% 60%), hsl(70 100% 58%), hsl(130 100% 55%), hsl(180 100% 56%),
+      hsl(215 100% 64%), hsl(265 100% 68%), hsl(310 100% 66%), hsl(360 100% 64%),
+      hsl(35 100% 60%), hsl(70 100% 58%), hsl(130 100% 55%), hsl(180 100% 56%),
+      hsl(215 100% 64%), hsl(265 100% 68%), hsl(310 100% 66%), hsl(360 100% 64%));
+  background-size: 160px 160px, 300% 300%, 400% 400%;
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-position: 0 0, var(--hx, 50%) var(--by, 50%), var(--bx, 50%) var(--by, 50%);
+  background-blend-mode: soft-light, screen, normal;
   mix-blend-mode: color-dodge;
-  filter: saturate(1.5) brightness(.78) contrast(1.15);
+  filter: saturate(1.4) brightness(.78) contrast(1.05);
   opacity: calc(.5 + var(--foil, .3) * .45);
 }
 /* 2. glitter: tiny sparkles that twinkle as the angle changes */
@@ -988,9 +992,10 @@ button.big { padding: 14px 18px; font-size: 17px; }
 /* 4. a rainbow sheen over the rarity metal frame */
 .card.holo.lit:not(.back) {
   background-image:
-    repeating-linear-gradient(118deg, hsl(0 100% 70% / .55) 0%, hsl(60 100% 65% / .55) 6%, hsl(150 100% 60% / .55) 12%, hsl(210 100% 65% / .55) 18%, hsl(290 100% 70% / .55) 24%, hsl(360 100% 70% / .55) 30%),
+    linear-gradient(118deg, hsl(0 100% 70% / .55), hsl(60 100% 65% / .55), hsl(150 100% 60% / .55), hsl(210 100% 65% / .55), hsl(290 100% 70% / .55), hsl(360 100% 70% / .55), hsl(60 100% 65% / .55), hsl(150 100% 60% / .55), hsl(210 100% 65% / .55), hsl(290 100% 70% / .55), hsl(360 100% 70% / .55)),
     linear-gradient(115deg, var(--rd, #555) 0%, var(--rm, #999) calc(var(--mx, 50%) - 34%), var(--rl, #eee) var(--mx, 50%), var(--rm, #999) calc(var(--mx, 50%) + 22%), var(--rd, #555) 100%);
-  background-size: 300% 300%, 100% 100%;
+  background-size: 400% 400%, 100% 100%;
+  background-repeat: no-repeat;
   background-position: var(--bx, 50%) var(--by, 50%), 0 0;
   background-blend-mode: color-dodge, normal;
   border-color: #fff;
@@ -1255,3 +1260,14 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .storm.decided .resp:not(.picked) { opacity: .3; transform: scale(.96); filter: grayscale(.6); }
 .storm.decided .resp.picked { animation: respChosen .9s ease-in-out infinite alternate; }
 @keyframes respChosen { from { box-shadow: 0 0 0 2px var(--st), 0 0 14px var(--st); } to { box-shadow: 0 0 0 3px #fff, 0 0 30px var(--st); transform: scale(1.03); } }
+
+/* six-card packs: one row of six on wide screens, two rows of three otherwise (rows leave room for the Scrap buttons) */
+.pack-cards { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; row-gap: 58px !important; }
+@media (min-width: 1280px) {
+  .pack-cards { grid-template-columns: repeat(6, auto); gap: 22px; }
+  .pack-card { width: 180px; height: 251px; font-size: 32px; }
+}
+@media (min-width: 900px) and (max-width: 1279px) {
+  .pack-card { width: 170px; height: 237px; font-size: 30px; }
+  .pack-cards { column-gap: 26px; }
+}

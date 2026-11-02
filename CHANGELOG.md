@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.7.0 — 2026-11-02
+### Changed
+- Card packs now hold **6 cards**: 5 random cards plus 1 guaranteed foil, revealed last. Each of the 5 random cards
+  can also be a foil, which works out to a bonus foil in about one pack in six. The reveal shows one row of six on
+  wide screens and two rows of three elsewhere.
+- Foil shine is one smooth, continuous rainbow sheen. The old repeating bands left hard lines in the shine while it
+  moved, and the drift could jump; the light now glides smoothly and never shows an edge. Same for the rainbow frame.
+### Fixed
+- The music auto-start described under v3.6.5 actually ships in this release (its file was missing from v3.6.5).
+
 ## v3.6.5 — 2026-11-02
 ### Changed
 - The music control no longer shows the song title.

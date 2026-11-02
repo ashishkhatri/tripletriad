@@ -1152,7 +1152,7 @@
     $('#pack').classList.add('show');
   }
 
-  // Step 2: the three cards come out face down; click each to reveal it.
+  // Step 2: the six cards come out face down (the foil last); click each to reveal it.
   function revealPackCards(deckId, r) {
     const box = $('#pack-cards'); box.innerHTML = '';
     const deck = decks.get(deckId);
