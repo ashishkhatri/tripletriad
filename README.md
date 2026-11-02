@@ -237,7 +237,11 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 - **Foil lighting** (`public/foil.js`): the pointer is treated as a point light above the screen.
   Each card's surface normal comes from its tilt; Blinn-Phong shading places a specular glare at the
   reflection point, and a Fresnel term drives a holographic foil layer (spectrum + grain) that is
-  colour-dodged over the art, so it works on any picture. Touch screens get a slow drifting light instead.
+  colour-dodged over the art, so it works on any picture.
+- **Phones and tablets:** the motion sensor (gyroscope) takes the pointer's place. Tilting the device tilts the cards
+  with it while the light stays fixed in the room, so glare and foil sweep across the cards as you move. The neutral
+  angle follows however you hold the device. iPhones and iPads ask for motion access on your first tap (needs HTTPS,
+  e.g. through Cloudflare). Without sensors, or with reduced motion turned on, the light drifts slowly instead.
 - **Normal vs foil:** normal cards only get the gloss and glare. Foils get a loud holographic finish: rainbow bands
   across the whole card that sweep slowly on their own and swing with the pointer, glitter, a prismatic frame and a glow.
 - **Themes** (`public/themes.css`): each set restyles the whole site with its own materials and shapes, not just

@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.0 — 2026-11-02
+### Added
+- Phones and tablets: cards now move with the device. The motion sensor tilts every card as you tilt the phone, and
+  the light stays fixed in the room, so the glare and the foil shine sweep across the cards like a real card in your
+  hand. Works in portrait and landscape, and the neutral angle follows however you're holding the phone.
+  iPhones and iPads ask for motion access on your first tap. Without a sensor (or with reduced motion on) the
+  slow drifting light is used as before.
+
 ## v3.7.0 — 2026-11-02
 ### Changed
 - Card packs now hold **6 cards**: 5 random cards plus 1 guaranteed foil, revealed last. Each of the 5 random cards

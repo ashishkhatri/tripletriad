@@ -16,7 +16,9 @@
  *     - The spectrum's offset follows the half-vector too, so colours sweep as the angle changes.
  *  3. Results are written as CSS variables that the stylesheet uses for the transform, the glare
  *     and foil layers (blended over the art, so it works on any picture) and the drop shadow.
- * Without a mouse (touch screens) the light drifts slowly on its own so cards still shimmer.
+ * On phones and tablets the device's motion sensors drive it instead: tilting the device tilts the cards
+ * the same way, and the light stays put in the room, so the glare and foil sweep across the cards like
+ * a real card in your hand. Without sensors (or before permission is given) the light drifts on its own.
  */
 (() => {
   const MAX_TILT = 16;          // degrees, card under the pointer
@@ -31,6 +33,44 @@
   window.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { px = e.clientX; py = e.clientY; } }, { passive: true });
   document.addEventListener('pointerleave', () => { px = py = null; });
   window.addEventListener('blur', () => { px = py = null; });
+
+  // ---------- device tilt (gyroscope / orientation sensor) ----------
+  // tilt.x, tilt.y in -1..1: how far the device is tipped right / toward you from where you usually hold it.
+  const tilt = { on: false, x: 0, y: 0, b0: null, g0: null, lastEvent: 0 };
+  const TILT_RANGE = 22;        // degrees of device tilt that map to a full card tilt
+  function onOrientation(e) {
+    if (e.beta == null || e.gamma == null) return;
+    // map sensor axes to the screen's axes for portrait / landscape
+    const ang = (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : (window.orientation || 0);
+    let fb = e.beta, lr = e.gamma;                                   // front-back, left-right (portrait)
+    if (ang === 90) { fb = -e.gamma; lr = e.beta; }
+    else if (ang === -90 || ang === 270) { fb = e.gamma; lr = -e.beta; }
+    else if (ang === 180) { fb = -e.beta; lr = -e.gamma; }
+    const now = performance.now();
+    const dt = tilt.lastEvent ? Math.min(0.2, (now - tilt.lastEvent) / 1000) : 0;
+    tilt.lastEvent = now;
+    // the neutral pose slowly follows how the device is held, so any comfortable angle works
+    if (tilt.b0 === null) { tilt.b0 = fb; tilt.g0 = lr; }
+    const follow = 1 - Math.exp(-dt / 2.5);
+    tilt.b0 += (fb - tilt.b0) * follow;
+    tilt.g0 += (lr - tilt.g0) * follow;
+    tilt.x = clamp((lr - tilt.g0) / TILT_RANGE, -1, 1);
+    tilt.y = clamp((fb - tilt.b0) / TILT_RANGE, -1, 1);
+    tilt.on = true;
+  }
+  function listenTilt() { window.addEventListener('deviceorientation', onOrientation, { passive: true }); }
+  if (!finePointer && 'DeviceOrientationEvent' in window && !reduceMotion) {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS asks for permission, and only from a tap
+      const ask = () => {
+        window.removeEventListener('touchend', ask, true); window.removeEventListener('click', ask, true);
+        DeviceOrientationEvent.requestPermission().then((r) => { if (r === 'granted') listenTilt(); }).catch(() => {});
+      };
+      window.addEventListener('touchend', ask, true); window.addEventListener('click', ask, true);
+    } else listenTilt();
+  }
+  // stale sensor (no events for a while, e.g. a desktop that reports none): fall back to the drifting light
+  const tiltLive = () => tilt.on && performance.now() - tilt.lastEvent < 1500;
 
   const states = new WeakMap();
   const norm = (v) => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
@@ -76,6 +116,14 @@
             const d = Math.hypot(dx, dy), f = 1 / (1 + d * 0.6);
             try_ = clamp(dx, -1, 1) * LEAN * f; trx = -clamp(dy, -1, 1) * LEAN * f;
           }
+        } else if (tiltLive()) {
+          // device tilt: cards turn with the device; the light stays fixed in the room, so on screen
+          // it moves the opposite way and the reflection slides across the card
+          const mt = Math.min(Number(el.dataset.tilt) || MAX_TILT, 18);
+          if (ghost && el._swing) { trx = el._swing.rx; try_ = el._swing.ry; }
+          else if (!still) { try_ = tilt.x * mt; trx = -tilt.y * mt; }
+          lx = cx - tilt.x * r.width * 1.8;
+          ly = cy - r.height * 0.6 - tilt.y * r.height * 1.6;
         } else {
           // no mouse: a slow wandering light, plus a soft idle sway
           const t = now / 1000 + s.seed;
@@ -115,8 +163,9 @@
         // Smooth sine motion kept inside 0–100% so the oversized gradient never shows an edge or jumps.
         const t = now / 1000 + s.seed * 7;
         const drift = el.classList.contains('holo') && !reduceMotion;
-        const dx = drift ? Math.sin(t * 0.35) * 22 + Math.sin(t * 0.13) * 10 : 0;
-        const dy = drift ? Math.cos(t * 0.27) * 18 : 0;
+        const amt = tiltLive() ? 0.35 : 1;   // with device tilt the motion comes mostly from your hand
+        const dx = drift ? (Math.sin(t * 0.35) * 22 + Math.sin(t * 0.13) * 10) * amt : 0;
+        const dy = drift ? Math.cos(t * 0.27) * 18 * amt : 0;
         st.setProperty('--bx', clamp(50 + Hl[0] * 120 + dx, 0, 100).toFixed(2) + '%');
         st.setProperty('--by', clamp(50 + Hl[1] * 120 + dy, 0, 100).toFixed(2) + '%');
         st.setProperty('--hx', clamp(50 + Hl[0] * 200 + dx * 1.3, 0, 100).toFixed(2) + '%');
