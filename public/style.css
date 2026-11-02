@@ -953,3 +953,52 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .mode .row { min-width: 0; }
 .mode .row input { min-width: 0; flex: 1 1 auto; }
 .mode .row button { flex: 0 0 auto; }
+
+/* ===================== foil cards: loud, unmistakable holographic finish ===================== */
+/* 1. full-card rainbow bands over the art (no mask), sweeping with the light and drifting on their own */
+.card.holo .foil-layer {
+  -webkit-mask-image: none; mask-image: none;
+  background-image:
+    url("foil-grain.svg"),
+    repeating-linear-gradient(118deg,
+      hsl(0 100% 64%) 0%, hsl(45 100% 60%) 3.5%, hsl(90 100% 58%) 7%, hsl(165 100% 55%) 10.5%,
+      hsl(200 100% 60%) 14%, hsl(250 100% 68%) 17.5%, hsl(300 100% 66%) 21%, hsl(340 100% 64%) 24.5%, hsl(360 100% 64%) 28%),
+    repeating-linear-gradient(62deg, #fff0 0 18px, #ffffff40 22px, #fff0 26px 44px);
+  background-size: 120px 120px, 300% 300%, 220% 220%;
+  background-position: var(--bx, 50%) var(--by, 50%), var(--bx, 50%) var(--by, 50%), var(--hx, 50%) 0;
+  background-blend-mode: overlay, normal, screen;
+  mix-blend-mode: color-dodge;
+  filter: saturate(1.5) brightness(.78) contrast(1.15);
+  opacity: calc(.5 + var(--foil, .3) * .45);
+}
+/* 2. glitter: tiny sparkles that twinkle as the angle changes */
+.card.holo .art::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+  background-image:
+    radial-gradient(circle at 20% 30%, #fff 0 1px, #fff0 1.6px), radial-gradient(circle at 70% 60%, #fff 0 1.2px, #fff0 1.8px),
+    radial-gradient(circle at 40% 80%, #fff 0 .9px, #fff0 1.5px), radial-gradient(circle at 85% 15%, #fff 0 1.1px, #fff0 1.7px),
+    radial-gradient(circle at 55% 40%, #fff 0 .8px, #fff0 1.4px);
+  background-size: 37px 41px, 53px 47px, 29px 31px, 61px 59px, 43px 37px;
+  background-position: var(--bx, 50%) var(--by, 50%), calc(100% - var(--bx, 50%)) var(--by, 50%), var(--by, 50%) var(--bx, 50%), var(--hx, 50%) 30%, 20% var(--hx, 50%);
+  mix-blend-mode: screen; opacity: calc(.45 + var(--spec, 0) * .55);
+  -webkit-mask-image: radial-gradient(farthest-corner circle at var(--mx, 50%) var(--my, 30%), #000 0%, #0009 45%, #0003 100%);
+          mask-image: radial-gradient(farthest-corner circle at var(--mx, 50%) var(--my, 30%), #000 0%, #0009 45%, #0003 100%);
+}
+/* 3. brighter glare on foils */
+.card.holo .glare-spot { opacity: calc(var(--glare, .3) * 1.25); }
+.card.holo .glare-spot::after { opacity: calc(.25 + var(--spec, 0)); }
+/* 4. a rainbow sheen over the rarity metal frame */
+.card.holo.lit:not(.back) {
+  background-image:
+    repeating-linear-gradient(118deg, hsl(0 100% 70% / .55) 0%, hsl(60 100% 65% / .55) 6%, hsl(150 100% 60% / .55) 12%, hsl(210 100% 65% / .55) 18%, hsl(290 100% 70% / .55) 24%, hsl(360 100% 70% / .55) 30%),
+    linear-gradient(115deg, var(--rd, #555) 0%, var(--rm, #999) calc(var(--mx, 50%) - 34%), var(--rl, #eee) var(--mx, 50%), var(--rm, #999) calc(var(--mx, 50%) + 22%), var(--rd, #555) 100%);
+  background-size: 300% 300%, 100% 100%;
+  background-position: var(--bx, 50%) var(--by, 50%), 0 0;
+  background-blend-mode: color-dodge, normal;
+  border-color: #fff;
+  box-shadow: 0 0 0 1px #ffffff99, 0 0 14px hsl(calc(var(--hue-shift, 200) * 1deg) 100% 70% / .45), calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b;
+}
+.card.rar-5.holo.lit:not(.back) { background-blend-mode: overlay, normal, normal; }
+/* normal cards: plain gloss only (no rainbow, no glitter) */
+.card.lit:not(.holo) .art::after { content: none; }
+@media (prefers-reduced-motion: reduce) { .card.holo .art::after { opacity: .5; } }

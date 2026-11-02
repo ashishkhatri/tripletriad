@@ -111,8 +111,11 @@
         st.setProperty('--ry', s.ry.toFixed(2) + 'deg');
         st.setProperty('--mx', mx.toFixed(1) + '%');
         st.setProperty('--my', my.toFixed(1) + '%');
-        st.setProperty('--bx', (50 + Hl[0] * 220).toFixed(1) + '%');
-        st.setProperty('--by', (50 + Hl[1] * 220).toFixed(1) + '%');
+        // foils: the holographic bands also drift slowly on their own, so they shimmer even when still
+        const drift = el.classList.contains('holo') && !reduceMotion ? Math.sin(now / 1900 + s.seed) * 26 + (now / 90 + s.seed * 40) % 200 : 0;
+        st.setProperty('--bx', (50 + Hl[0] * 220 + drift).toFixed(1) + '%');
+        st.setProperty('--by', (50 + Hl[1] * 220 + drift * 0.6).toFixed(1) + '%');
+        st.setProperty('--hx', (50 + Hl[0] * 420 + drift * 1.4).toFixed(1) + '%');
         st.setProperty('--spec', spec.toFixed(3));
         st.setProperty('--glare', glare.toFixed(3));
         st.setProperty('--foil', foil.toFixed(3));

@@ -1,5 +1,5 @@
 'use strict';
-/* Sound effects: short MP3s in /sfx, preloaded and played through Web Audio. */
+/* Sound effects: short MP3s in /sfx (one kit per card set), preloaded and played through Web Audio. */
 window.Sfx = (() => {
   // relative loudness per effect (files are peak-normalized)
   const MIX = {
@@ -29,15 +29,25 @@ window.Sfx = (() => {
     preload();
     return ctx;
   }
-  function load(name) {
-    if (!buffers.has(name)) {
-      buffers.set(name, fetch(`sfx/${name}.mp3`).then((r) => r.arrayBuffer())
-        .then((ab) => new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej)))
-        .catch(() => { buffers.delete(name); return null; }));
-    }
-    return buffers.get(name);
+  // Each card set has its own sound kit in sfx/<set>/; the root files are the default (Wilds) kit.
+  const KITS = new Set(['arcane', 'starfall', 'tidebound', 'bloomwild', 'hollow']);
+  const kit = () => { const th = document.documentElement.dataset.theme; return KITS.has(th) ? th : ''; };
+  function fetchBuf(url) {
+    return fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((ab) => new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej)));
   }
-  function preload() { Object.keys(MIX).forEach(load); }
+  function load(name, k = kit()) {
+    const key = `${k}/${name}`;
+    if (!buffers.has(key)) {
+      const p = k ? fetchBuf(`sfx/${k}/${name}.mp3`).catch(() => load(name, '')) : fetchBuf(`sfx/${name}.mp3`);
+      buffers.set(key, p.catch(() => { buffers.delete(key); return null; }));
+    }
+    return buffers.get(key);
+  }
+  function preload() { Object.keys(MIX).forEach((n) => load(n)); }
+  // load the new kit as soon as the set (theme) changes
+  new MutationObserver(() => { if (ctx) preload(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // play('flip') or play('flip', { delay: 0.1, rate: 1.05 })
   async function play(name, opts = {}) {

@@ -236,6 +236,8 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
   Each card's surface normal comes from its tilt; Blinn-Phong shading places a specular glare at the
   reflection point, and a Fresnel term drives a holographic foil layer (spectrum + grain) that is
   colour-dodged over the art, so it works on any picture. Touch screens get a slow drifting light instead.
+- **Normal vs foil:** normal cards only get the gloss and glare. Foils get a loud holographic finish: rainbow bands
+  across the whole card that sweep slowly on their own and swing with the pointer, glitter, a prismatic frame and a glow.
 - **Themes** (`public/themes.css`): each set restyles the whole site with its own materials and shapes, not just
   colours — Wilds: wood and parchment; Arcane Order: frosted astral glass and rune rings; Starfall: a cut-corner
   starship HUD with grid lines and corner brackets; Tidebound: rounded sea glass, bubble buttons and tide-pool slots;
@@ -247,12 +249,24 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 
 ## Sound effects
 
-Original sound effects live in `public/sfx/` (MP3, ~560 KB total): card pick-up, placement, flips,
-putting a card back, Same/Plus/Combo chimes, your-turn bell, win/lose/draw stings, XP, pack unlocks,
-wagers, pack opening and a reveal sound per card level (grander for rarer cards).
+Original sound effects (MP3, ~3.6 MB total): card pick-up, placement, flips, putting a card back,
+Same/Plus/Combo chimes, your-turn bell, win/lose/draw stings, XP, pack unlocks, wagers, pack opening and a
+reveal sound per card level (grander for rarer cards).
+
+Each card set has its own sound kit, used whenever that set's theme is showing:
+
+| Set | Kit | Folder |
+|---|---|---|
+| Wilds | wood, bells, plucked strings | `public/sfx/` (also the fallback) |
+| Arcane Order | glass chimes, crystal taps, shimmer, big hall | `public/sfx/arcane/` |
+| Starfall | synth bleeps, laser zaps, servo whirs, space echo | `public/sfx/starfall/` |
+| Tidebound | water drops, bubbles, wave swells, vibraphone | `public/sfx/tidebound/` |
+| Bloomwild | kalimba, leaf rustles, birdsong | `public/sfx/bloomwild/` |
+| Hollow Lanterns | temple bells, gongs, music box, ghostly wind, minor key | `public/sfx/hollow/` |
+
 The 🔔 button and slider next to the music control mute them and set their volume (remembered per browser).
-They're synthesized by `tools/gensfx.py` (`python3 tools/gensfx.py`), and any file can be swapped for your own MP3
-with the same name.
+They're synthesized by `tools/gensfx.py` (`python3 tools/gensfx.py [kit] [effect]`). Any file can be swapped for
+your own MP3 with the same name; a custom set without its own folder uses the root files.
 
 ## Versions and releases
 

@@ -3,6 +3,21 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.3.0 — 2026-11-01
+### Added
+- Every card set has its own sound effects, matching its theme:
+  - **Wilds:** wood, bells and plucked strings (unchanged).
+  - **Arcane Order:** glass chimes, crystal taps and shimmering air in a big hall.
+  - **Starfall:** synth bleeps, laser-zap flips, servo whirs and a space echo.
+  - **Tidebound:** water drops, bubbles, wave swells and vibraphone.
+  - **Bloomwild:** kalimba, leaf rustles and birdsong.
+  - **Hollow Lanterns:** temple bells, gongs, a music box and ghostly wind, in a minor key.
+- Sounds switch with the set's theme; a set without its own sounds uses the Wilds ones.
+### Changed
+- Foil cards are now unmistakable: rainbow holographic bands over the whole card that sweep slowly on their own and
+  swing with the pointer, glitter sparkles, a prismatic rainbow frame with a glow, and a brighter glare.
+  Normal cards keep just the gloss and glare.
+
 ## v3.2.0 — 2026-11-01
 ### Changed
 - New menu system with separate sections: **Play**, **Collection**, **Challenges**, **How to play** and **Account**.
