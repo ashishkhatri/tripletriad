@@ -619,20 +619,34 @@
     applyTheme(deckId);
     const box = $('#pack-cards'); box.innerHTML = '';
     $('#pack-title').textContent = `${deck.name} pack`;
+    // a real 3D pack: front and back faces with thickness between them, foil side walls,
+    // pillow shading and crinkles; it floats in a wrapper and tilts toward the pointer
+    const float = document.createElement('div'); float.className = 'sealed-float';
     const sealed = document.createElement('div');
     sealed.className = 'sealed foil';
-    const src = `packs/${encodeURIComponent(deckId)}.svg`;
+    sealed.dataset.tilt = '26';
+    const src = `packs/${encodeURIComponent(deckId)}.svg`, backSrc = `packs/${encodeURIComponent(deckId)}-back.svg`;
     sealed.style.setProperty('--pack-art', `url("${src}")`);
+    sealed.style.setProperty('--pack-back', `url("${backSrc}")`);
+    const front = document.createElement('div'); front.className = 'pack-face pack-front';
     for (const part of ['pack-body', 'pack-top']) {
       const d = document.createElement('div'); d.className = part;
       const img = document.createElement('img'); img.src = src; img.alt = part === 'pack-body' ? `${deck.name} card pack` : '';
       img.draggable = false;
-      d.appendChild(img); sealed.appendChild(d);
+      d.appendChild(img); front.appendChild(d);
     }
-    const foil = document.createElement('div'); foil.className = 'foil-layer'; sealed.appendChild(foil);
-    const glare = document.createElement('div'); glare.className = 'glare-spot'; sealed.appendChild(glare);
+    for (const layer of ['pack-bulge', 'pack-crinkle', 'foil-layer', 'glare-spot']) {
+      const d = document.createElement('div'); d.className = layer; front.appendChild(d);
+    }
+    const back = document.createElement('div'); back.className = 'pack-face pack-back';
+    const bimg = document.createElement('img'); bimg.src = backSrc; bimg.alt = ''; bimg.draggable = false; back.appendChild(bimg);
+    const bb = document.createElement('div'); bb.className = 'pack-bulge'; back.appendChild(bb);
+    const left = document.createElement('div'); left.className = 'pack-edge pack-edge-l';
+    const right = document.createElement('div'); right.className = 'pack-edge pack-edge-r';
+    sealed.append(back, left, right, front);
+    float.appendChild(sealed);
     const burst = document.createElement('div'); burst.className = 'pack-burst'; box.appendChild(burst);
-    box.appendChild(sealed);
+    box.appendChild(float);
     let opening = false;
     sealed.onclick = async () => {
       if (opening) return;
@@ -647,7 +661,7 @@
       burst.classList.add('go');
       $('#pack-hint').textContent = '';
       await sleep(950);
-      sealed.remove(); burst.remove();
+      float.remove(); burst.remove();
       revealPackCards(deckId, r);
     };
     $('#pack-hint').textContent = 'Click the pack to tear it open';

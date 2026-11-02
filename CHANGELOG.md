@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v2.2.1 — 2026-11-01
+### Changed
+- Card packs are real 3D objects: front and back faces with thickness between them, foil side walls,
+  pillow-shaped shading, crinkles at the crimped seals, a gentle floating sway, a stronger tilt toward the
+  pointer, and a 3D tear where the top flies off and the pack drops away.
+- Each set's pack has its own back design (centre fin seal, set name, contents, barcode).
+
 ## v2.2.0 — 2026-11-01
 ### Added
 - 3D cards: tilt toward the pointer with a moving shadow; the dragged card lifts and swings with your motion;

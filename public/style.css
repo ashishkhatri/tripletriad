@@ -610,50 +610,100 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   .card.placed, .card.flip { animation-duration: .01s; }
 }
 
-/* ===== sealed card pack ===== */
+/* ===== sealed card pack (3D) ===== */
+.sealed-float {
+  --depth: 14px;
+  position: relative; perspective: 900px; perspective-origin: 50% 40%;
+  animation: packIn .7s cubic-bezier(.2,.9,.3,1.2) both, packFloat 4.5s ease-in-out .7s infinite;
+}
+.sealed { animation: packSway 4.5s ease-in-out .7s infinite; }
 .sealed {
   position: relative; width: 230px; aspect-ratio: 300 / 460; cursor: pointer; user-select: none;
-  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transform-style: preserve-3d; transition: transform .1s linear;
-  filter: drop-shadow(calc(var(--sx, 0) * 1.5px) calc(var(--sy, 6) * 1.5px + 10px) 18px #000c);
-  animation: packIn .6s cubic-bezier(.2,.9,.3,1.2) both;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .1s linear;
 }
-.sealed .pack-body, .sealed .pack-top { position: absolute; inset: 0; }
-.sealed img { width: 100%; height: 100%; display: block; pointer-events: none; }
-.sealed .pack-top { clip-path: inset(0 0 86.5% 0); }
-.sealed .pack-body { clip-path: inset(13.5% 0 0 0); }
-/* the lighting layers are cut to the pack's own outline */
-.sealed .foil-layer, .sealed .glare-spot {
+/* soft shadow on the "table" below the floating pack */
+.sealed-float::after {
+  content: ""; position: absolute; left: 12%; right: 12%; bottom: -34px; height: 26px; border-radius: 50%;
+  background: radial-gradient(ellipse at center, #000a 0%, #0000 70%);
+  transform: translateX(calc(var(--sx, 0) * 1.4px)); animation: shadowFloat 4.5s ease-in-out .7s infinite;
+}
+.pack-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform-style: flat; }
+.pack-face *, .pack-face *::after { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.pack-front { transform: translateZ(calc(var(--depth) / 2)); }
+.pack-back  { transform: rotateY(180deg) translateZ(calc(var(--depth) / 2)); }
+.pack-face img { width: 100%; height: 100%; display: block; pointer-events: none; }
+.pack-front .pack-body, .pack-front .pack-top { position: absolute; inset: 0; }
+.pack-front .pack-top { clip-path: inset(0 0 86.5% 0); }
+.pack-front .pack-body { clip-path: inset(13.5% 0 0 0); }
+/* foil side walls between the faces (the crimped ends are flat, so walls stop short of them) */
+.pack-edge {
+  position: absolute; top: 4.5%; bottom: 4.5%; width: var(--depth);
+  background: linear-gradient(180deg, var(--metal-5), var(--metal-3) 14%, var(--metal-4) 36%, var(--metal-2) 58%, var(--metal-4) 80%, var(--metal-5) 100%);
+  box-shadow: inset 0 0 0 1px #0007, inset 4px 0 6px #0006, inset -4px 0 6px #0006;
+}
+.pack-edge::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(180deg, #fff3 0 2px, #0000 2px 9px); }
+.pack-edge-l { left: 0; transform-origin: left center; transform: translateX(calc(var(--depth) / -2)) rotateY(-90deg) translateX(calc(var(--depth) / -2)); }
+.pack-edge-r { right: 0; transform-origin: right center; transform: translateX(calc(var(--depth) / 2)) rotateY(90deg) translateX(calc(var(--depth) / 2)); }
+/* lighting layers are cut to the pack's own outline */
+.pack-face .pack-bulge, .pack-face .pack-crinkle, .pack-face .foil-layer, .pack-face .glare-spot {
+  position: absolute; inset: 0; pointer-events: none; border-radius: 0;
   -webkit-mask: var(--pack-art) center / 100% 100% no-repeat; mask: var(--pack-art) center / 100% 100% no-repeat;
-  border-radius: 0;
 }
-.sealed .foil-layer { opacity: calc(var(--foil, .3) * .85); }
-.sealed:hover { animation: packWiggle 1.2s ease-in-out infinite; }
-.sealed.shaking { animation: packShake .35s linear infinite; }
-.sealed.tearing { animation: none; cursor: default; }
-.sealed.tearing .pack-top { animation: tearOff .7s cubic-bezier(.3,.6,.4,1) forwards; }
-.sealed.tearing .pack-body, .sealed.tearing .foil-layer, .sealed.tearing .glare-spot { animation: packDrop .7s .25s cubic-bezier(.5,0,.8,.4) forwards; }
+.pack-back .pack-bulge { -webkit-mask-image: var(--pack-back); mask-image: var(--pack-back); }
+/* pillow shape: a filled foil pack bulges in the middle and falls away at the sides and seals */
+.pack-bulge {
+  background:
+    linear-gradient(90deg, #000a 0%, #0004 7%, #fff0 22%, #fff2 46%, #fff0 70%, #0004 92%, #000a 100%),
+    linear-gradient(180deg, #0000 10%, #0005 12.5%, #fff1 16%, #fff0 30%, #fff0 74%, #0003 86%, #0005 88%, #0000 90%);
+  mix-blend-mode: soft-light; opacity: .95;
+}
+/* crinkles: fine creases fanning from the crimped seals, catching the light as it moves */
+.pack-crinkle {
+  background:
+    repeating-linear-gradient(97deg, #fff0 0 9px, #ffffff2e 9px 10px, #fff0 10px 23px),
+    repeating-linear-gradient(83deg, #fff0 0 13px, #0000002e 13px 14px, #fff0 14px 31px);
+  background-position: var(--bx, 50%) 0, calc(100% - var(--bx, 50%)) 0;
+  -webkit-mask-image: var(--pack-art), linear-gradient(180deg, #000 0%, #000 14%, #0000 26%, #0000 74%, #000 86%, #000 100%);
+          mask-image: var(--pack-art), linear-gradient(180deg, #000 0%, #000 14%, #0000 26%, #0000 74%, #000 86%, #000 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+  mix-blend-mode: overlay; opacity: .9;
+}
+.pack-front .foil-layer { opacity: calc(var(--foil, .3) * .9); }
+.pack-front .glare-spot { opacity: calc(var(--glare, .3) * 1.15); }
+
+.sealed:hover .pack-front { animation: packBreathe 1.4s ease-in-out infinite; }
+.sealed.shaking { animation: packShake .32s linear infinite; }
+.sealed.tearing { cursor: default; }
+.sealed.tearing .pack-front .pack-top { animation: tearOff3d .75s cubic-bezier(.3,.6,.4,1) forwards; transform-origin: 85% 100%; }
+.sealed.tearing { animation: packDrop3d .8s .3s cubic-bezier(.5,0,.8,.4) forwards; }
 .pack-burst { position: absolute; left: 50%; top: 45%; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; }
 .pack-burst.go { animation: burst .9s ease-out forwards; }
-.pack-cards { position: relative; min-height: 270px; align-items: center; }
-@keyframes packIn { from { transform: perspective(900px) translateY(60px) rotateX(30deg) scale(.8); opacity: 0; } }
-@keyframes packWiggle { 0%, 100% { rotate: 0deg; } 25% { rotate: -1.2deg; } 75% { rotate: 1.2deg; } }
+.pack-cards { position: relative; min-height: 290px; align-items: center; }
+
+@keyframes packIn { from { transform: translateY(80px) scale(.8); opacity: 0; } }
+@keyframes packFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+@keyframes packSway { 0%, 100% { rotate: y -9deg; } 50% { rotate: y 9deg; } }
+@keyframes shadowFloat { 0%, 100% { opacity: .9; scale: 1; } 50% { opacity: .6; scale: .9; } }
+@keyframes packBreathe { 0%, 100% { scale: 1; } 50% { scale: 1.012 1.006; } }
 @keyframes packShake { 0%, 100% { translate: 0 0; } 25% { translate: -3px 1px; } 50% { translate: 3px -1px; } 75% { translate: -2px -1px; } }
-@keyframes tearOff {
-  0% { transform: none; opacity: 1; }
-  30% { transform: translate(6px, -6px) rotate(4deg); }
-  100% { transform: translate(140px, -160px) rotate(38deg); opacity: 0; }
+@keyframes tearOff3d {
+  0%   { transform: none; opacity: 1; }
+  30%  { transform: translateZ(10px) rotateX(-25deg) rotateZ(4deg); }
+  100% { transform: translate3d(150px, -170px, 120px) rotateX(-75deg) rotateZ(38deg); opacity: 0; }
 }
-@keyframes packDrop {
-  0% { transform: none; opacity: 1; }
-  100% { transform: translateY(220px) scale(.85); opacity: 0; }
+@keyframes packDrop3d {
+  0%   { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); opacity: 1; }
+  100% { transform: translate3d(0, 200px, -260px) rotateX(35deg); opacity: 0; }
 }
 @keyframes burst {
   0% { box-shadow: 0 0 0 0 var(--metal-2), 0 0 0 0 var(--metal-1); opacity: 1; }
   100% { box-shadow: 0 0 120px 90px color-mix(in srgb, var(--metal-2) 0%, transparent), 0 0 60px 40px color-mix(in srgb, var(--metal-1) 0%, transparent); opacity: 0; }
 }
 .pack-card .face-back { pointer-events: none; }
-@media (min-width: 900px) { .sealed { width: 300px; } .pack-cards { min-height: 470px; } }
+@media (min-width: 900px) { .sealed { width: 300px; } .sealed-float { --depth: 20px; } .pack-cards { min-height: 480px; } }
+@media (prefers-reduced-motion: reduce) { .sealed-float, .sealed-float::after, .sealed { animation: none; } }
 @media (max-width: 640px) {
   /* leave room for the sound / music control in the bottom corner */
   .screen.active, #game.active { padding-bottom: 76px; }

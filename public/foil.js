@@ -71,7 +71,7 @@
           const dx = (px - cx) / (r.width / 2), dy = (py - cy) / (r.height / 2);
           const inside = Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
           if (ghost) { trx = el._swing ? el._swing.rx : 0; try_ = el._swing ? el._swing.ry : 0; }
-          else if (inside && !still) { try_ = dx * MAX_TILT; trx = -dy * MAX_TILT; }
+          else if (inside && !still) { const mt = Number(el.dataset.tilt) || MAX_TILT; try_ = dx * mt; trx = -dy * mt; }
           else if (!still) {
             const d = Math.hypot(dx, dy), f = 1 / (1 + d * 0.6);
             try_ = clamp(dx, -1, 1) * LEAN * f; trx = -clamp(dy, -1, 1) * LEAN * f;

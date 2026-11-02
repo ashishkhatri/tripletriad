@@ -101,6 +101,46 @@ function packSvg(deck) {
 `;
 }
 
+function packBackSvg(deck) {
+  const st = STYLE[deck.id] || FALLBACK;
+  const name = esc(deck.name.toUpperCase());
+  const fit = name.length > 9 ? ` textLength="${W - 120}" lengthAdjust="spacingAndGlyphs"` : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+<defs>
+  <linearGradient id="body" x1="1" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="${st.c2}"/><stop offset=".5" stop-color="${st.c1}"/><stop offset="1" stop-color="${st.c2}"/>
+  </linearGradient>
+  <linearGradient id="seal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${st.c3}"/><stop offset="1" stop-color="${st.c2}"/></linearGradient>
+  <clipPath id="packShape"><path d="${crimp(14, false)} L${W},${H - 14} ${crimp(H - 14, true).replace(/^M[^L]+/, '').split(' L').reverse().join(' L')} Z"/></clipPath>
+</defs>
+<g clip-path="url(#packShape)">
+  <rect width="${W}" height="${H}" fill="url(#body)"/>
+  <g opacity=".16">${motif(st.motif, st.c3)}</g>
+  <rect y="0" width="${W}" height="54" fill="url(#seal)"/>
+  <rect y="${H - 54}" width="${W}" height="54" fill="url(#seal)"/>
+  ${Array.from({ length: 30 }, (_, i) => `<rect x="${i * 10}" y="2" width="1.5" height="48" fill="#ffffff" opacity=".18"/><rect x="${i * 10}" y="${H - 50}" width="1.5" height="48" fill="#ffffff" opacity=".18"/>`).join('')}
+  <!-- fin seal down the middle, like a real flow-wrapped pack -->
+  <rect x="${W / 2 - 14}" y="54" width="28" height="${H - 108}" fill="${st.c3}" opacity=".55"/>
+  <rect x="${W / 2 - 14}" y="54" width="28" height="${H - 108}" fill="none" stroke="#000" stroke-opacity=".25"/>
+  ${Array.from({ length: 34 }, (_, i) => `<rect x="${W / 2 - 13}" y="${58 + i * 10}" width="26" height="1.4" fill="#fff" opacity=".22"/>`).join('')}
+  <g transform="translate(${W / 2 - 72} 120)">
+    <rect width="${-2}" height="0"/>
+  </g>
+  <text x="${W / 4}" y="150" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="2" transform="rotate(-90 ${W / 4} 150)">TRIAD</text>
+  <text x="${W * 0.75}" y="230" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="${st.ink}" text-anchor="middle" letter-spacing="3" transform="rotate(90 ${W * 0.75} 230)"${fit}>${name}</text>
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" fill="${st.ink}" opacity=".75" font-size="9.5" text-anchor="middle">
+    <text x="${W / 4}" y="270">3 CARDS PER PACK</text>
+    <text x="${W / 4}" y="286">ONE SET · ${deck.cards.length} CARDS</text>
+    <text x="${W / 4}" y="302">RARER LEVELS INSIDE</text>
+  </g>
+  <g transform="translate(${W / 4 - 34} 320)" opacity=".8">
+    ${Array.from({ length: 22 }, (_, i) => `<rect x="${i * 3.1}" y="0" width="${(i * 7) % 3 === 0 ? 2 : 1}" height="34" fill="${st.ink}"/>`).join('')}
+  </g>
+</g>
+</svg>
+`;
+}
+
 const index = JSON.parse(fs.readFileSync(path.join(PUBLIC, 'decks', 'index.json'), 'utf8'));
 fs.mkdirSync(path.join(PUBLIC, 'packs'), { recursive: true });
 for (const f of index.decks) {
@@ -108,5 +148,6 @@ for (const f of index.decks) {
   deck.id = deck.id || f.replace(/\.json$/, '');
   const out = path.join(PUBLIC, 'packs', `${deck.id}.svg`);
   fs.writeFileSync(out, packSvg(deck));
+  fs.writeFileSync(path.join(PUBLIC, 'packs', `${deck.id}-back.svg`), packBackSvg(deck));
   console.log(`${deck.id.padEnd(10)} ${Math.round(fs.statSync(out).size / 1024)} KB`);
 }
