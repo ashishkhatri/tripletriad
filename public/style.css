@@ -736,13 +736,30 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   border-color: #b07648;
   background: linear-gradient(180deg, #91592f, #5e351a);
 }
-/* epic: diamond — icy blue metal with cut facets that catch the light */
+/* epic: diamond — a crystal frame: big angled facets in light and deep blue (hard edges, like cut glass),
+   a white glint that slides with the light, and star sparkles that twinkle */
 .card.rar-4.lit:not(.back) {
-  border-color: #e8f8ff;
+  border-color: #f2fbff;
   background:
-    conic-gradient(from 45deg at var(--mx, 50%) 40%, #ffffff00 0deg, #ffffff55 20deg, #ffffff00 45deg, #ffffff40 110deg, #ffffff00 140deg, #ffffff55 200deg, #ffffff00 230deg, #ffffff35 300deg, #ffffff00 330deg),
-    linear-gradient(115deg, var(--rd) 0%, var(--rm) calc(var(--mx, 50%) - 34%), var(--rl) var(--mx, 50%), var(--rm) calc(var(--mx, 50%) + 22%), var(--rd) 100%);
+    linear-gradient(115deg, #fff0 calc(var(--mx, 50%) - 14%), #ffffffb0 var(--mx, 50%), #fff0 calc(var(--mx, 50%) + 14%)),
+    linear-gradient(28deg, #0000 0 31%, #ffffffa0 31% 44%, #0000 44% 63%, #ffffff60 63% 71%, #0000 71%),
+    linear-gradient(-62deg, #0000 0 17%, #f2fbffb0 17% 27%, #0000 27% 52%, #ffffff80 52% 58%, #0000 58% 81%, #f2fbffa0 81% 90%, #0000 90%),
+    linear-gradient(74deg, #0000 0 9%, #06285cb0 9% 22%, #0000 22% 48%, #06285ca0 48% 61%, #0000 61% 86%, #06285ca8 86%),
+    linear-gradient(-14deg, #0000 0 36%, #0b3d82a0 36% 49%, #0000 49% 73%, #ffffff70 73% 80%, #0000 80%),
+    linear-gradient(160deg, #9fdcff 0%, #3c92e0 30%, #b9ecff 52%, #2a76c9 74%, #8fd3ff 100%);
+  box-shadow: 0 0 0 1px #bfeaffaa, 0 0 12px #4fb4ff66, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
 }
+/* twinkling sparkles on the diamond frame (four-point stars, staggered) */
+.card.rar-4:not(.back) > .tw { position: absolute; z-index: 3; width: .55em; height: .55em; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 8%, #fff0 30%), linear-gradient(0deg, #fff0 44%, #fff 50%, #fff0 56%), linear-gradient(90deg, #fff0 44%, #fff 50%, #fff0 56%);
+  -webkit-mask: radial-gradient(circle, #000 20%, #0000 70%); mask: radial-gradient(circle, #000 20%, #0000 70%);
+  animation: twinkle 2.6s ease-in-out infinite; opacity: 0; translate: -50% -50%; }
+.card.rar-4 > .tw:nth-of-type(1) { left: 3%; top: 14%; }
+.card.rar-4 > .tw:nth-of-type(2) { left: 97%; top: 42%; animation-delay: .9s; }
+.card.rar-4 > .tw:nth-of-type(3) { left: 4%; top: 77%; animation-delay: 1.7s; }
+.card.rar-4 > .tw:nth-of-type(4) { left: 62%; top: 1.5%; animation-delay: 2.2s; }
+@keyframes twinkle { 0%, 100% { opacity: 0; scale: .3; rotate: 0deg; } 18% { opacity: 1; scale: 1; rotate: 45deg; } 36% { opacity: 0; scale: .3; rotate: 90deg; } }
+@media (prefers-reduced-motion: reduce) { .card.rar-4 > .tw { animation: none; } }
 /* legendary: prismatic metal that shifts with the light */
 .card.rar-5.lit:not(.back) {
   border-color: #fff;

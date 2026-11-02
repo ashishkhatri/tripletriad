@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.3 — 2026-11-02
+
+- Epic (diamond) frames look like cut crystal: large angled facets in bright and deep blue with hard edges, a white glint that slides with the light and tilt, and four star sparkles that twinkle around the frame.
+
 ## v0.5.2 — 2026-11-02
 
 - New rarity frames: **bronze** = Common (matte unless foil), **silver** = Uncommon, **gold** = Rare, **diamond** (icy blue with cut facets) = Epic, **prismatic** (rainbow) = Legendary. Iron is gone.

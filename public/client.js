@@ -201,6 +201,7 @@
     ['t', 'r', 'b', 'l'].forEach((k, i) => { const s = document.createElement('span'); s.className = k; s.textContent = RANK(card.r[i]); ranks.appendChild(s); });
     el.appendChild(ranks);
     if (card.el) { const e = document.createElement('div'); e.className = 'el'; e.textContent = (glyphs || {})[card.el] || glyph(card.el); e.title = cap(card.el); el.appendChild(e); }
+    if (card.level === 4) for (let k = 0; k < 4; k++) { const t = document.createElement('i'); t.className = 'tw'; el.appendChild(t); }   // diamond frame sparkles
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = card.name; el.appendChild(nm);
     el.title = `${card.name} — ${RARITY[card.level] || ''} · ${cap(card.el)}${card.foil ? ' · Foil' : ''} — ${card.r.map(RANK).join(' / ')}`;
     return el;
