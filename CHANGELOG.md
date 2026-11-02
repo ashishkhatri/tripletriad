@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.6.5 — 2026-11-02
+### Changed
+- The music control no longer shows the song title.
+- Music starts on its own unless you've turned it off: right away where the browser allows autoplay, otherwise on your
+  very first click, tap or key press anywhere on the page. Turning music back on starts the track immediately, and
+  nothing plays (or downloads) while music is off.
+
 ## v3.6.2 — 2026-11-02
 ### Changed
 - A draw now earns 23 XP, halfway between a loss (10) and a win (35), rounded up. It was 15.

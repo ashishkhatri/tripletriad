@@ -203,7 +203,8 @@ It's separate from the code, so `update` never touches it, and `update` keeps th
 Each card set has its own original background theme in `public/music/` (MP3, 128 kbps, ~0.5–1 MB each),
 played as a seamless loop. The menu plays the selected set's theme; a game plays its set's theme.
 The ♫ button and slider in the corner mute it and set the volume, remembered per browser.
-Browsers only allow sound after the first click or tap, so music starts then.
+Music starts on its own unless you've turned it off. Browsers may hold sound back until your first click, tap or key
+press on the page (sites you play often and installed apps are usually allowed straight away); it starts at that moment.
 
 | Set | Theme |
 |---|---|

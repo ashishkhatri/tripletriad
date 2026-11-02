@@ -308,10 +308,8 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .music-btn { width: 34px; height: 34px; padding: 0; border-radius: 50%; font-size: 18px; line-height: 1; }
 .music-btn.off { color: var(--muted); filter: saturate(.3); }
 .music-ctl input[type=range] { width: 80px; accent-color: var(--gold); padding: 0; background: none; box-shadow: none; border: 0; }
-.music-title { font-style: italic; font-size: 14px; color: var(--muted); max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 640px) {
   .music-ctl { bottom: 10px; right: 10px; }
-  .music-title { display: none; }
   .music-ctl input[type=range] { width: 64px; }
 }
 
