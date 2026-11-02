@@ -201,6 +201,7 @@
     ['t', 'r', 'b', 'l'].forEach((k, i) => { const s = document.createElement('span'); s.className = k; s.textContent = RANK(card.r[i]); ranks.appendChild(s); });
     el.appendChild(ranks);
     if (card.el) { const e = document.createElement('div'); e.className = 'el'; e.textContent = (glyphs || {})[card.el] || glyph(card.el); e.title = cap(card.el); el.appendChild(e); }
+    if (card.level === 5) { const cm = document.createElement('i'); cm.className = 'comets'; el.prepend(cm); }   // legendary frame comets (behind the art)
     if (card.level === 4) for (let k = 0; k < 4; k++) { const t = document.createElement('i'); t.className = 'tw'; el.appendChild(t); }   // diamond frame sparkles
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = card.name; el.appendChild(nm);
     el.title = `${card.name} — ${RARITY[card.level] || ''} · ${cap(card.el)}${card.foil ? ' · Foil' : ''} — ${card.r.map(RANK).join(' / ')}`;
@@ -1232,6 +1233,26 @@
     const burst = document.createElement('div'); burst.className = 'craft-burst' + (foil ? ' foil' : ''); tile.appendChild(burst);
     setTimeout(() => { burst.remove(); tile.classList.remove('craft-new', 'craft-dupe', 'craft-foil'); }, 2400);
   }
+  function scrapReveal(id, gained) {
+    const tile = document.querySelector(`#col-grid .grid-card[data-card="${id}"]`);
+    if (!tile) return;
+    tile.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    const s = colSummary, left = (s.cards[id] || 0) + (s.foils[id] || 0);
+    tile.classList.remove('scrap-anim', 'scrap-gone'); void tile.offsetWidth;
+    tile.classList.add('scrap-anim'); if (!left) tile.classList.add('scrap-gone');
+    const fx = [];
+    const fl = document.createElement('div'); fl.className = 'scrap-flash'; fx.push(fl);
+    const mn = document.createElement('div'); mn.className = 'scrap-minus'; mn.textContent = '−1'; fx.push(mn);
+    for (let k = 0; k < 9; k++) {
+      const sh = document.createElement('i'); sh.className = 'scrap-shard'; sh.textContent = '◆';
+      const a = (k / 9) * Math.PI * 2 + Math.random() * .4, d = 60 + Math.random() * 50;
+      sh.style.setProperty('--dx', (Math.cos(a) * d).toFixed(0) + 'px'); sh.style.setProperty('--dy', (Math.sin(a) * d).toFixed(0) + 'px');
+      sh.style.animationDelay = (.15 + Math.random() * .15).toFixed(2) + 's'; fx.push(sh);
+    }
+    tile.append(...fx);
+    toast(`Scrapped for ${gained} shards.`);
+    setTimeout(() => { fx.forEach((e) => e.remove()); tile.classList.remove('scrap-anim', 'scrap-gone'); }, 1500);
+  }
   async function detailAction(kind) {
     const { deckId, id, foil } = detail;
     try {
@@ -1249,9 +1270,10 @@
         craftReveal(id, foil);
         return;
       }
-      toast(`Scrapped for ${r.gained} shards.`);
-      renderCardDetail();
-      renderCollection();
+      // close the popup and show the card being scrapped in the collection (or its count dropping)
+      $('#card-detail').classList.remove('show');
+      await renderCollection();
+      scrapReveal(id, r.gained);
     } catch (e) { toast(e.message); sfx('error'); }
   }
 

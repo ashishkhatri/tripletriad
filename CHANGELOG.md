@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.5 — 2026-11-02
+
+- Epic frames are mostly solid `#a335ee`, with just a few faint facets, a soft glint and the twinkling sparkles.
+- Legendary frames stand out: a brighter glow and two comets of light that race around the frame all the time, even when nothing moves.
+- Scrapping from the collection closes the card window and plays an animation on the card: it shudders and flashes red, shards fly off and a −1 floats up. If you still have copies, the count drops with a red pulse; if it was your last, the card fades to grey.
+
 ## v0.5.4 — 2026-11-02
 
 - New rarity colours: Common white `#ffffff` (matte unless foil), Uncommon green `#1eff00`, Rare blue `#0070dd`, Epic purple `#a335ee`, Legendary orange `#ff8000`.

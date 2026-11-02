@@ -168,7 +168,7 @@ progress follows a player to any device. Guests can still play with the **Balanc
   The computer gets a hand of about the same total level as yours.
 - **Normal and foil cards:** every card exists as a normal and a rarer foil version (every pack has one guaranteed foil, and about one pack in six has a bonus foil among its other five cards).
   Only foils get the holographic layer. Foil copies are played first when they're in your hand.
-- **Card frames:** the border shows rarity — white `#ffffff` (common, matte unless foil), green `#1eff00` (uncommon), blue `#0070dd` (rare), faceted purple `#a335ee` (epic), orange `#ff8000` with a smooth sheen (legendary) — and the
+- **Card frames:** the border shows rarity — white `#ffffff` (common, matte unless foil), green `#1eff00` (uncommon), blue `#0070dd` (rare), purple `#a335ee` with faint facets and sparkles (epic), orange `#ff8000` with a smooth sheen and two comets circling the frame (legendary) — and the
   element is the icon in the top-right corner. On the board, the name plate shows whose card it is (blue / red).
 - **Shards** (one balance per account): earned from daily challenges and by scrapping cards; spent on crafting.
   | Rarity | Scrap | Craft |

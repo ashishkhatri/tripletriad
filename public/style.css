@@ -737,17 +737,15 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   border-color: #ffffff;
   background: linear-gradient(180deg, #ffffff, #d9dce1);
 }
-/* epic: purple with small cut facets (hard-edged light and dark shards, tiled) and a glint that follows the light */
+/* epic: mostly solid #a335ee, with a few faint cut facets and a soft glint that follows the light */
 .card.rar-4.lit:not(.back) {
-  border-color: #f0dcff;
+  border-color: #e4c4ff;
   background:
-    linear-gradient(115deg, #fff0 calc(var(--mx, 50%) - 14%), #ffffffa0 var(--mx, 50%), #fff0 calc(var(--mx, 50%) + 14%)),
-    linear-gradient(28deg, #0000 0 31%, #ffffff8c 31% 44%, #0000 44% 63%, #ffffff55 63% 71%, #0000 71%) 0 0 / 1.3em 1.7em,
-    linear-gradient(-62deg, #0000 0 17%, #f6eaffa0 17% 27%, #0000 27% 52%, #ffffff70 52% 58%, #0000 58% 81%, #f6eaff90 81% 90%, #0000 90%) .4em .2em / 1.1em 1.5em,
-    linear-gradient(74deg, #0000 0 9%, #2a0748a8 9% 22%, #0000 22% 48%, #2a0748a0 48% 61%, #0000 61% 86%, #2a0748a8 86%) .2em .5em / 1.5em 1.2em,
-    linear-gradient(-14deg, #0000 0 36%, #3a0d66a0 36% 49%, #0000 49% 73%, #ffffff60 73% 80%, #0000 80%) .7em 0 / 1.2em 1.9em,
-    linear-gradient(160deg, #d6a6ff 0%, #8f2de0 30%, #e3c2ff 52%, #7a22c4 74%, #c48af7 100%);
-  box-shadow: 0 0 0 1px #e2bfffaa, 0 0 12px #a335ee66, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
+    linear-gradient(115deg, #fff0 calc(var(--mx, 50%) - 16%), #ffffff55 var(--mx, 50%), #fff0 calc(var(--mx, 50%) + 16%)),
+    linear-gradient(28deg, #0000 0 38%, #ffffff2e 38% 50%, #0000 50%) 0 0 / 2.2em 2.6em,
+    linear-gradient(-62deg, #0000 0 55%, #2c064d38 55% 68%, #0000 68%) .6em .3em / 2.4em 2.2em,
+    #a335ee;
+  box-shadow: 0 0 0 1px #d9aaffaa, 0 0 12px #a335ee66, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
 }
 /* twinkling sparkles on the epic frame (four-point stars, staggered) */
 .card.rar-4:not(.back) > .tw { position: absolute; z-index: 3; width: .5em; height: .5em; pointer-events: none;
@@ -760,14 +758,22 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .card.rar-4 > .tw:nth-of-type(4) { left: 62%; top: 1.5%; animation-delay: 2.2s; }
 @keyframes twinkle { 0%, 100% { opacity: 0; scale: .3; rotate: 0deg; } 18% { opacity: 1; scale: 1; rotate: 45deg; } 36% { opacity: 0; scale: .3; rotate: 90deg; } }
 @media (prefers-reduced-motion: reduce) { .card.rar-4 > .tw { animation: none; } }
-/* legendary: bright orange metal with one wide, very smooth sheen that glides with the light and tilt */
+/* legendary: bright orange with a smooth sheen, and two comets of light that always race around the frame */
 .card.rar-5.lit:not(.back) {
-  border-color: #ffe2bf;
+  border-color: #ffd29a;
   background:
-    linear-gradient(115deg, #fff0 calc(var(--mx, 50%) - 30%), #ffffff26 calc(var(--mx, 50%) - 18%), #ffffff99 calc(var(--mx, 50%) - 7%), #fffffff2 var(--mx, 50%), #ffffff99 calc(var(--mx, 50%) + 7%), #ffffff26 calc(var(--mx, 50%) + 18%), #fff0 calc(var(--mx, 50%) + 30%)),
-    linear-gradient(115deg, #b85300 0%, #ff8000 calc(var(--mx, 50%) - 30%), #ffb057 var(--mx, 50%), #ff8000 calc(var(--mx, 50%) + 30%), #b85300 100%);
-  box-shadow: 0 0 0 1px #ffd4a0cc, 0 0 16px #ff800088, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
+    linear-gradient(115deg, #fff0 calc(var(--mx, 50%) - 30%), #ffffff26 calc(var(--mx, 50%) - 18%), #ffffff80 calc(var(--mx, 50%) - 7%), #ffffffd0 var(--mx, 50%), #ffffff80 calc(var(--mx, 50%) + 7%), #ffffff26 calc(var(--mx, 50%) + 18%), #fff0 calc(var(--mx, 50%) + 30%)),
+    linear-gradient(115deg, #c05a00 0%, #ff8000 calc(var(--mx, 50%) - 30%), #ffab4d var(--mx, 50%), #ff8000 calc(var(--mx, 50%) + 30%), #c05a00 100%);
+  box-shadow: 0 0 0 1px #ffc77a, 0 0 18px #ff8000aa, 0 0 34px #ff800055, calc(var(--sx, 0) * 1px) calc(var(--sy, 6) * 1px) 18px #000b, var(--edge);
 }
+@property --comet { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+/* the comets sit behind the art, so only the frame ring shows them; tails fade behind each bright head */
+.card.rar-5 > .comets { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+  background: conic-gradient(from var(--comet), #fff0 0deg, #ffd08000 125deg, #ffd080aa 165deg, #fff4dc 174deg, #ffffff 179deg, #fff0 180deg, #ffd08000 305deg, #ffd080aa 345deg, #fff4dc 354deg, #ffffff 359deg, #fff0 360deg);
+  filter: brightness(1.3) drop-shadow(0 0 3px #fff);
+  animation: comet 3.2s linear infinite; }
+@keyframes comet { to { --comet: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .card.rar-5 > .comets { animation-duration: 12s; } }
 .card.mine::before, .card.theirs::before, .card::before {
   /* thin dark bevel between the rarity frame and the art (no element colour) */
   box-shadow: inset 0 0 0 2px #0009, inset 0 0 0 3px #ffffff26;
@@ -1573,6 +1579,22 @@ body.in-game { overflow: hidden; overscroll-behavior: none; }
   -webkit-mask: radial-gradient(circle, #000 20%, transparent 65%); mask: radial-gradient(circle, #000 20%, transparent 65%); }
 @keyframes craftBurst { 0% { opacity: 0; scale: .3; } 20% { opacity: 1; } 100% { opacity: 0; scale: 1.3; rotate: 40deg; } }
 #nav .nav-item span { white-space: nowrap; }
+/* scrapped from the collection: the card shudders and flashes red, shards fly off, and the count drops with a red pulse */
+.grid-card.scrap-anim .card { animation: scrapShake .55s ease-in-out; }
+@keyframes scrapShake { 15% { transform: translateX(-5px) rotate(-2deg); } 35% { transform: translateX(5px) rotate(2deg); } 55% { transform: translateX(-3px) rotate(-1deg); } 75% { transform: translateX(2px) scale(.96); } }
+.grid-card.scrap-anim.scrap-gone .card { animation: scrapShake .55s ease-in-out, scrapFade 1.3s ease-in forwards; }
+@keyframes scrapFade { 0%, 35% { filter: grayscale(0) brightness(1.1); } 100% { filter: grayscale(.9) brightness(.55); } }
+.scrap-flash { position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: 6px;
+  background: radial-gradient(circle, #ff4a3dcc, #ff4a3d55 45%, transparent 75%); mix-blend-mode: screen; animation: scrapFlash .9s ease-out forwards; }
+@keyframes scrapFlash { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+.scrap-minus { position: absolute; left: 50%; top: 40%; z-index: 6; pointer-events: none; translate: -50% -50%;
+  font: 900 30px/1 var(--title); color: #ff6b5e; text-shadow: 0 2px 4px #000, 0 0 12px #ff2a1a; animation: scrapMinus 1.3s ease-out forwards; }
+@keyframes scrapMinus { 0% { opacity: 0; transform: translateY(10px) scale(.6); } 20% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-50px); } }
+.scrap-shard { position: absolute; left: 50%; top: 50%; z-index: 6; pointer-events: none; font-size: 16px; color: #8fd8ff; text-shadow: 0 0 6px #4fc3ff;
+  animation: scrapShard .9s cubic-bezier(.2,.7,.4,1) forwards; }
+@keyframes scrapShard { 0% { opacity: 1; transform: translate(-50%, -50%) scale(.5); } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(160deg); } }
+.grid-card.scrap-anim .count { animation: countDrop 1.3s ease-out; }
+@keyframes countDrop { 0% { transform: scale(1); } 20% { transform: scale(1.9); background: #e5483b; color: #fff; box-shadow: 0 0 18px 6px #ff4a3d99; } 100% { transform: scale(1); } }
 
 /* dropdown lists: always dark text on light, whatever the theme (dark themes made the names invisible) */
 select option { color: #1a1a1a !important; background: #ffffff !important; }
