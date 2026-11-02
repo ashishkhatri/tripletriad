@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.2 — 2026-11-02
+
+- New rarity frames: **bronze** = Common (matte unless foil), **silver** = Uncommon, **gold** = Rare, **diamond** (icy blue with cut facets) = Epic, **prismatic** (rainbow) = Legendary. Iron is gone.
+- Pack reveal light bursts match the new frame colours; How to play and the README describe the new frames.
+
 ## v0.5.1 — 2026-11-02
 
 - Every pack has at least one Rare or better card (if none comes up, one card is re-rolled from Rare and up).

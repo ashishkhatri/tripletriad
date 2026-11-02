@@ -718,10 +718,10 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 }
 
 /* ===== card frames: outer = rarity, inner = element, name plate = owner ===== */
-.card.rar-1 { --rd: #3c4048; --rm: #6f7680; --rl: #d3d8de; }   /* iron */
-.card.rar-2 { --rd: #5a2f14; --rm: #b46a35; --rl: #f6c897; }   /* bronze */
-.card.rar-3 { --rd: #646e7c; --rm: #c3cbd6; --rl: #ffffff; }   /* silver */
-.card.rar-4 { --rd: #6b4d16; --rm: #c99a3a; --rl: #fff3c4; }   /* gold */
+.card.rar-1 { --rd: #4a2a14; --rm: #a2643a; --rl: #f0c49a; }   /* bronze: common */
+.card.rar-2 { --rd: #646e7c; --rm: #c3cbd6; --rl: #ffffff; }   /* silver: uncommon */
+.card.rar-3 { --rd: #6b4d16; --rm: #c99a3a; --rl: #fff3c4; }   /* gold: rare */
+.card.rar-4 { --rd: #0c3a6b; --rm: #3f9be0; --rl: #e8f8ff; }   /* diamond: epic */
 .card.el-fire    { --elc: #ff5b2e; }  .card.el-ice     { --elc: #9ee9ff; }
 .card.el-thunder { --elc: #ffe048; }  .card.el-earth   { --elc: #b8854f; }
 .card.el-poison  { --elc: #a35cff; }  .card.el-wind    { --elc: #6ee7b7; }
@@ -731,10 +731,17 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   border-color: var(--rl, #ddd);
   background: linear-gradient(115deg, var(--rd, #555) 0%, var(--rm, #999) calc(var(--mx, 50%) - 34%), var(--rl, #eee) var(--mx, 50%), var(--rm, #999) calc(var(--mx, 50%) + 22%), var(--rd, #555) 100%);
 }
-/* common: plain dark-grey frame, matte (no moving shine) unless it's a foil */
+/* common: plain bronze frame, matte (no moving shine) unless it's a foil */
 .card.rar-1.lit:not(.back):not(.holo) {
-  border-color: #50545b;
-  background: linear-gradient(180deg, #3a3d43, #2a2c31);
+  border-color: #b07648;
+  background: linear-gradient(180deg, #91592f, #5e351a);
+}
+/* epic: diamond — icy blue metal with cut facets that catch the light */
+.card.rar-4.lit:not(.back) {
+  border-color: #e8f8ff;
+  background:
+    conic-gradient(from 45deg at var(--mx, 50%) 40%, #ffffff00 0deg, #ffffff55 20deg, #ffffff00 45deg, #ffffff40 110deg, #ffffff00 140deg, #ffffff55 200deg, #ffffff00 230deg, #ffffff35 300deg, #ffffff00 330deg),
+    linear-gradient(115deg, var(--rd) 0%, var(--rm) calc(var(--mx, 50%) - 34%), var(--rl) var(--mx, 50%), var(--rm) calc(var(--mx, 50%) + 22%), var(--rd) 100%);
 }
 /* legendary: prismatic metal that shifts with the light */
 .card.rar-5.lit:not(.back) {
@@ -1387,7 +1394,7 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .reveal-burst::before { content: ''; position: absolute; inset: 0; border-radius: 50%;
   background: repeating-conic-gradient(from 0deg, transparent 0deg 8deg, color-mix(in srgb, var(--rc) 70%, transparent) 10deg, transparent 12deg 24deg);
   -webkit-mask: radial-gradient(circle, #000 10%, transparent 65%); mask: radial-gradient(circle, #000 10%, transparent 65%); opacity: 0; }
-.reveal-burst.rb-2 { --rc: #e0a36a; } .reveal-burst.rb-3 { --rc: #b9d6ff; } .reveal-burst.rb-4 { --rc: #ffd75a; }
+.reveal-burst.rb-1 { --rc: #e0a36a; } .reveal-burst.rb-2 { --rc: #dfe6ee; } .reveal-burst.rb-3 { --rc: #ffd75a; } .reveal-burst.rb-4 { --rc: #6cc8ff; }
 .reveal-burst.rb-5 { --rc: #ff9de1; width: 300%; }
 .reveal-burst.rb-3::before, .reveal-burst.rb-4::before, .reveal-burst.rb-5::before, .reveal-burst.rb-foil::before { opacity: 1; animation: revealRays 1.6s linear forwards; }
 .reveal-burst.rb-foil::before { background: repeating-conic-gradient(from 0deg, #ff6b6b00 0deg 6deg, #ff6b9acc 8deg, #ffd36bcc 10deg, #6bffb5cc 12deg, #6bc8ffcc 14deg, #c58cffcc 16deg, #c58cff00 18deg 30deg); }
