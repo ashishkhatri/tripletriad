@@ -19,24 +19,64 @@
   <script>try{var t=localStorage.getItem("triad-deck");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
 <body>
-  <!-- MENU -->
-  <section id="menu" class="screen active">
-    <h1 class="logo">TRIAD</h1>
-    <p class="tag">A Four-Sided Card Duel</p>
-    <div id="account" class="account">
-      <span id="acct-guest">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> to collect cards</span>
-      <span id="acct-user" hidden>Signed in as <b id="acct-name"></b> · <span class="shards shard-balance" title="Shards">0</span> · <button id="btn-collection" class="link">Collection</button> · <button id="btn-signout" class="link">Sign out</button></span>
+  <!-- NAVIGATION: left rail on desktop, bottom tab bar on phones -->
+  <nav id="nav" class="nav" aria-label="Main">
+    <div class="nav-logo">TRIAD</div>
+    <button type="button" class="nav-item" data-view="play"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="9" height="13" rx="1.5" transform="rotate(-10 7.5 11.5)"/><rect x="11" y="4" width="9" height="13" rx="1.5" transform="rotate(8 15.5 10.5)"/></svg><span>Play</span><i class="nav-dot" hidden></i></button>
+    <button type="button" class="nav-item" data-view="collection"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.2"/></svg><span>Collection</span><i class="nav-dot" hidden></i></button>
+    <button type="button" class="nav-item" data-view="challenges"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" /></svg><span>Challenges</span><i class="nav-dot" hidden></i></button>
+    <button type="button" class="nav-item" data-view="howto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3-1.5 5.5-1.5 8 0v14c-2.5-1.5-5-1.5-8 0z"/><path d="M20 5.5c-3-1.5-5.5-1.5-8 0v14c2.5-1.5 5-1.5 8 0z"/></svg><span>How to play</span><i class="nav-dot" hidden></i></button>
+    <button type="button" class="nav-item" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.2-4 4.2-5.8 7.5-5.8s6.3 1.8 7.5 5.8"/></svg><span>Account</span><i class="nav-dot" hidden></i></button>
+    <div class="nav-foot">
+      <span class="shards shard-balance nav-shards" title="Shards" hidden>0</span>
+      <a id="version" href="https://github.com/ashishkhatri/tripletriad/releases" target="_blank" rel="noopener"></a>
     </div>
+  </nav>
 
-    <div class="panel">
-      <label class="field" id="name-field">Your name <input id="name" maxlength="16" placeholder="Player"></label>
+  <!-- MENU (Play, Challenges, How to play, Account views) -->
+  <section id="menu" class="screen active">
+    <header class="mobile-head"><span class="mh-logo">TRIAD</span><span class="shards shard-balance" hidden>0</span></header>
 
-      <label class="field">Card set <select id="deck"></select></label>
-      <p id="deck-desc" class="muted deck-desc"></p>
-      <div id="set-progress" class="set-progress" hidden>
-        <div class="xpbar"><span id="menu-xp-fill"></span></div>
-        <div class="set-progress-text"><span id="menu-xp-text"></span> <button id="btn-packs" class="link" hidden></button></div>
+    <!-- PLAY -->
+    <div class="view" id="view-play" data-view="play">
+      <div class="view-head">
+        <h1 class="logo">TRIAD</h1>
+        <p class="tag">A Four-Sided Card Duel</p>
       </div>
+      <div class="panel set-panel">
+        <label class="field">Card set <select id="deck"></select></label>
+        <p id="deck-desc" class="muted deck-desc"></p>
+        <div id="set-progress" class="set-progress" hidden>
+          <div class="xpbar"><span id="menu-xp-fill"></span></div>
+          <div class="set-progress-text"><span id="menu-xp-text"></span> <button id="btn-packs" class="link" hidden></button></div>
+        </div>
+        <p id="guest-note" class="guest-note">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> to collect cards and earn shards</p>
+      </div>
+      <div class="modes">
+        <div class="panel mode">
+          <h2>Vs Computer</h2>
+          <div class="seg" role="radiogroup" aria-label="Difficulty">
+            <button type="button" data-level="easy">Easy</button><button type="button" data-level="normal" class="on">Normal</button><button type="button" data-level="hard">Hard</button>
+          </div>
+          <select id="difficulty" hidden>
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+          <button id="btn-ai" class="primary big">Play</button>
+        </div>
+        <div class="panel mode">
+          <h2>Online</h2>
+          <button id="btn-create" class="big">Create room</button>
+          <div class="row">
+            <input id="join-code" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Room code">
+            <button id="btn-join">Join</button>
+          </div>
+        </div>
+      </div>
+      <p id="menu-error" class="error"></p>
+      <details class="panel match-rules" id="match-rules">
+        <summary><span class="mr-title">Match rules</span><span id="rules-summary" class="mr-sum"></span><span class="mr-edit">Change</span></summary>
       <fieldset class="rules">
         <legend>Rules</legend>
         <label class="rule" data-tip="Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands."><input type="checkbox" id="r-open" checked> Open<button type="button" class="rule-info" aria-label="About the Open rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands.</span></label>
@@ -53,33 +93,51 @@
         <label class="rule" data-tip="The winner takes one card of their choice from the loser's hand into their collection. Needs a collection Hands option."><input type="checkbox" id="r-wager"> Wager<button type="button" class="rule-info" aria-label="About the Wager rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">The winner takes one card of their choice from the loser's hand into their collection. Needs a collection Hands option.</span></label>
         <p id="rules-note" class="rules-note"></p>
       </fieldset>
-
-      <div class="row">
-        <select id="difficulty">
-          <option value="easy">Easy</option>
-          <option value="normal" selected>Normal</option>
-          <option value="hard">Hard</option>
-        </select>
-        <button id="btn-ai" class="primary">Play vs Computer</button>
-      </div>
-
-      <div class="divider"><span>Online</span></div>
-      <button id="btn-create">Create room</button>
-      <div class="row">
-        <input id="join-code" maxlength="4" placeholder="CODE" autocomplete="off">
-        <button id="btn-join">Join</button>
-      </div>
-      <p id="menu-error" class="error"></p>
+      </details>
     </div>
-    <section id="dailies" class="dailies" hidden>
-      <div class="dailies-head"><h3>Daily challenges</h3><span id="daily-reset" class="muted"></span></div>
-      <ul id="daily-list"></ul>
-    </section>
-    <details class="howto">
-      <summary>How to play</summary>
-      <p>Take turns placing cards on the 3×3 board. When your card's side beats the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards (counting the one left in hand) wins.</p>
-    </details>
-    <footer class="version"><a id="version" href="https://github.com/ashishkhatri/tripletriad/releases" target="_blank" rel="noopener"></a></footer>
+
+    <!-- CHALLENGES -->
+    <div class="view" id="view-challenges" data-view="challenges" hidden>
+      <h2 class="view-title">Daily challenges</h2>
+      <section id="dailies" class="dailies">
+        <div class="dailies-head"><span id="daily-reset" class="muted"></span></div>
+        <ul id="daily-list"></ul>
+      </section>
+      <div id="dailies-guest" class="panel center" hidden>
+        <p>Sign in to get three new challenges every day and earn shards.</p>
+        <button type="button" class="primary" data-open-auth>Sign in</button>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY -->
+    <div class="view" id="view-howto" data-view="howto" hidden>
+      <h2 class="view-title">How to play</h2>
+      <div class="panel howto-panel">
+        <h3>The basics</h3>
+        <p>Take turns placing cards on the 3×3 board. Each card has a number on every side (A is 10). When your card's side is higher than the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards — counting the one left in hand — wins.</p>
+        <h3>Reading a card</h3>
+        <p>The border shows rarity: <b>iron</b> (common), <b>bronze</b>, <b>silver</b>, <b>gold</b> and <b>prismatic</b> (legendary). The icon in the top corner is the card's element. On the board, a blue name plate is yours and red is your opponent's. Shimmering holographic cards are foils.</p>
+        <h3>Rules</h3>
+        <p>Pick extra rules under <b>Match rules</b> on the Play screen — rest your pointer on (or tap) each <b>i</b> to see what it does.</p>
+        <h3>Collecting</h3>
+        <p>Signed-in players earn XP in each set: 10 for playing, 25 more for a win. Every 100 XP unlocks a card pack from that set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards.</p>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="view" id="view-account" data-view="account" hidden>
+      <h2 class="view-title">Account</h2>
+      <div class="panel" id="account-guest">
+        <p>You're playing as a guest. Sign in to keep a collection, earn XP, shards and packs, and play with your own cards.</p>
+        <label class="field" id="name-field">Name shown to opponents <input id="name" maxlength="16" placeholder="Player"></label>
+        <div class="row"><button type="button" class="primary" data-open-auth>Sign in</button><button type="button" data-open-auth="register">Create account</button></div>
+      </div>
+      <div class="panel" id="account-user" hidden>
+        <p class="acct-line">Signed in as <b id="acct-name"></b></p>
+        <p class="acct-line"><span class="shards shard-balance">0</span> shards</p>
+        <div class="row"><button type="button" id="btn-collection">Collection</button><button type="button" id="btn-signout">Sign out</button></div>
+      </div>
+    </div>
   </section>
 
   <!-- LOBBY -->
@@ -137,7 +195,7 @@
   <!-- COLLECTION -->
   <section id="collection" class="screen">
     <header class="col-head">
-      <button id="btn-col-back" class="small">← Menu</button>
+      <button id="btn-col-back" class="small col-back">← Back</button>
       <h2>Collection</h2>
       <select id="col-deck"></select>
     </header>

@@ -14,6 +14,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
 - Accounts, per-set card collections, XP, card packs, normal and foil cards, Shards for scrapping and crafting, and daily challenges (see below)
 - Trading-card-size cards on desktop with 3D tilt, swing, capture flips and a dynamic foil/glare lighting effect
 - A full visual theme per card set (colours and fonts), and sealed foil card packs you tear open
+- A menu with Play, Collection, Challenges, How to play and Account sections (top bar on desktop, tab bar on phones)
 - Works on phones
 
 ## Run it

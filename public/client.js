@@ -46,7 +46,31 @@
     if (id === 'builder' && typeof Music !== 'undefined') Music.play(musicFor(roomDeck));
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     $('#result').classList.remove('show');
+    // the navigation belongs to the menu and the collection, not to matches
+    const navOn = id === 'menu' || id === 'collection';
+    document.body.classList.toggle('with-nav', navOn);
+    markNav(id === 'collection' ? 'collection' : currentView);
     if (id === 'menu') { refreshProgress(); refreshDailies(); }
+  }
+
+  // ---------- navigation ----------
+  let currentView = 'play';
+  try { const v = sessionStorage.getItem('triad-view'); if (v && v !== 'collection') currentView = v; } catch (e) { /* ignore */ }
+  function markNav(view) {
+    document.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('on', b.dataset.view === view));
+  }
+  function setView(view) {
+    if (view === 'collection') {
+      if (!account) { currentView = 'account'; setView('account'); toast('Sign in to start a collection.'); return; }
+      openCollection($('#deck').value);
+      return;
+    }
+    currentView = view;
+    try { sessionStorage.setItem('triad-view', view); } catch (e) { /* ignore */ }
+    document.querySelectorAll('#menu .view').forEach((v) => { v.hidden = v.dataset.view !== view; });
+    if (!document.querySelector('#menu.active')) show('menu'); else { document.body.classList.add('with-nav'); markNav(view); }
+    window.scrollTo(0, 0);
+    if (view === 'challenges') refreshDailies();
   }
   let toastTimer;
   function toast(msg) {
@@ -545,9 +569,10 @@
     renderAccount();
   }
   function renderAccount() {
-    $('#acct-guest').hidden = !!account;
-    $('#acct-user').hidden = !account;
-    $('#name-field').hidden = !!account;
+    $('#account-guest').hidden = !!account;
+    $('#account-user').hidden = !account;
+    $('#guest-note').hidden = !!account;
+    document.querySelectorAll('.nav-shards, .mobile-head .shard-balance').forEach((el) => { el.hidden = !account; });
     if (account) { $('#acct-name').textContent = account.name; setShards(account.shards || 0); }
     syncRuleOptions();
     refreshProgress();
@@ -559,13 +584,17 @@
   }
   async function refreshDailies() {
     const box = $('#dailies');
-    if (!account) { box.hidden = true; return; }
+    $('#dailies-guest').hidden = !!account;
+    if (!account) { box.hidden = true; document.querySelector('.nav-item[data-view="challenges"] .nav-dot').hidden = true; return; }
     try {
       const d = await api('GET', '/api/daily');
       setShards(d.shards);
       box.hidden = false;
       const h = Math.floor(d.resetsIn / 3600e3), m = Math.floor((d.resetsIn % 3600e3) / 60e3);
       $('#daily-reset').textContent = `New challenges in ${h}h ${m}m`;
+      const left = d.challenges.filter((c) => !c.done).length;
+      const dot = document.querySelector('.nav-item[data-view="challenges"] .nav-dot');
+      dot.hidden = !left; dot.textContent = left;
       const list = $('#daily-list'); list.innerHTML = '';
       for (const c of d.challenges) {
         const li = document.createElement('li'); li.className = c.done ? 'done' : '';
@@ -585,6 +614,10 @@
     $('#r-wager').closest('label').classList.toggle('disabled', !collectionHands);
     $('#rules-note').textContent = !account ? 'Sign in to play with your collection and earn packs.' : (!collectionHands ? 'Balanced hands don’t use your collection, but you still earn XP.' : '');
     try { localStorage.setItem('triad-rules', JSON.stringify(readRules())); } catch (e) { /* ignore */ }
+    const r = readRules();
+    const bits = ['open', 'same', 'plus', 'elemental', 'wager'].filter((k) => r[k]).map((k) => RULE_NAMES[k]);
+    const hands = { balanced: 'Balanced hands', random: 'Random hands', build: 'Built hands', budget: 'Budget hands' }[r.handMode];
+    $('#rules-summary').textContent = [...bits, hands].join(' · ');
   }
   function openAuth() {
     $('#auth-error').textContent = '';
@@ -597,6 +630,7 @@
     try {
       account = await api('POST', `/api/${kind}`, { name, password });
       $('#auth').classList.remove('show');
+      setView('play');
       $('#auth-pass').value = '';
       renderAccount();
       toast(kind === 'register' ? `Welcome, ${account.name}! Your starter cards are waiting in each set.` : `Welcome back, ${account.name}.`);
@@ -895,13 +929,23 @@
   $('#name').addEventListener('change', () => { try { localStorage.setItem('triad-name', $('#name').value); } catch (e) { /* ignore */ } });
 
   $('#btn-signin').onclick = openAuth;
+  document.querySelectorAll('[data-open-auth]').forEach((b) => { b.onclick = openAuth; });
+  document.querySelectorAll('.nav-item').forEach((b) => { b.onclick = () => setView(b.dataset.view); });
+  document.querySelectorAll('.seg [data-level]').forEach((b) => {
+    b.onclick = () => {
+      $('#difficulty').value = b.dataset.level;
+      document.querySelectorAll('.seg [data-level]').forEach((x) => x.classList.toggle('on', x === b));
+      try { localStorage.setItem('triad-level', b.dataset.level); } catch (e) { /* ignore */ }
+    };
+  });
+  try { const lv = localStorage.getItem('triad-level'); if (lv) { const b = document.querySelector(`.seg [data-level="${lv}"]`); if (b) b.click(); } } catch (e) { /* ignore */ }
   $('#auth-form').addEventListener('submit', (e) => { e.preventDefault(); doAuth('login'); });
   $('#btn-auth-register').onclick = () => { if ($('#auth-form').reportValidity()) doAuth('register'); };
   $('#btn-auth-cancel').onclick = () => $('#auth').classList.remove('show');
   $('#btn-signout').onclick = async () => { try { await api('POST', '/api/logout', {}); } catch (e) { /* ignore */ } account = null; renderAccount(); toast('Signed out.'); };
   $('#btn-collection').onclick = () => openCollection($('#deck').value);
   $('#btn-packs').onclick = () => openPack($('#deck').value);
-  $('#btn-col-back').onclick = () => show('menu');
+  $('#btn-col-back').onclick = () => setView(currentView === 'collection' ? 'play' : currentView);
   $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };
   $('#btn-open-pack').onclick = () => openPack($('#col-deck').value);
   $('#btn-scrap-extras').onclick = async () => {
@@ -951,6 +995,7 @@
       if (r) { ['open', 'same', 'plus', 'elemental', 'wager'].forEach((k) => { $('#r-' + k).checked = !!r[k]; }); if (r.handMode) $('#r-hands').value = r.handMode; }
     } catch (e) { /* ignore */ }
     await loadAccount();
+    setView(currentView);
     const room = new URLSearchParams(location.search).get('room');
     if (room) $('#join-code').value = room.toUpperCase().slice(0, 4);
     let saved = null;

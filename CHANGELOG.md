@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.2.0 — 2026-11-01
+### Changed
+- New menu system with separate sections: **Play**, **Collection**, **Challenges**, **How to play** and **Account**.
+  - Desktop: a navigation bar across the top with the logo, the sections, your shards and the version.
+  - Phones: a tab bar along the bottom and a slim header.
+  - The navigation hides during matches, the lobby and the hand builder, and the last section is remembered.
+- Play section: the card set with its XP and pack button, then two cards — *Vs Computer* (Easy / Normal / Hard + Play)
+  and *Online* (create a room or join with a code). Match rules fold away under a one-line summary.
+- Daily challenges, How to play and Account each have their own section; the Challenges tab shows how many are left.
+
 ## v3.1.1 — 2026-11-01
 ### Fixed
 - Rule tooltips sometimes didn't appear or showed up far above their ⓘ. Cause: a stray brace in the stylesheet
