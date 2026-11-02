@@ -1298,3 +1298,4 @@ button.big { padding: 14px 18px; font-size: 17px; }
   background: radial-gradient(circle, transparent 30%, #0001 31%, transparent 32%); }
 .tilt-meter span { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; background: var(--gold-hi, #f0c96a); box-shadow: 0 0 10px var(--gold-hi, #f0c96a); }
 @keyframes ghostGrow { from { scale: var(--g0, 1); } to { scale: 1; } }
+.mh-version { margin-left: 10px; font-family: var(--title); font-weight: 600; font-size: 11px; letter-spacing: .1em; color: var(--muted); text-decoration: none; vertical-align: middle; }

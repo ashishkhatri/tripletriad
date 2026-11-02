@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.6 — 2026-11-02
+### Fixed
+- The version number was missing on phones (it lived in the desktop top bar, which phones hide). It now sits next
+  to the TRIAD logo at the top of the phone layout, linking to the releases page.
+
 ## v3.8.5 — 2026-11-02
 ### Fixed
 - Opening packs was slow and could show glitches, especially on phones. The pack's lighting layers were cut to shape

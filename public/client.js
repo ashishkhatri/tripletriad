@@ -1393,7 +1393,7 @@
     if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value));
   }
 
-  fetch('version').then((r) => r.json()).then((v) => { $('#version').textContent = 'v' + v.version; }).catch(() => {});
+  fetch('version').then((r) => r.json()).then((v) => { $('#version').textContent = 'v' + v.version; $('#version-m').textContent = 'v' + v.version; }).catch(() => {});
 
   loadDecks().then(async () => {
     try { $('#name').value = localStorage.getItem('triad-name') || ''; } catch (e) { /* ignore */ }
