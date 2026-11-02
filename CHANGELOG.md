@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.8.4 — 2026-11-02
+### Changed
+- A card you drag is now exactly the size of a square on the board (it grows from hand size the moment you pick it
+  up, keeping the same spot under your finger or pointer), on phones and desktop.
+
 ## v3.8.3 — 2026-11-02
 ### Fixed
 - Browsers, installed apps and Cloudflare could keep using an old cached copy of the game's scripts after an update

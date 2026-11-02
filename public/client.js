@@ -546,7 +546,7 @@
     if (!myTurn() || (e.button !== undefined && e.button > 0)) return;
     e.preventDefault();
     const sx = e.clientX, sy = e.clientY, rect = el.getBoundingClientRect();
-    const offX = sx - rect.left, offY = sy - rect.top;
+    let offX = sx - rect.left, offY = sy - rect.top;
     let ghost = null, over = null, lastX = sx, lastY = sy;
     const cleanup = () => {
       window.removeEventListener('pointermove', move);
@@ -569,7 +569,15 @@
         ghost = el.cloneNode(true);
         ghost.classList.remove('selected', 'playable', 'placed', 'flip');
         ghost.classList.add('drag-ghost');
-        ghost.style.width = rect.width + 'px'; ghost.style.height = rect.height + 'px';
+        // the dragged card takes the size of a square on the board, growing from the hand size
+        const slot = document.querySelector('#board .cell .card') || document.querySelector('#board .cell');
+        const sr = slot ? slot.getBoundingClientRect() : rect;
+        const gw = sr.width || rect.width, gh = sr.height || rect.height, k = gw / rect.width;
+        ghost.style.width = gw + 'px'; ghost.style.height = gh + 'px';
+        ghost.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * k) + 'px';
+        offX *= k; offY *= gh / rect.height;               // keep the same spot under your finger
+        ghost.style.transformOrigin = `${offX}px ${offY}px`;
+        ghost.style.setProperty('--g0', (1 / k).toFixed(3));
         ghost._swing = { rx: 0, ry: 0 };
         document.body.appendChild(ghost);
         lastX = ev.clientX; lastY = ev.clientY;

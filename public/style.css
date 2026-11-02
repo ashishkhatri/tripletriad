@@ -599,7 +599,8 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 
 /* the dragged card: lifted, bigger shadow, swings with the pointer */
 .drag-ghost {
-  transform: translate3d(var(--gx, 0px), var(--gy, 0px), 0) perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.08) !important;
+  transform: translate3d(var(--gx, 0px), var(--gy, 0px), 0) perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+  animation: ghostGrow .18s cubic-bezier(.2,1.2,.4,1) both !important;
   box-shadow: 0 0 0 2px var(--gold-hi), calc(var(--sx, 0) * 2px) calc(var(--sy, 6) * 2px + 18px) 34px #000c !important;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1296,3 +1297,4 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .tilt-meter { position: relative; width: 100px; height: 100px; margin: 6px 0 10px; border-radius: 50%; border: 1px solid currentColor; opacity: .8;
   background: radial-gradient(circle, transparent 30%, #0001 31%, transparent 32%); }
 .tilt-meter span { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px; border-radius: 50%; background: var(--gold-hi, #f0c96a); box-shadow: 0 0 10px var(--gold-hi, #f0c96a); }
+@keyframes ghostGrow { from { scale: var(--g0, 1); } to { scale: 1; } }
