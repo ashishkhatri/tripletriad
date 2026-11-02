@@ -202,7 +202,7 @@ function startGame(room, hands) {
   scheduleAI(room);
 }
 
-function scheduleAI(room) {
+function scheduleAI(room, delay) {
   const s = room.state;
   if (!s || s.over) return;
   const pl = room.players[s.turn];
@@ -214,7 +214,7 @@ function scheduleAI(room) {
       const m = TT.chooseMove(s, pl.level);
       applyMove(room, s.turn, m.hand, m.cell);
     } catch (e) { console.error('AI move failed:', e); }
-  }, s.board.every((x) => !x) ? 1400 : 900);
+  }, delay || (s.board.every((x) => !x) ? 1400 : 900));
 }
 
 function applyMove(room, seat, hand, cell) {
@@ -235,6 +235,8 @@ function applyMove(room, seat, hand, cell) {
 
 // ---------- Storms: a pending choice between moves ----------
 const STORM_SECONDS = 25;
+// how long the computer pauses around storms: weighing its response cards, and again after the strike before it plays
+const aiPause = () => 4500 + Math.random() * 1500;
 function beginStorm(room, events) {
   const st = room.state.storm;
   st.deadline = Date.now() + STORM_SECONDS * 1000;
@@ -247,7 +249,7 @@ function beginStorm(room, events) {
     pickStorm(room, st.chooser, TT.chooseStormResponse(room.state, pl && pl.ai ? pl.level : 'normal'));
   };
   // the computer takes a few seconds to "read" the cards, so you can see what it was dealt
-  room.stormTimer = setTimeout(auto, pl && pl.ai ? 4500 + Math.random() * 1500 : STORM_SECONDS * 1000);
+  room.stormTimer = setTimeout(auto, pl && pl.ai ? aiPause() : STORM_SECONDS * 1000);
 }
 // Shows everyone which response was picked, then resolves it after a short pause.
 const STORM_REVEAL_MS = 1800;
@@ -272,7 +274,8 @@ function resolveStorm(room, seat, choice) {
   const st = room.stats && room.stats[seat];
   if (st) st.storms = (st.storms || 0) + 1;
   pushState(room, events);
-  scheduleAI(room);
+  // after a strike, give everyone time to see what the storm did before the computer plays its next card
+  scheduleAI(room, aiPause());
 }
 
 // End of a match: XP for signed-in players, then the wager (if on).

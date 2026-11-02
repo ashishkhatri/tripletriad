@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.3 — 2026-11-02
+### Changed
+- After a storm hits, the computer now waits as long as it does when choosing a storm response (4.5–6 seconds) before
+  playing its next card, so you can see what the storm did first.
+
 ## v0.4.2 — 2026-11-02
 ### Changed
 - Cards in a match only show their element icon when the Elemental rule is on. The Collection, packs and hand
