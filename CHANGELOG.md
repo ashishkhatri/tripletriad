@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.4.6 — 2026-11-02
+### Changed
+- Hovering the version number says "Open v… Patch notes", and it now opens that version's release notes directly.
+
 ## v0.4.5 — 2026-11-02
 ### Added
 - **Browser Back works like an app:** it goes to the previous screen (Play, Collection, Challenges…) and closes an open

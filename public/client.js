@@ -1641,7 +1641,14 @@
     if (document.querySelector('#menu.active')) Music.play(musicFor(sel.value));
   }
 
-  fetch('version').then((r) => r.json()).then((v) => { $('#version').textContent = 'v' + v.version; $('#version-m').textContent = 'v' + v.version; }).catch(() => {});
+  fetch('version').then((r) => r.json()).then((v) => {
+    // the version links to that release's patch notes
+    for (const a of [$('#version'), $('#version-m')]) {
+      a.textContent = 'v' + v.version;
+      a.title = `Open v${v.version} Patch notes`;
+      a.href = `https://github.com/ashishkhatri/tripletriad/releases/tag/v${v.version}`;
+    }
+  }).catch(() => {});
 
   loadDecks().then(async () => {
     try { $('#name').value = localStorage.getItem('triad-name') || ''; } catch (e) { /* ignore */ }
