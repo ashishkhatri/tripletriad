@@ -3,6 +3,17 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v3.6.0 — 2026-11-02
+### Added
+- Move history animations:
+  - Hovering a line makes its numbers flash with light and settle into a glow, while the cards involved get a sweep of
+    light and a pulse of the frame.
+  - Captured cards turn over in the mini board and fade from their old colour to their new one.
+  - Storm lines flash in the storm's style (fire burst, lightning, frost, spin, shake).
+  - A ▶ button replays a move step by step: the placed card drops in, then each line lights up in turn.
+  - The newest move replays automatically when you open the panel and whenever a new move arrives while it's open.
+  - Turned off when the system asks for reduced motion.
+
 ## v3.5.0 — 2026-11-01
 ### Added
 - **Storms** rule: between moves, elemental storms may strike the board — Wildfire (scorch −1), Tidal Surge (push a

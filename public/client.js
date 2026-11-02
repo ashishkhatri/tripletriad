@@ -322,6 +322,7 @@
   let historyOpen = false;
   function setHistory(open) {
     historyOpen = open;
+    if (open) autoPlayed = -1; else stopReplay();
     $('#history').classList.toggle('show', open);
     $('#btn-history').setAttribute('aria-expanded', String(open));
     if (open) renderHistory();
@@ -395,7 +396,8 @@
             lines.push({ html: `${nm(st.from)}’s ${SIDE[st.d]} ${num(st.a, 'win')} beats ${nm(st.n)}’s ${SIDE[od]} ${num(st.b, 'lose')} → <b>captured</b>`, step: si, cls: 'win' });
           } else if (t) {
             if (st.k === 'bolt' || st.k === 'burn') flips.add(st.n);
-            lines.push({ html: t, cls: 'note' });
+            const cells = st.k === 'swap' ? [st.a, st.b] : st.k === 'tide' ? (st.moves || []).map((m) => m.to) : st.k === 'dragon' ? (st.path || []) : st.n !== undefined ? [st.n] : [];
+            lines.push({ html: t, cls: 'note', cells, flipped: st.k === 'bolt' || st.k === 'burn' ? [st.n] : [], fx: st.k });
           }
           return;
         }
@@ -426,6 +428,14 @@
           });
         }
       });
+      // what each line points at: numbers (by step), cards to flash, and cards that changed sides
+      for (const ln of lines) {
+        if (ln.step === undefined) { if (!ln.cells) ln.cells = []; continue; }
+        const st = h.steps[ln.step];
+        ln.cells = [...new Set(marks.filter((m) => m.step === ln.step).map((m) => m.cell))];
+        ln.flipped = st.pairs ? st.pairs.filter((x) => x.flip).map((x) => x.n) : st.flip ? [st.n] : [];
+      }
+      if (h.mod || h.boosted) lines.filter((l) => l.cls === 'note' && !l.cells.length && !h.storm).forEach((l) => { l.cells = [h.cell]; });
       if (!h.steps.length && !h.storm) {
         const around = [0, 1, 2, 3].map((d) => TT.neighbor(h.cell, d)).filter((n) => n >= 0 && h.owners[n] !== null);
         lines.push({ html: i === 0 ? 'First card on the board.' : around.length ? 'Only its own side’s cards next to it, so nothing to capture.' : 'Nothing next to it yet.', cls: 'note' });
@@ -433,9 +443,10 @@
 
       const head = document.createElement('div'); head.className = 'hist-head';
       if (h.storm) li.classList.add('storm-entry');
+      const playBtn = '<button type="button" class="hist-play" title="Replay this move" aria-label="Replay this move">▶</button>';
       head.innerHTML = h.storm
-        ? `<span class="hist-no">${STORM_ICON[h.kind]}</span><span><b>${TT.STORMS[h.original || h.kind].name}</b> <small>· ${who(h.p)} chose ${TT.RESPONSES[h.choice].name}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `${flips.size} flipped` : 'no flips'}</span>`
-        : `<span class="hist-no">${hist.slice(0, i + 1).filter((x) => !x.storm).length}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>`;
+        ? `<span class="hist-no">${STORM_ICON[h.kind]}</span><span><b>${TT.STORMS[h.original || h.kind].name}</b> <small>· ${who(h.p)} chose ${TT.RESPONSES[h.choice].name}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `${flips.size} flipped` : 'no flips'}</span>${playBtn}`
+        : `<span class="hist-no">${hist.slice(0, i + 1).filter((x) => !x.storm).length}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>${playBtn}`;
       li.appendChild(head);
       const body = document.createElement('div'); body.className = 'hist-body';
       const mb = document.createElement('div'); mb.className = 'mini-board';
@@ -458,20 +469,56 @@
       }
       body.appendChild(mb);
       const ul = document.createElement('ul'); ul.className = 'hist-steps';
-      for (const ln of lines) {
+      const mcells = [...mb.children];
+      const lit = lines.map((ln) => {
         const sli = document.createElement('li'); sli.className = ln.cls || ''; sli.innerHTML = ln.html;
-        if (ln.step !== undefined) {
-          const on = (v) => { mb.classList.toggle('focus', v); mb.querySelectorAll('.rk.hl').forEach((r) => r.classList.toggle('on', v && r.dataset.steps.split(' ').includes(String(ln.step)))); };
-          sli.addEventListener('pointerenter', () => on(true));
-          sli.addEventListener('pointerleave', () => on(false));
-        }
+        // light up this line: its numbers glow, its cards flash, captured cards change colour
+        const on = (v) => {
+          sli.classList.toggle('lit', v);
+          mb.classList.toggle('focus', v && ln.step !== undefined);
+          if (ln.step !== undefined) mb.querySelectorAll('.rk.hl').forEach((r) => r.classList.toggle('on', v && r.dataset.steps.split(' ').includes(String(ln.step))));
+          mcells.forEach((c, k) => {
+            const hit = v && ln.cells.includes(k);
+            c.classList.remove('cell-flash', 'cell-turn', 'fx-' + ln.fx);
+            if (hit) { void c.offsetWidth; c.classList.add('cell-flash'); if (ln.fx) c.classList.add('fx-' + ln.fx); }
+            if (v && (ln.flipped || []).includes(k)) { c.classList.add('cell-turn'); c.style.setProperty('--was', h.owners[k] === me ? 'var(--theirs)' : 'var(--mine)'); }
+          });
+        };
+        sli.addEventListener('pointerenter', () => { stopReplay(); on(true); });
+        sli.addEventListener('pointerleave', () => on(false));
         ul.appendChild(sli);
-      }
+        return on;
+      });
       body.appendChild(ul);
       li.appendChild(body);
+      li._replay = async () => {
+        const token = {};
+        replayToken = token;
+        li.classList.add('replaying');
+        const placed = !h.storm && mcells[h.cell];
+        if (placed) { placed.classList.remove('cell-drop'); void placed.offsetWidth; placed.classList.add('cell-drop'); await sleep(550); }
+        for (const on of lit) {
+          if (replayToken !== token) break;
+          on(true); await sleep(1100);
+          on(false);
+          if (replayToken !== token) break;
+          await sleep(120);
+        }
+        li.classList.remove('replaying');
+        if (placed) placed.classList.remove('cell-drop');
+      };
+      head.querySelector('.hist-play').onclick = (e) => { e.stopPropagation(); li._replay(); };
       list.appendChild(li);
     }
+    // play the newest move once when the panel opens or a new move arrives
+    if (hist.length !== autoPlayed) {
+      autoPlayed = hist.length;
+      const first = list.querySelector('.hist-move');
+      if (first && first._replay && !matchMedia('(prefers-reduced-motion: reduce)').matches) setTimeout(() => { if (historyOpen) first._replay(); }, 350);
+    }
   }
+  let replayToken = null, autoPlayed = -1;
+  const stopReplay = () => { replayToken = null; };
   const SIDE_CELL = ['top left', 'top', 'top right', 'left', 'centre', 'right', 'bottom left', 'bottom', 'bottom right'];
 
   // ---------- drag & drop (mouse and touch); a plain click still selects ----------

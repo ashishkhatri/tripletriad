@@ -1204,3 +1204,53 @@ button.big { padding: 14px 18px; font-size: 17px; }
 .mini-mod { position: absolute; z-index: 3; left: -4px; top: -6px; padding: 0 3px; border-radius: 5px; font: 700 10px/14px system-ui, sans-serif; font-style: normal; color: #111; }
 .mini-mod.down { background: #ffab6b; } .mini-mod.up { background: #ffe58a; }
 @media (prefers-reduced-motion: reduce) { .dragon, .board[class*="fx-"], .cell.fx-hit::before { animation-duration: .01s !important; } }
+
+/* ---------- move history animations ---------- */
+.hist-play { margin-left: 6px; flex: none; width: 24px; height: 24px; border-radius: 50%; padding: 0; border: 1px solid #f0c96a88;
+  background: #f0c96a22; color: #f0c96a; font-size: 10px; line-height: 22px; cursor: pointer; align-self: center; transition: background .15s, transform .15s; }
+.hist-play:hover { background: #f0c96a55; transform: scale(1.1); }
+.hist-move.replaying .hist-play { animation: playPulse .8s ease-in-out infinite; }
+@keyframes playPulse { 50% { box-shadow: 0 0 0 4px #f0c96a33; } }
+.hist-steps li { transition: background .2s, box-shadow .2s, transform .2s; }
+.hist-steps li.lit { background: #ffffff24; box-shadow: inset 3px 0 0 #f0c96a; transform: translateX(2px); }
+.hist-steps li.lit .n { animation: numFlash .55s ease-in-out 2; }
+/* numbers: a bright flash of light that settles into a glow */
+.mini-board .rk.on { animation: numFlash .55s ease-in-out 2; z-index: 4; }
+@keyframes numFlash {
+  0%, 100% { box-shadow: 0 0 0 1.5px #000c, 0 0 0 0 #fff0; filter: none; }
+  40% { box-shadow: 0 0 0 1.5px #fff, 0 0 12px 4px #fffbe0, 0 0 22px 8px color-mix(in srgb, currentColor 0%, #ffe680aa); filter: brightness(1.45); }
+}
+/* cards: a sweep of light across the face plus a pulse of the frame */
+.mini-cell.cell-flash .mini-card { animation: cardPulse .7s ease-out; }
+.mini-cell.cell-flash .mini-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 3px; z-index: 3; pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, #ffffffd0 48%, #fff6c0aa 52%, transparent 70%);
+  background-size: 250% 100%; mix-blend-mode: screen; animation: cardSweep .7s ease-out both;
+}
+@keyframes cardSweep { from { background-position: 130% 0; opacity: 1; } to { background-position: -40% 0; opacity: .2; } }
+@keyframes cardPulse { 0% { transform: scale(1); } 30% { transform: scale(1.09); box-shadow: 0 0 0 2px #fff, 0 0 16px 4px #fff6c0; } 100% { transform: scale(1); } }
+/* a captured card turns from its old colour to its new one */
+.mini-cell.cell-turn::before { content: ''; position: absolute; inset: 0; border-radius: 5px; z-index: 0;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--was) 60%, #fff), var(--was) 60%); animation: turnFade 1s ease-in both; }
+@keyframes turnFade { 0%, 25% { opacity: 1; } 100% { opacity: 0; } }
+.mini-cell.cell-turn .mini-card { animation: miniFlip .6s ease-in-out .15s both; }
+@keyframes miniFlip { 0% { transform: perspective(200px) rotateY(0); } 50% { transform: perspective(200px) rotateY(90deg); filter: brightness(1.8); } 100% { transform: perspective(200px) rotateY(0); } }
+/* the card being placed drops in at the start of a replay */
+.mini-cell.cell-drop .mini-card { animation: miniDrop .5s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes miniDrop { from { transform: translateY(-14px) scale(1.25); opacity: 0; box-shadow: 0 14px 18px #000a; } }
+/* storm-coloured light for storm lines */
+.mini-cell.fx-scorch .mini-card::before, .mini-cell.fx-burn .mini-card::before { background: radial-gradient(circle at 50% 70%, #fff3b0, #ff8a1ecc 40%, transparent 70%); background-size: 100% 100%; animation: miniBurst .8s ease-out both; }
+.mini-cell.fx-bolt .mini-card::before { background: linear-gradient(100deg, transparent 42%, #fff 48%, #fff6a0 52%, transparent 58%); background-size: 100% 100%; animation: miniBolt .8s steps(1) both; }
+.mini-cell.fx-freeze::after { animation: miniBurst .8s ease-out; }
+.mini-cell.fx-freeze { box-shadow: 0 0 0 2px #bff1ff, 0 0 14px #9fe6ff; }
+.mini-cell.fx-spin .mini-card { animation: miniSpin .7s cubic-bezier(.3,1.3,.5,1); }
+.mini-cell.fx-tide .mini-card::before { background: linear-gradient(90deg, transparent, #7fd0ffdd, #fff, transparent); background-size: 250% 100%; }
+.mini-cell.fx-swap .mini-card { animation: miniShake .5s ease-in-out; }
+@keyframes miniBurst { from { opacity: 1; transform: scale(.6); } to { opacity: 0; transform: scale(1.3); } }
+@keyframes miniBolt { 0%, 30% { opacity: 1; } 15%, 45%, 100% { opacity: 0; } }
+@keyframes miniSpin { from { rotate: -90deg; } }
+@keyframes miniShake { 20%, 60% { translate: -3px 0; } 40%, 80% { translate: 3px 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .mini-board .rk.on, .hist-steps li.lit .n, .mini-cell.cell-flash .mini-card, .mini-cell.cell-flash .mini-card::before,
+  .mini-cell.cell-turn .mini-card, .mini-cell.cell-drop .mini-card { animation: none; }
+}
