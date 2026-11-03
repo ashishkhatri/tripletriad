@@ -1,7 +1,7 @@
 {
  "id": "finalfantasy",
  "name": "Final Fantasy",
- "description": "The classic Triple Triad board: beasts, monsters and machines of the world of Balamb",
+ "description": "The classic Triple Triad cards of Final Fantasy VIII: 110 cards, from Geezard to Squall",
  "music": {
   "file": "music/finalfantasy.mp3",
   "title": "Dancing Mad",
@@ -20,561 +20,1359 @@
  "cards": [
   {
    "id": 1,
-   "name": "Rust Bucket",
+   "name": "Geezard",
    "level": 1,
    "ranks": [
     1,
-    3,
-    6,
-    2
+    4,
+    1,
+    5
    ],
-   "form": "ship",
-   "element": "fire",
-   "image": "art/finalfantasy/1.svg"
+   "image": "art/finalfantasy/Geezard.png"
   },
   {
    "id": 2,
-   "name": "Gumdrop",
+   "name": "Funguar",
    "level": 1,
    "ranks": [
-    2,
-    2,
-    6,
+    5,
+    1,
+    1,
     3
    ],
-   "form": "blob",
-   "image": "art/finalfantasy/2.svg"
+   "image": "art/finalfantasy/Funguar.png"
   },
   {
    "id": 3,
-   "name": "Fungus",
+   "name": "Bite Bug",
    "level": 1,
    "ranks": [
-    2,
-    5,
-    4,
-    1
+    1,
+    3,
+    3,
+    5
    ],
-   "form": "mushroom",
-   "element": "poison",
-   "image": "art/finalfantasy/3.svg"
+   "image": "art/finalfantasy/Bite-Bug.png"
   },
   {
    "id": 4,
-   "name": "Cactar",
+   "name": "Red Bat",
    "level": 1,
    "ranks": [
+    6,
     1,
-    5,
-    4,
+    1,
     2
    ],
-   "form": "cactus",
-   "element": "earth",
-   "image": "art/finalfantasy/4.svg"
+   "image": "art/finalfantasy/Red-Bat.png"
   },
   {
    "id": 5,
-   "name": "Lakion",
+   "name": "Blobra",
    "level": 1,
    "ranks": [
+    2,
+    3,
     1,
-    6,
-    4,
-    1
+    5
    ],
-   "form": "ghost",
-   "element": "holy",
-   "image": "art/finalfantasy/5.svg"
+   "image": "art/finalfantasy/Blobra.png"
   },
   {
    "id": 6,
-   "name": "Ghoul",
+   "name": "Gayla",
    "level": 1,
    "ranks": [
+    2,
+    1,
     4,
-    4,
-    3,
-    2
+    4
    ],
-   "form": "wraith",
-   "image": "art/finalfantasy/6.svg"
+   "element": "thunder",
+   "image": "art/finalfantasy/Gayla.png"
   },
   {
    "id": 7,
-   "name": "Moogle",
+   "name": "Gesper",
    "level": 1,
    "ranks": [
     1,
-    1,
-    7,
-    5
+    5,
+    4,
+    1
    ],
-   "form": "blob",
-   "element": "wind",
-   "image": "art/finalfantasy/7.svg"
+   "image": "art/finalfantasy/Gesper.png"
   },
   {
    "id": 8,
-   "name": "Zombie",
+   "name": "Fastitocalon-F",
+   "level": 1,
+   "ranks": [
+    3,
+    5,
+    2,
+    1
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Fastitocalon-F.png"
+  },
+  {
+   "id": 9,
+   "name": "Blood Soul",
+   "level": 1,
+   "ranks": [
+    2,
+    1,
+    6,
+    1
+   ],
+   "image": "art/finalfantasy/Blood-Soul.png"
+  },
+  {
+   "id": 10,
+   "name": "Caterchipillar",
+   "level": 1,
+   "ranks": [
+    4,
+    2,
+    4,
+    3
+   ],
+   "image": "art/finalfantasy/Caterchipillar.png"
+  },
+  {
+   "id": 11,
+   "name": "Cockatrice",
+   "level": 1,
+   "ranks": [
+    2,
+    1,
+    2,
+    6
+   ],
+   "element": "thunder",
+   "image": "art/finalfantasy/Cockatrice.png"
+  },
+  {
+   "id": 12,
+   "name": "Grat",
+   "level": 1,
+   "ranks": [
+    7,
+    1,
+    3,
+    1
+   ],
+   "image": "art/finalfantasy/Grat.png"
+  },
+  {
+   "id": 13,
+   "name": "Buel",
+   "level": 1,
+   "ranks": [
+    6,
+    2,
+    2,
+    3
+   ],
+   "image": "art/finalfantasy/Buel.png"
+  },
+  {
+   "id": 14,
+   "name": "Mesmerize",
    "level": 1,
    "ranks": [
     5,
     3,
     3,
-    2
-   ],
-   "form": "ghost",
-   "element": "poison",
-   "image": "art/finalfantasy/8.svg"
-  },
-  {
-   "id": 9,
-   "name": "Salamander",
-   "level": 2,
-   "ranks": [
-    6,
-    6,
-    3,
-    2
-   ],
-   "form": "serpent",
-   "element": "fire",
-   "image": "art/finalfantasy/9.svg"
-  },
-  {
-   "id": 10,
-   "name": "Gargoyle",
-   "level": 2,
-   "ranks": [
-    6,
-    5,
-    4,
-    3
-   ],
-   "form": "bird",
-   "element": "earth",
-   "image": "art/finalfantasy/10.svg"
-  },
-  {
-   "id": 11,
-   "name": "Cocoapod",
-   "level": 2,
-   "ranks": [
-    7,
-    4,
-    3,
     4
    ],
-   "form": "crab",
-   "element": "wind",
-   "image": "art/finalfantasy/11.svg"
-  },
-  {
-   "id": 12,
-   "name": "Serpent",
-   "level": 2,
-   "ranks": [
-    6,
-    5,
-    4,
-    2
-   ],
-   "form": "serpent",
-   "element": "poison",
-   "image": "art/finalfantasy/12.svg"
-  },
-  {
-   "id": 13,
-   "name": "Lizard",
-   "level": 2,
-   "ranks": [
-    5,
-    6,
-    3,
-    4
-   ],
-   "form": "insect",
-   "element": "earth",
-   "image": "art/finalfantasy/13.svg"
-  },
-  {
-   "id": 14,
-   "name": "Fenrir",
-   "level": 2,
-   "ranks": [
-    7,
-    3,
-    5,
-    4
-   ],
-   "form": "quad",
-   "element": "ice",
-   "image": "art/finalfantasy/14.svg"
+   "image": "art/finalfantasy/Mesmerize.png"
   },
   {
    "id": 15,
-   "name": "Chocobo",
-   "level": 2,
+   "name": "Glacial Eye",
+   "level": 1,
    "ranks": [
-    3,
-    8,
+    6,
+    1,
     4,
     3
    ],
-   "form": "bird",
-   "element": "wind",
-   "image": "art/finalfantasy/15.svg"
+   "element": "ice",
+   "image": "art/finalfantasy/Glacial-Eye.png"
   },
   {
    "id": 16,
-   "name": "Siren",
+   "name": "Belhelmel",
+   "level": 1,
+   "ranks": [
+    3,
+    4,
+    5,
+    3
+   ],
+   "image": "art/finalfantasy/Belhelmel.png"
+  },
+  {
+   "id": 17,
+   "name": "Thrustaevis",
+   "level": 1,
+   "ranks": [
+    5,
+    3,
+    2,
+    5
+   ],
+   "element": "wind",
+   "image": "art/finalfantasy/Thrustaevis.png"
+  },
+  {
+   "id": 18,
+   "name": "Anacondaur",
+   "level": 1,
+   "ranks": [
+    5,
+    1,
+    3,
+    5
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Anacondaur.png"
+  },
+  {
+   "id": 19,
+   "name": "Creeps",
+   "level": 1,
+   "ranks": [
+    5,
+    2,
+    5,
+    2
+   ],
+   "element": "thunder",
+   "image": "art/finalfantasy/Creeps.png"
+  },
+  {
+   "id": 20,
+   "name": "Grendel",
+   "level": 1,
+   "ranks": [
+    4,
+    4,
+    5,
+    2
+   ],
+   "element": "thunder",
+   "image": "art/finalfantasy/Grendel.png"
+  },
+  {
+   "id": 21,
+   "name": "Jelleye",
+   "level": 1,
+   "ranks": [
+    3,
+    2,
+    1,
+    7
+   ],
+   "image": "art/finalfantasy/Jelleye.png"
+  },
+  {
+   "id": 22,
+   "name": "Grand Mantis",
+   "level": 1,
+   "ranks": [
+    5,
+    2,
+    5,
+    3
+   ],
+   "image": "art/finalfantasy/Grand-Mantis.png"
+  },
+  {
+   "id": 23,
+   "name": "Forbidden",
+   "level": 2,
+   "ranks": [
+    6,
+    6,
+    3,
+    2
+   ],
+   "image": "art/finalfantasy/Forbidden.png"
+  },
+  {
+   "id": 24,
+   "name": "Armadodo",
+   "level": 2,
+   "ranks": [
+    6,
+    3,
+    1,
+    6
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Armadodo.png"
+  },
+  {
+   "id": 25,
+   "name": "Tri-Face",
+   "level": 2,
+   "ranks": [
+    3,
+    5,
+    5,
+    5
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Tri-Face.png"
+  },
+  {
+   "id": 26,
+   "name": "Fastitocalon",
+   "level": 2,
+   "ranks": [
+    7,
+    5,
+    1,
+    3
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Fastitocalon.png"
+  },
+  {
+   "id": 27,
+   "name": "Snow Lion",
+   "level": 2,
+   "ranks": [
+    7,
+    1,
+    5,
+    3
+   ],
+   "element": "ice",
+   "image": "art/finalfantasy/Snow-Lion.png"
+  },
+  {
+   "id": 28,
+   "name": "Ochu",
+   "level": 2,
+   "ranks": [
+    5,
+    6,
+    3,
+    3
+   ],
+   "image": "art/finalfantasy/Ochu.png"
+  },
+  {
+   "id": 29,
+   "name": "SAM08G",
+   "level": 2,
+   "ranks": [
+    5,
+    6,
+    2,
+    4
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/SAM08G.png"
+  },
+  {
+   "id": 30,
+   "name": "Death Claw",
+   "level": 2,
+   "ranks": [
+    4,
+    4,
+    7,
+    2
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/Death-Claw.png"
+  },
+  {
+   "id": 31,
+   "name": "Cactuar",
+   "level": 2,
+   "ranks": [
+    6,
+    2,
+    6,
+    3
+   ],
+   "image": "art/finalfantasy/Cactuar.png"
+  },
+  {
+   "id": 32,
+   "name": "Tonberry",
+   "level": 2,
+   "ranks": [
+    3,
+    6,
+    4,
+    4
+   ],
+   "image": "art/finalfantasy/Tonberry.png"
+  },
+  {
+   "id": 33,
+   "name": "Abyss Worm",
+   "level": 2,
+   "ranks": [
+    7,
+    2,
+    3,
+    5
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Abyss-Worm.png"
+  },
+  {
+   "id": 34,
+   "name": "Turtapod",
+   "level": 2,
+   "ranks": [
+    2,
+    3,
+    6,
+    7
+   ],
+   "image": "art/finalfantasy/Turtapod.png"
+  },
+  {
+   "id": 35,
+   "name": "Vysage",
    "level": 2,
    "ranks": [
     6,
     5,
     4,
-    4
-   ],
-   "form": "hero",
-   "element": "water",
-   "image": "art/finalfantasy/16.svg"
-  },
-  {
-   "id": 17,
-   "name": "Bats",
-   "level": 3,
-   "ranks": [
-    6,
-    6,
-    5,
     5
    ],
-   "form": "bird",
-   "element": "wind",
-   "image": "art/finalfantasy/17.svg"
-  },
-  {
-   "id": 18,
-   "name": "Gryphon",
-   "level": 3,
-   "ranks": [
-    8,
-    6,
-    4,
-    5
-   ],
-   "form": "bird",
-   "element": "earth",
-   "image": "art/finalfantasy/18.svg"
-  },
-  {
-   "id": 19,
-   "name": "Puff Rat",
-   "level": 3,
-   "ranks": [
-    7,
-    6,
-    5,
-    4
-   ],
-   "form": "insect",
-   "element": "wind",
-   "image": "art/finalfantasy/19.svg"
-  },
-  {
-   "id": 20,
-   "name": "Sphinx",
-   "level": 3,
-   "ranks": [
-    7,
-    5,
-    5,
-    6
-   ],
-   "form": "quad",
-   "element": "earth",
-   "image": "art/finalfantasy/20.svg"
-  },
-  {
-   "id": 21,
-   "name": "Ochu",
-   "level": 3,
-   "ranks": [
-    8,
-    4,
-    4,
-    7
-   ],
-   "form": "jelly",
-   "element": "wind",
-   "image": "art/finalfantasy/21.svg"
-  },
-  {
-   "id": 22,
-   "name": "Mimic",
-   "level": 3,
-   "ranks": [
-    6,
-    6,
-    6,
-    5
-   ],
-   "form": "mask",
-   "element": "holy",
-   "image": "art/finalfantasy/22.svg"
-  },
-  {
-   "id": 23,
-   "name": "Fang",
-   "level": 3,
-   "ranks": [
-    7,
-    6,
-    5,
-    5
-   ],
-   "form": "crab",
-   "element": "fire",
-   "image": "art/finalfantasy/23.svg"
-  },
-  {
-   "id": 24,
-   "name": "Goblin",
-   "level": 3,
-   "ranks": [
-    6,
-    5,
-    6,
-    6
-   ],
-   "form": "hero",
-   "element": "poison",
-   "image": "art/finalfantasy/24.svg"
-  },
-  {
-   "id": 25,
-   "name": "Lava",
-   "level": 3,
-   "ranks": [
-    7,
-    6,
-    5,
-    6
-   ],
-   "form": "golem",
-   "element": "fire",
-   "image": "art/finalfantasy/25.svg"
-  },
-  {
-   "id": 26,
-   "name": "Behemoth",
-   "level": 3,
-   "ranks": [
-    8,
-    5,
-    5,
-    6
-   ],
-   "form": "golem",
-   "element": "ice",
-   "image": "art/finalfantasy/26.svg"
-  },
-  {
-   "id": 27,
-   "name": "T-Rex",
-   "level": 3,
-   "ranks": [
-    7,
-    7,
-    4,
-    6
-   ],
-   "form": "serpent",
-   "element": "earth",
-   "image": "art/finalfantasy/27.svg"
-  },
-  {
-   "id": 28,
-   "name": "Bolt",
-   "level": 4,
-   "ranks": [
-    7,
-    8,
-    5,
-    5
-   ],
-   "form": "drone",
-   "element": "thunder",
-   "image": "art/finalfantasy/28.svg"
-  },
-  {
-   "id": 29,
-   "name": "Hades",
-   "level": 4,
-   "ranks": [
-    8,
-    7,
-    5,
-    6
-   ],
-   "form": "serpent",
-   "element": "ice",
-   "image": "art/finalfantasy/29.svg"
-  },
-  {
-   "id": 30,
-   "name": "Fang",
-   "level": 4,
-   "ranks": [
-    7,
-    7,
-    6,
-    7
-   ],
-   "form": "golem",
-   "element": "fire",
-   "image": "art/finalfantasy/30.svg"
-  },
-  {
-   "id": 31,
-   "name": "Salamander",
-   "level": 4,
-   "ranks": [
-    8,
-    6,
-    6,
-    5
-   ],
-   "form": "serpent",
-   "element": "fire",
-   "image": "art/finalfantasy/31.svg"
-  },
-  {
-   "id": 32,
-   "name": "Siren",
-   "level": 4,
-   "ranks": [
-    7,
-    8,
-    5,
-    7
-   ],
-   "form": "hero",
-   "element": "water",
-   "image": "art/finalfantasy/32.svg"
-  },
-  {
-   "id": 33,
-   "name": "Ochu",
-   "level": 4,
-   "ranks": [
-    9,
-    5,
-    5,
-    7
-   ],
-   "form": "jelly",
-   "element": "wind",
-   "image": "art/finalfantasy/33.svg"
-  },
-  {
-   "id": 34,
-   "name": "Ghazid",
-   "level": 4,
-   "ranks": [
-    7,
-    8,
-    6,
-    6
-   ],
-   "form": "quad",
-   "element": "thunder",
-   "image": "art/finalfantasy/34.svg"
-  },
-  {
-   "id": 35,
-   "name": "Ghazid",
-   "level": 4,
-   "ranks": [
-    8,
-    7,
-    7,
-    5
-   ],
-   "form": "quad",
-   "element": "thunder",
-   "image": "art/finalfantasy/35.svg"
+   "image": "art/finalfantasy/Vysage.png"
   },
   {
    "id": 36,
-   "name": "Ghazid",
-   "level": 4,
+   "name": "T-Rexaur",
+   "level": 2,
    "ranks": [
-    7,
-    8,
-    7,
-    6
+    4,
+    6,
+    2,
+    7
    ],
-   "form": "quad",
-   "element": "thunder",
-   "image": "art/finalfantasy/36.svg"
+   "image": "art/finalfantasy/T-Rexaur.png"
   },
   {
    "id": 37,
-   "name": "Moogle",
-   "level": 5,
+   "name": "Bomb",
+   "level": 2,
    "ranks": [
-    8,
-    8,
-    8,
-    6
+    2,
+    7,
+    6,
+    3
    ],
-   "form": "blob",
-   "element": "wind",
-   "image": "art/finalfantasy/37.svg"
+   "element": "fire",
+   "image": "art/finalfantasy/Bomb.png"
   },
   {
    "id": 38,
-   "name": "Salamander",
-   "level": 5,
+   "name": "Blitz",
+   "level": 2,
    "ranks": [
-    9,
-    7,
-    7,
+    1,
+    6,
+    4,
     7
    ],
-   "form": "serpent",
-   "element": "fire",
-   "image": "art/finalfantasy/38.svg"
+   "element": "thunder",
+   "image": "art/finalfantasy/Blitz.png"
   },
   {
    "id": 39,
-   "name": "Fenrir",
-   "level": 5,
+   "name": "Wendigo",
+   "level": 2,
    "ranks": [
-    8,
-    9,
     7,
-    7
+    3,
+    1,
+    6
    ],
-   "form": "quad",
-   "element": "ice",
-   "image": "art/finalfantasy/39.svg"
+   "image": "art/finalfantasy/Wendigo.png"
   },
   {
    "id": 40,
-   "name": "Chocobo",
+   "name": "Torama",
+   "level": 2,
+   "ranks": [
+    7,
+    4,
+    4,
+    4
+   ],
+   "image": "art/finalfantasy/Torama.png"
+  },
+  {
+   "id": 41,
+   "name": "Imp",
+   "level": 2,
+   "ranks": [
+    3,
+    7,
+    3,
+    6
+   ],
+   "image": "art/finalfantasy/Imp.png"
+  },
+  {
+   "id": 42,
+   "name": "Blue Dragon",
+   "level": 2,
+   "ranks": [
+    6,
+    2,
+    7,
+    3
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Blue-Dragon.png"
+  },
+  {
+   "id": 43,
+   "name": "Adamantoise",
+   "level": 2,
+   "ranks": [
+    4,
+    5,
+    5,
+    6
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Adamantoise.png"
+  },
+  {
+   "id": 44,
+   "name": "Hexadragon",
+   "level": 2,
+   "ranks": [
+    7,
+    5,
+    4,
+    3
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/Hexadragon.png"
+  },
+  {
+   "id": 45,
+   "name": "Iron Giant",
+   "level": 3,
+   "ranks": [
+    6,
+    5,
+    6,
+    5
+   ],
+   "image": "art/finalfantasy/Iron-Giant.png"
+  },
+  {
+   "id": 46,
+   "name": "Behemoth",
+   "level": 3,
+   "ranks": [
+    3,
+    6,
+    5,
+    7
+   ],
+   "image": "art/finalfantasy/Behemoth.png"
+  },
+  {
+   "id": 47,
+   "name": "Chimera",
+   "level": 3,
+   "ranks": [
+    7,
+    6,
+    5,
+    3
+   ],
+   "element": "water",
+   "image": "art/finalfantasy/Chimera.png"
+  },
+  {
+   "id": 48,
+   "name": "PuPu",
+   "level": 3,
+   "ranks": [
+    3,
+    10,
+    2,
+    1
+   ],
+   "image": "art/finalfantasy/PuPu.png"
+  },
+  {
+   "id": 49,
+   "name": "Elastoid",
+   "level": 3,
+   "ranks": [
+    6,
+    2,
+    6,
+    7
+   ],
+   "image": "art/finalfantasy/Elastoid.png"
+  },
+  {
+   "id": 50,
+   "name": "GIM47N",
+   "level": 3,
+   "ranks": [
+    5,
+    5,
+    7,
+    4
+   ],
+   "image": "art/finalfantasy/GIM47N.png"
+  },
+  {
+   "id": 51,
+   "name": "Malboro",
+   "level": 3,
+   "ranks": [
+    7,
+    7,
+    4,
+    2
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Malboro.png"
+  },
+  {
+   "id": 52,
+   "name": "Ruby Dragon",
+   "level": 3,
+   "ranks": [
+    7,
+    2,
+    7,
+    4
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/Ruby-Dragon.png"
+  },
+  {
+   "id": 53,
+   "name": "Elnoyle",
+   "level": 3,
+   "ranks": [
+    5,
+    3,
+    7,
+    6
+   ],
+   "image": "art/finalfantasy/Elnoyle.png"
+  },
+  {
+   "id": 54,
+   "name": "Tonberry King",
+   "level": 3,
+   "ranks": [
+    4,
+    6,
+    7,
+    4
+   ],
+   "image": "art/finalfantasy/Tonberry-King.png"
+  },
+  {
+   "id": 55,
+   "name": "Wedge & Biggs",
+   "level": 3,
+   "ranks": [
+    6,
+    6,
+    2,
+    7
+   ],
+   "image": "art/finalfantasy/Wedge-Biggs.png"
+  },
+  {
+   "id": 56,
+   "name": "Fujin & Raijin",
+   "level": 3,
+   "ranks": [
+    2,
+    8,
+    8,
+    4
+   ],
+   "image": "art/finalfantasy/Fujin-Raijin.png"
+  },
+  {
+   "id": 57,
+   "name": "Elvoret",
+   "level": 3,
+   "ranks": [
+    7,
+    8,
+    3,
+    4
+   ],
+   "element": "wind",
+   "image": "art/finalfantasy/Elvoret.png"
+  },
+  {
+   "id": 58,
+   "name": "X-ATM092",
+   "level": 3,
+   "ranks": [
+    4,
+    8,
+    7,
+    3
+   ],
+   "image": "art/finalfantasy/X-ATM092.png"
+  },
+  {
+   "id": 59,
+   "name": "Granaldo",
+   "level": 3,
+   "ranks": [
+    7,
+    2,
+    8,
+    5
+   ],
+   "image": "art/finalfantasy/Granaldo.png"
+  },
+  {
+   "id": 60,
+   "name": "Gerogero",
+   "level": 3,
+   "ranks": [
+    1,
+    8,
+    8,
+    3
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Gerogero.png"
+  },
+  {
+   "id": 61,
+   "name": "Iguion",
+   "level": 3,
+   "ranks": [
+    8,
+    2,
+    8,
+    2
+   ],
+   "image": "art/finalfantasy/Iguion.png"
+  },
+  {
+   "id": 62,
+   "name": "Abadon",
+   "level": 3,
+   "ranks": [
+    6,
+    8,
+    4,
+    5
+   ],
+   "image": "art/finalfantasy/Abadon.png"
+  },
+  {
+   "id": 63,
+   "name": "Trauma",
+   "level": 3,
+   "ranks": [
+    4,
+    8,
+    5,
+    6
+   ],
+   "image": "art/finalfantasy/Trauma.png"
+  },
+  {
+   "id": 64,
+   "name": "Oilboyle",
+   "level": 3,
+   "ranks": [
+    1,
+    8,
+    4,
+    8
+   ],
+   "image": "art/finalfantasy/Oilboyle.png"
+  },
+  {
+   "id": 65,
+   "name": "Shumi Tribe",
+   "level": 3,
+   "ranks": [
+    6,
+    5,
+    8,
+    4
+   ],
+   "image": "art/finalfantasy/Shumi-Tribe.png"
+  },
+  {
+   "id": 66,
+   "name": "Krysta",
+   "level": 3,
+   "ranks": [
+    7,
+    5,
+    8,
+    1
+   ],
+   "image": "art/finalfantasy/Krysta.png"
+  },
+  {
+   "id": 67,
+   "name": "Propagator",
+   "level": 4,
+   "ranks": [
+    8,
+    4,
+    4,
+    8
+   ],
+   "image": "art/finalfantasy/Propagator.png"
+  },
+  {
+   "id": 68,
+   "name": "Jumbo Cactuar",
+   "level": 4,
+   "ranks": [
+    8,
+    8,
+    4,
+    4
+   ],
+   "image": "art/finalfantasy/Jumbo-Cactuar.png"
+  },
+  {
+   "id": 69,
+   "name": "Tri-Point",
+   "level": 4,
+   "ranks": [
+    8,
+    5,
+    2,
+    8
+   ],
+   "element": "thunder",
+   "image": "art/finalfantasy/Tri-Point.png"
+  },
+  {
+   "id": 70,
+   "name": "Gargantua",
+   "level": 4,
+   "ranks": [
+    5,
+    6,
+    6,
+    8
+   ],
+   "image": "art/finalfantasy/Gargantua.png"
+  },
+  {
+   "id": 71,
+   "name": "Mobile Type 8",
+   "level": 4,
+   "ranks": [
+    8,
+    6,
+    7,
+    3
+   ],
+   "image": "art/finalfantasy/Mobile-Type-8.png"
+  },
+  {
+   "id": 72,
+   "name": "Sphinxara",
+   "level": 4,
+   "ranks": [
+    8,
+    3,
+    5,
+    8
+   ],
+   "image": "art/finalfantasy/Sphinxara.png"
+  },
+  {
+   "id": 73,
+   "name": "Tiamat",
+   "level": 4,
+   "ranks": [
+    8,
+    8,
+    5,
+    4
+   ],
+   "image": "art/finalfantasy/Tiamat.png"
+  },
+  {
+   "id": 74,
+   "name": "BGH251F2",
+   "level": 4,
+   "ranks": [
+    5,
+    7,
+    8,
+    5
+   ],
+   "image": "art/finalfantasy/BGH251F2.png"
+  },
+  {
+   "id": 75,
+   "name": "Red Giant",
+   "level": 4,
+   "ranks": [
+    6,
+    8,
+    4,
+    7
+   ],
+   "image": "art/finalfantasy/Red-Giant.png"
+  },
+  {
+   "id": 76,
+   "name": "Catoblepas",
+   "level": 4,
+   "ranks": [
+    1,
+    8,
+    7,
+    7
+   ],
+   "image": "art/finalfantasy/Catoblepas.png"
+  },
+  {
+   "id": 77,
+   "name": "Ultima Weapon",
+   "level": 4,
+   "ranks": [
+    7,
+    7,
+    2,
+    8
+   ],
+   "image": "art/finalfantasy/Ultima-Weapon.png"
+  },
+  {
+   "id": 78,
+   "name": "Chubby Chocobo",
+   "level": 4,
+   "ranks": [
+    4,
+    4,
+    8,
+    9
+   ],
+   "image": "art/finalfantasy/Chubby-Chocobo.png"
+  },
+  {
+   "id": 79,
+   "name": "Angelo",
+   "level": 4,
+   "ranks": [
+    9,
+    6,
+    7,
+    3
+   ],
+   "image": "art/finalfantasy/Angelo.png"
+  },
+  {
+   "id": 80,
+   "name": "Gilgamesh",
+   "level": 4,
+   "ranks": [
+    3,
+    7,
+    9,
+    6
+   ],
+   "image": "art/finalfantasy/Gilgamesh.png"
+  },
+  {
+   "id": 81,
+   "name": "MiniMog",
+   "level": 4,
+   "ranks": [
+    9,
+    3,
+    9,
+    2
+   ],
+   "image": "art/finalfantasy/MiniMog.png"
+  },
+  {
+   "id": 82,
+   "name": "Chicobo",
+   "level": 4,
+   "ranks": [
+    9,
+    4,
+    8,
+    4
+   ],
+   "image": "art/finalfantasy/Chicobo.png"
+  },
+  {
+   "id": 83,
+   "name": "Quezacotl",
+   "level": 4,
+   "ranks": [
+    2,
+    9,
+    9,
+    4
+   ],
+   "element": "thunder",
+   "image": "art/finalfantasy/Quezacotl.png"
+  },
+  {
+   "id": 84,
+   "name": "Shiva",
+   "level": 4,
+   "ranks": [
+    6,
+    7,
+    4,
+    9
+   ],
+   "element": "ice",
+   "image": "art/finalfantasy/Shiva.png"
+  },
+  {
+   "id": 85,
+   "name": "Ifrit",
+   "level": 4,
+   "ranks": [
+    9,
+    6,
+    2,
+    8
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/Ifrit.png"
+  },
+  {
+   "id": 86,
+   "name": "Siren",
+   "level": 4,
+   "ranks": [
+    8,
+    9,
+    6,
+    2
+   ],
+   "image": "art/finalfantasy/Siren.png"
+  },
+  {
+   "id": 87,
+   "name": "Sacred",
+   "level": 4,
+   "ranks": [
+    5,
+    1,
+    9,
+    9
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Sacred.png"
+  },
+  {
+   "id": 88,
+   "name": "Minotaur",
+   "level": 4,
+   "ranks": [
+    9,
+    5,
+    2,
+    9
+   ],
+   "element": "earth",
+   "image": "art/finalfantasy/Minotaur.png"
+  },
+  {
+   "id": 89,
+   "name": "Carbuncle",
+   "level": 5,
+   "ranks": [
+    8,
+    4,
+    10,
+    4
+   ],
+   "image": "art/finalfantasy/Carbuncle.png"
+  },
+  {
+   "id": 90,
+   "name": "Diablos",
+   "level": 5,
+   "ranks": [
+    5,
+    10,
+    8,
+    3
+   ],
+   "image": "art/finalfantasy/Diablos.png"
+  },
+  {
+   "id": 91,
+   "name": "Leviathan",
+   "level": 5,
+   "ranks": [
+    7,
+    10,
+    1,
+    7
+   ],
+   "element": "water",
+   "image": "art/finalfantasy/Leviathan.png"
+  },
+  {
+   "id": 92,
+   "name": "Odin",
+   "level": 5,
+   "ranks": [
+    8,
+    10,
+    3,
+    5
+   ],
+   "image": "art/finalfantasy/Odin.png"
+  },
+  {
+   "id": 93,
+   "name": "Pandemona",
+   "level": 5,
+   "ranks": [
+    10,
+    1,
+    7,
+    7
+   ],
+   "element": "wind",
+   "image": "art/finalfantasy/Pandemona.png"
+  },
+  {
+   "id": 94,
+   "name": "Cerberus",
+   "level": 5,
+   "ranks": [
+    7,
+    4,
+    6,
+    10
+   ],
+   "image": "art/finalfantasy/Cerberus.png"
+  },
+  {
+   "id": 95,
+   "name": "Alexander",
    "level": 5,
    "ranks": [
     9,
+    10,
+    4,
+    2
+   ],
+   "element": "holy",
+   "image": "art/finalfantasy/Alexander.png"
+  },
+  {
+   "id": 96,
+   "name": "Phoenix",
+   "level": 5,
+   "ranks": [
+    7,
+    2,
+    7,
+    10
+   ],
+   "element": "fire",
+   "image": "art/finalfantasy/Phoenix.png"
+  },
+  {
+   "id": 97,
+   "name": "Bahamut",
+   "level": 5,
+   "ranks": [
+    10,
     8,
-    8,
+    2,
     6
    ],
-   "form": "bird",
-   "element": "wind",
-   "image": "art/finalfantasy/40.svg"
+   "image": "art/finalfantasy/Bahamut.png"
+  },
+  {
+   "id": 98,
+   "name": "Doomtrain",
+   "level": 5,
+   "ranks": [
+    3,
+    1,
+    10,
+    10
+   ],
+   "element": "poison",
+   "image": "art/finalfantasy/Doomtrain.png"
+  },
+  {
+   "id": 99,
+   "name": "Eden",
+   "level": 5,
+   "ranks": [
+    4,
+    4,
+    9,
+    10
+   ],
+   "image": "art/finalfantasy/Eden.png"
+  },
+  {
+   "id": 100,
+   "name": "Ward",
+   "level": 5,
+   "ranks": [
+    10,
+    7,
+    2,
+    8
+   ],
+   "image": "art/finalfantasy/Ward.png"
+  },
+  {
+   "id": 101,
+   "name": "Kiros",
+   "level": 5,
+   "ranks": [
+    6,
+    7,
+    6,
+    10
+   ],
+   "image": "art/finalfantasy/Kiros.png"
+  },
+  {
+   "id": 102,
+   "name": "Laguna",
+   "level": 5,
+   "ranks": [
+    5,
+    10,
+    3,
+    9
+   ],
+   "image": "art/finalfantasy/Laguna.png"
+  },
+  {
+   "id": 103,
+   "name": "Selphie",
+   "level": 5,
+   "ranks": [
+    10,
+    8,
+    6,
+    4
+   ],
+   "image": "art/finalfantasy/Selphie.png"
+  },
+  {
+   "id": 104,
+   "name": "Quistis",
+   "level": 5,
+   "ranks": [
+    9,
+    6,
+    10,
+    2
+   ],
+   "image": "art/finalfantasy/Quistis.png"
+  },
+  {
+   "id": 105,
+   "name": "Irvine",
+   "level": 5,
+   "ranks": [
+    2,
+    6,
+    9,
+    10
+   ],
+   "image": "art/finalfantasy/Irvine.png"
+  },
+  {
+   "id": 106,
+   "name": "Zell",
+   "level": 5,
+   "ranks": [
+    8,
+    5,
+    10,
+    6
+   ],
+   "image": "art/finalfantasy/Zell.png"
+  },
+  {
+   "id": 107,
+   "name": "Rinoa",
+   "level": 5,
+   "ranks": [
+    4,
+    10,
+    2,
+    10
+   ],
+   "image": "art/finalfantasy/Rinoa.png"
+  },
+  {
+   "id": 108,
+   "name": "Edea",
+   "level": 5,
+   "ranks": [
+    10,
+    10,
+    3,
+    3
+   ],
+   "image": "art/finalfantasy/Edea.png"
+  },
+  {
+   "id": 109,
+   "name": "Seifer",
+   "level": 5,
+   "ranks": [
+    6,
+    9,
+    10,
+    4
+   ],
+   "image": "art/finalfantasy/Seifer.png"
+  },
+  {
+   "id": 110,
+   "name": "Squall",
+   "level": 5,
+   "ranks": [
+    10,
+    4,
+    6,
+    9
+   ],
+   "image": "art/finalfantasy/Squall.png"
   }
  ]
 }
