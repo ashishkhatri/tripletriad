@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.9.0 — 2026-11-03
+
+- New card set: **Final Fantasy** 🗡️ — the classic *Triple Triad* board from Final Fantasy VIII, as an original homage.
+  - The 40-card deck uses the original card names, ranks and levels (Moogle 8-8-8-6, the three 4★ Fangs, Salamander 7-7-7-7, the 5★ Moogle, Behemoth, Chocobo, Fenrir…).
+  - New brass-and-parchment board theme (Cinzel / Philosopher type, gilded panels, a summoning-sigil ornament).
+  - Original "Dancing Mad" 12/8 background theme (an homage to the board's waltz) and a polished-brass sound kit.
+
 ## v0.8.4 — 2026-11-03
 
 - Removed the **Scrap extras** button from the collection. Scrap cards one at a time from the card view or the pack reveal.

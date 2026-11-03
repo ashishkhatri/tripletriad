@@ -17,6 +17,7 @@ const STYLE = {
   tidebound: { c1: '#04262d', c2: '#0e6676', c3: '#ffd2bd', ink: '#fffaf3', motif: 'waves',    tag: 'REEF & DEEP' },
   bloomwild: { c1: '#13280e', c2: '#3c7a2a', c3: '#ffc7da', ink: '#fff6f9', motif: 'leaves',   tag: 'FLORA & FUNGI' },
   hollow:    { c1: '#0d0a18', c2: '#3a2457', c3: '#ffb35c', ink: '#fff4df', motif: 'lanterns', tag: 'SPIRITS & MASKS' },
+  finalfantasy: { c1: '#1c1305', c2: '#4a3618', c3: '#f3d488', ink: '#fff2d8', motif: 'triad', tag: 'TRIPLE TRIAD OF BALAMB' },
 };
 const FALLBACK = { c1: '#222', c2: '#555', c3: '#ddd', ink: '#fff', motif: 'stars', tag: 'CARD PACK' };
 
@@ -41,6 +42,7 @@ function motif(kind, color) {
     if (kind === 'waves') s += `<g ${t}><path d="M-18,0 q6,-8 12,0 t12,0 t12,0" stroke="${color}" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>`;
     if (kind === 'leaves') s += `<g ${t}><path d="M0,-14 C10,-6 10,6 0,14 C-10,6 -10,-6 0,-14 Z M0,-12 L0,12" fill="${color}" stroke="${color}" stroke-width="1"/></g>`;
     if (kind === 'lanterns') s += `<g ${t}><rect x="-6" y="-9" width="12" height="16" rx="5" fill="${color}"/><path d="M-3,-9 v-4 h6 v4 M0,7 v5" stroke="${color}" stroke-width="1.6" fill="none"/></g>`;
+    if (kind === 'triad') s += `<g ${t} stroke="${color}" fill="none" stroke-width="1.6"><rect x="-9" y="-9" width="18" height="18" rx="2"/>${[0, 6, 12].map((dx) => [0, 6, 12].map((dy) => `<circle cx="${dx - 6}" cy="${dy - 6}" r="1.7"/>`).join('')).join('')}</g>`;
   }
   return s;
 }

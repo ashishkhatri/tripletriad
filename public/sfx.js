@@ -34,7 +34,7 @@ window.Sfx = (() => {
     return ctx;
   }
   // Each card set has its own sound kit in sfx/<set>/; the root files are the default (Wilds) kit.
-  const KITS = new Set(['arcane', 'starfall', 'tidebound', 'bloomwild', 'hollow']);
+  const KITS = new Set(['arcane', 'starfall', 'tidebound', 'bloomwild', 'hollow', 'finalfantasy']);
   const kit = () => { const th = document.documentElement.dataset.theme; return KITS.has(th) ? th : ''; };
   function fetchBuf(url) {
     return fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })

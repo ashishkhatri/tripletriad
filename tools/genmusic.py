@@ -185,6 +185,17 @@ SONGS = {
                   D5 - F#5 - B5 - A5 - | F#5 - - E5 D5 - A4 - | G5 - E5 - C#5 - A#4 - | B4 - - - - - . .''',
         arp='harp', arp_pat=[0, None, 2, None, 1, None, 2, None], arp_oct=3,
         bass='R . . . . . . .', drums='', pad=True),
+    # Bouncy 12/8 ballroom dance in F minor — an original homage to the board's waltz.
+    'finalfantasy': dict(
+        title='Dancing Mad', bpm=70, sub=2, steps=12,
+        chords=['Fm', 'Db', 'Bb', 'C', 'Fm', 'Db', 'G', 'Fm'],
+        lead='flute', lead2='bell',
+        melody='''D5 - - F5 - - C5 - - A4 - - | D5 - - F5 - - G5 - - A5 - - |
+                  A5 - - G5 - - F5 - - D5 - - | A4 - - C5 - - D5 - - F5 - - |
+                  Bb5 - - Ab5 - - G5 - - F5 - - | D5 - - F5 - - A5 - - G5 - - |
+                  F5 - - D5 - - A4 - - F5 - - | C5 - - F5 - - - - - - - -''',
+        arp='pluck', arp_pat=[0, 2, 1, 2, 3, 2, 1, 2, 3, 1, 2, 1], arp_oct=3,
+        bass='R . . . . R . . . . R .', drums='k . . . h . . k . . h .', pad=True),
 }
 
 # ---------------- renderer ----------------

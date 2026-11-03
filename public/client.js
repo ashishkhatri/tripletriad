@@ -1976,7 +1976,7 @@
   };
 
   // ---------- boot ----------
-  const SET_ICON = { wilds: '🐾', arcane: '🔮', starfall: '🚀', tidebound: '🌊', bloomwild: '🌸', hollow: '🏮' };
+  const SET_ICON = { wilds: '🐾', arcane: '🔮', starfall: '🚀', tidebound: '🌊', bloomwild: '🌸', hollow: '🏮', finalfantasy: '🗡️' };
   async function loadDecks() {
     const index = await (await fetch('decks/index.json')).json();
     const sel = $('#deck'), csel = $('#col-deck');

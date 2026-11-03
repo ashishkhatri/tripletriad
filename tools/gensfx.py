@@ -358,6 +358,58 @@ class Bloomwild(Wilds):
         return x
 
 
+class FinalFantasy(Wilds):
+    """Polished brass, chime bells and a card-snap in a warm ballroom — an original homage to the board's theme."""
+    name = 'finalfantasy'
+    room_s, room_wet = 1.6, 0.34
+    def tone(self, f, d=1.6, decay=2.2, bright=1.0):   # chime / hand-bell: bright strike, clear partials
+        tt = t(d * 1.1)
+        parts = [(1, 1, 1), (1.498, .42 * bright, 1.4), (2.0, .3 * bright, 1.9), (2.99, .18 * bright, 2.6), (4.2, .08 * bright, 3.4)]
+        x = sum(a * np.sin(2 * np.pi * f * r * tt) * np.exp(-tt * decay * k) for r, a, k in parts)
+        x[:int(0.02 * SR)] += 0.12 * bright * bp(noise(0.02), f * 2, min(18000, f * 8)) * np.exp(-t(0.02) * 60)          # metal strike transient
+        return fade_in(x, 60)
+    def pluck(self, f, d=0.6, decay=7):             # plucked harp / lute string
+        tt = t(d * 1.1)
+        x = sum((0.6 ** k) * np.sin(2 * np.pi * (k + 1) * f * tt) * np.exp(-tt * (decay + 3 * k)) for k in range(5))
+        return fade_in(x, 30)
+    def swish(self, d, lo, hi, up=True):            # a crisp card swipe across the felt
+        tt = t(d)
+        x = band_sweep(noise(d), lo * 0.5, hi * 0.8, up, q=(0.85, 1.5))
+        return x * np.sin(np.pi * np.clip(tt / d, 0, 1)) ** 1.4
+    def tick(self, d=0.03, f=3000):                 # brass click
+        return sweep(1500, 900, 0.05, 80) * 0.7
+    def glitter(self, d=0.9, count=10, lo=84, hi=100, gain=0.25):   # ascending chime cascade
+        out = canvas(d + 0.9)
+        for i in range(count):
+            m = int(lo + (hi - lo) * i / max(1, count - 1) + rng.integers(-1, 2))
+            place(out, i * (d / count), self.tone(hz(m), 0.7, 6, 0.8) * rng.uniform(0.5, 1), gain)
+        return out
+    def place(self):                                # card thudded onto the board
+        x = canvas(0.35)
+        place(x, 0, self.thump(150, 65, 0.24, 20) * 0.9)
+        place(x, 0, lp(noise(0.05), 2600) * env_exp(int(0.05 * SR), 70) * 0.5)
+        place(x, 0.004, self.tick() * 0.4)
+        return reverb(x, 0.5, 0.16)
+    def flip(self):                                 # a card turning over
+        x = canvas(0.3)
+        place(x, 0, self.swish(0.16, 1200, 7000) * 0.8)
+        place(x, 0.15, self.tick() * 0.6)
+        place(x, 0.15, self.thump(200, 110, 0.09, 30) * 0.3)
+        return x
+    def click(self):
+        x = canvas(0.1); place(x, 0, self.thump(800, 500, 0.04, 90) * 0.5); return x
+    def error(self):
+        x = canvas(0.4)
+        place(x, 0, self.pluck(hz(52), 0.3, 10) * 0.6)
+        place(x, 0.09, self.pluck(hz(50), 0.3, 10) * 0.55)
+        return x
+    def tear(self):                                 # a pack tearing open with a chime flourish
+        x = canvas(0.7)
+        place(x, 0, self.swish(0.4, 800, 6000) * 0.7)
+        place(x, 0.32, self.glitter(0.3, 6, 88, 100, 0.5))
+        return x
+
+
 class Hollow(Wilds):
     """Temple bells, gongs, a music box and ghostly wind, in a minor key and a deep hall."""
     name = 'hollow'
@@ -410,7 +462,7 @@ class Hollow(Wilds):
         return x
 
 
-KITS = {k.name: k() for k in (Wilds, Arcane, Starfall, Tidebound, Bloomwild, Hollow)}
+KITS = {k.name: k() for k in (Wilds, Arcane, Starfall, Tidebound, Bloomwild, Hollow, FinalFantasy)}
 
 
 # =====================================================================

@@ -1,6 +1,6 @@
 {
   "name": "triad-online",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Self-hosted Triple Triad-style card game with AI and online multiplayer",
   "main": "server.js",
   "scripts": {

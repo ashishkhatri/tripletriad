@@ -15,6 +15,7 @@ const STYLE = {
   tidebound: { a: '#062e36', b: '#0f6474', m: '#ffd2bd', pattern: 'waves',   emblem: 'shell' },
   bloomwild: { a: '#16300f', b: '#356b25', m: '#ffc7da', pattern: 'leaves',  emblem: 'flower' },
   hollow:    { a: '#100c1c', b: '#3a2457', m: '#ffb35c', pattern: 'paper',   emblem: 'lantern' },
+  finalfantasy: { a: '#2a1c09', b: '#5a4218', m: '#f3d488', pattern: 'board', emblem: 'triad' },
 };
 const FALLBACK = { a: '#2a1640', b: '#3a1f4f', m: '#d9b45a', pattern: 'stars', emblem: 'star' };
 
@@ -24,6 +25,7 @@ function pattern(kind, c) {
   if (kind === 'grid') return `<pattern id="p" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20,0 H0 V20" fill="none" stroke="${c}" stroke-width=".8" opacity=".3"/><circle cx="0" cy="0" r="1.4" fill="${c}" opacity=".6"/></pattern>`;
   if (kind === 'waves') return `<pattern id="p" width="40" height="18" patternUnits="userSpaceOnUse"><path d="M0,9 q10,-8 20,0 t20,0" fill="none" stroke="${c}" stroke-width="1.6" opacity=".35"/></pattern>`;
   if (kind === 'leaves') return `<pattern id="p" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M17,4 C25,10 25,20 17,28 C9,20 9,10 17,4 Z M17,6 V27" fill="none" stroke="${c}" stroke-width="1.2" opacity=".35"/></pattern>`;
+  if (kind === 'board') return `<pattern id="p" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34,0 H0 V34" fill="none" stroke="${c}" stroke-width="1" opacity=".3"/><circle cx="17" cy="17" r="2" fill="${c}" opacity=".4"/><circle cx="0" cy="0" r="1.4" fill="${c}" opacity=".4"/></pattern>`;
   return `<pattern id="p" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0,14 H28 M14,0 V28" stroke="${c}" stroke-width=".7" opacity=".25"/><circle cx="14" cy="14" r="3" fill="none" stroke="${c}" stroke-width=".8" opacity=".35"/></pattern>`;
 }
 
@@ -35,6 +37,7 @@ function emblem(kind, c, a) {
   if (kind === 'shell') return g(`<circle r="60" fill="${a}" stroke="${c}" stroke-width="3"/><path d="M0,34 L-40,-6 Q-30,-40 0,-42 Q30,-40 40,-6 Z" fill="none" stroke="${c}" stroke-width="4" stroke-linejoin="round"/>${[-24, -12, 0, 12, 24].map((x) => `<path d="M0,32 L${x},-38" stroke="${c}" stroke-width="2.5"/>`).join('')}`);
   if (kind === 'flower') return g(`<circle r="60" fill="${a}" stroke="${c}" stroke-width="3"/>${Array.from({ length: 6 }, (_, i) => `<ellipse cy="-26" rx="12" ry="22" fill="none" stroke="${c}" stroke-width="3.5" transform="rotate(${i * 60})"/>`).join('')}<circle r="10" fill="${c}"/>`);
   if (kind === 'lantern') return g(`<circle r="60" fill="${a}" stroke="${c}" stroke-width="3"/><circle r="40" fill="${c}" opacity=".18"/><rect x="-18" y="-30" width="36" height="52" rx="16" fill="none" stroke="${c}" stroke-width="4"/><path d="M-10,-30 v-8 h20 v8 M-14,-12 h28 M-14,4 h28 M0,22 v12" stroke="${c}" stroke-width="3" fill="none"/>`);
+  if (kind === 'triad') return g(`<circle r="60" fill="${a}" stroke="${c}" stroke-width="3"/><circle r="48" fill="none" stroke="${c}" stroke-width="1.4" stroke-dasharray="3 6"/><rect x="-34" y="-34" width="68" height="68" rx="8" fill="none" stroke="${c}" stroke-width="4"/>${[-24, 0, 24].map((x) => [-24, 0, 24].map((y) => `<circle cx="${x}" cy="${y}" r="${(x === 0 && y === 0) ? 7 : 4.5}" fill="${c}"/>`).join('')).join('')}`);
   return g(`<circle r="58" fill="${a}" stroke="${c}" stroke-width="3"/><path d="M0,-40 L10,-10 L40,0 L10,10 L0,40 L-10,10 L-40,0 L-10,-10 Z" fill="${c}"/>`);
 }
 
