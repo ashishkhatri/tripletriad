@@ -1916,3 +1916,6 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .unst-ring { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid #d9b8ff; box-shadow: 0 0 20px #7b2bff, inset 0 0 20px #7b2bff; animation: unstRing .7s ease-out both; }
 @keyframes unstRing { from { transform: scale(.3); opacity: 1; } to { transform: scale(14); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .unst-word span.on { animation: none; } }
+/* Elemental / storm modifiers: the numbers themselves change, tinted green (raised) or red (lowered) */
+.card .ranks span.rk-up { color: #7dff7a; text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 6px #0b4d07; }
+.card .ranks span.rk-down { color: #ff7a6b; text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 6px #5a0b04; }

@@ -391,9 +391,14 @@
         if (slot.mod < 0) el.classList.add('scorched');
         if (slot.mod > 0) el.classList.add('empowered');
         if (total) {
-          const m = document.createElement('div'); m.className = 'mod ' + (total > 0 ? 'up' : 'down'); m.textContent = (total > 0 ? '+' : '−') + Math.abs(total);
-          m.title = [elKey ? (slot.card.el === elKey ? '+1 matching element square' : '−1 element square') : '', slot.mod < 0 ? `${slot.mod} scorched` : slot.mod > 0 ? `+${slot.mod} harnessed` : ''].filter(Boolean).join(', ');
-          cell.appendChild(m);
+          // the card's numbers show their real fighting value: green when raised, red when lowered
+          const why = [elKey ? (slot.card.el === elKey ? '+1 matching element square' : '−1 element square') : '', slot.mod < 0 ? `${slot.mod} scorched` : slot.mod > 0 ? `+${slot.mod} harnessed` : ''].filter(Boolean).join(', ');
+          el.querySelectorAll('.ranks span').forEach((sp, k) => {
+            const v = slot.card.r[k] + total;
+            sp.textContent = v === 10 ? 'A' : String(v);
+            sp.classList.add(total > 0 ? 'rk-up' : 'rk-down');
+          });
+          el.querySelector('.ranks').title = why;
         }
       } else if (myTurn() && selected !== null && TT.openCells(state).includes(i)) {
         cell.classList.add('can-drop');
