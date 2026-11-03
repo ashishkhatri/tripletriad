@@ -243,7 +243,7 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
   with it while the light stays fixed in the room, so glare and foil sweep across the cards as you move. The neutral
   angle follows however you hold the device. iPhones and iPads ask for motion access on your first tap (needs HTTPS,
   e.g. through Cloudflare). Without sensors, or with reduced motion turned on, the light drifts slowly instead.
-  The **Account** page has a Card tilt panel showing whether it's working (and why not), with an on/off switch.
+  Tilt turns on automatically the first time the game opens (iPhones and iPads ask for motion access on your first tap).
   Brave and some privacy settings block motion sensors: allow them under the browser's Site settings → Motion sensors.
 - **Normal vs foil:** normal cards only get the gloss and glare. Foils get a loud holographic finish: rainbow bands
   across the whole card that sweep slowly on their own and swing with the pointer, glitter, a prismatic frame and a glow.

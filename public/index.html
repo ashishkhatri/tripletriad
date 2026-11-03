@@ -26,11 +26,10 @@
     <button type="button" class="nav-item" data-view="collection"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.2"/></svg><span>Collection</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="challenges"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" /></svg><span>Challenges</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="rewards"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5c0 3 1.3 4.5 3.4 4.8M16.5 6h3c0 3-1.3 4.5-3.4 4.8"/><path d="M12 13.5V17M8.5 20h7M9.5 17h5v3h-5z"/></svg><span>Rewards</span><i class="nav-dot" hidden></i></button>
-    <button type="button" class="nav-item" data-view="howto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3-1.5 5.5-1.5 8 0v14c-2.5-1.5-5-1.5-8 0z"/><path d="M20 5.5c-3-1.5-5.5-1.5-8 0v14c2.5-1.5 5-1.5 8 0z"/></svg><span>How to play</span><i class="nav-dot" hidden></i></button>
-    <button type="button" class="nav-item" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.2-4 4.2-5.8 7.5-5.8s6.3 1.8 7.5 5.8"/></svg><span>Account</span><i class="nav-dot" hidden></i></button>
     <!-- card set picker: always at the top outside matches (icons only on phones until opened) -->
     <div class="set-bar">
       <span class="set-pick"><select id="deck" aria-label="Card set"></select><span class="set-icon" id="set-icon" aria-hidden="true"></span></span>
+      <button type="button" id="btn-level" class="level-pill" hidden title="Account level: open Rewards"><span>Lv</span><b id="level-num">1</b></button>
       <button id="btn-packs" class="pack-pill" hidden></button>
       <div id="set-progress" class="set-progress" hidden><span id="menu-xp-fill" hidden></span><span id="menu-xp-text" class="sr-only"></span></div>
     </div>
@@ -67,6 +66,7 @@
         </div>
         <div class="panel mode">
           <h2>Online</h2>
+          <label class="field" id="name-field">Your name <input id="name" maxlength="16" placeholder="Player"></label>
           <button id="btn-create" class="big">Create room</button>
           <div class="row">
             <input id="join-code" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Room code">
@@ -75,7 +75,8 @@
         </div>
       </div>
       <p id="menu-error" class="error"></p>
-      <p id="guest-note" class="guest-note">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> to collect cards and earn shards</p>
+      <p id="guest-note" class="guest-note">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> or <button type="button" class="link" data-open-auth="register">create an account</button> to collect cards and earn shards</p>
+      <p id="user-note" class="guest-note" hidden>Signed in as <b id="acct-name"></b> · <button type="button" id="btn-signout" class="link">Sign out</button></p>
       <details class="panel match-rules" id="match-rules">
         <summary><span class="mr-title">Match rules</span><span id="rules-summary" class="mr-sum"></span><span class="mr-edit">Change</span></summary>
       <fieldset class="rules">
@@ -96,23 +97,28 @@
         <p id="rules-note" class="rules-note"></p>
       </fieldset>
       </details>
+      <details class="panel howto-panel howto-fold">
+        <summary>How to play</summary>
+        <h3>The basics</h3>
+        <p>Take turns placing cards on the 3×3 board. Each card has a number on every side (A is 10). When your card's side is higher than the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards — counting the one left in hand — wins.</p>
+        <h3>Reading a card</h3>
+        <p>The border shows rarity: <b>white</b> (common), <b>green</b> (uncommon), <b>blue</b> (rare), faceted <b>purple</b> (epic) and gleaming <b>orange</b> (legendary). The icon in the top corner is the card's element. On the board, a blue name plate is yours and red is your opponent's. Shimmering holographic cards are foils.</p>
+        <h3>Rules</h3>
+        <p>Pick extra rules under <b>Match rules</b> above — rest your pointer on (or tap) each <b>i</b> to see what it does.</p>
+        <h3>Collecting</h3>
+        <p>Signed-in players earn XP from every game: 10 for playing, 25 more for a win. Every 100 XP earns a card pack, which you can open from any set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards. XP also raises your account level: every level has a surprise reward to claim on the Rewards screen.</p>
+      </details>
     </div>
 
     <!-- REWARDS: account levels, one reward per level, scrolling left to right -->
     <div class="view" id="view-rewards" data-view="rewards" hidden>
       <h2 class="view-title">Rewards</h2>
       <section id="rewards-user" class="rewards">
-        <div class="rw-head">
-          <div class="rw-level"><span>Level</span><b id="rw-level">1</b></div>
-          <div class="rw-info"><p id="rw-note"></p></div>
-          <button type="button" id="btn-claim" class="primary" hidden>Claim</button>
-        </div>
         <div class="rw-track-wrap">
           <button type="button" class="rw-nav rw-prev" aria-label="Scroll back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
           <div id="rw-track" class="rw-track"></div>
           <button type="button" class="rw-nav rw-next" aria-label="Scroll ahead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         </div>
-        <p class="muted rw-legend">Every level has a surprise reward. Level up by playing matches.</p>
       </section>
       <div id="rewards-guest" class="panel center" hidden>
         <p>Sign in to earn account levels. Every level has a reward, from shards to Legendary cards.</p>
@@ -133,42 +139,6 @@
       </div>
     </div>
 
-    <!-- HOW TO PLAY -->
-    <div class="view" id="view-howto" data-view="howto" hidden>
-      <h2 class="view-title">How to play</h2>
-      <div class="panel howto-panel">
-        <h3>The basics</h3>
-        <p>Take turns placing cards on the 3×3 board. Each card has a number on every side (A is 10). When your card's side is higher than the touching side of an opponent's card, that card flips to your colour. When the board is full, whoever owns more cards — counting the one left in hand — wins.</p>
-        <h3>Reading a card</h3>
-        <p>The border shows rarity: <b>white</b> (common), <b>green</b> (uncommon), <b>blue</b> (rare), faceted <b>purple</b> (epic) and gleaming <b>orange</b> (legendary). The icon in the top corner is the card's element. On the board, a blue name plate is yours and red is your opponent's. Shimmering holographic cards are foils.</p>
-        <h3>Rules</h3>
-        <p>Pick extra rules under <b>Match rules</b> on the Play screen — rest your pointer on (or tap) each <b>i</b> to see what it does.</p>
-        <h3>Collecting</h3>
-        <p>Signed-in players earn XP from every game: 10 for playing, 25 more for a win. Every 100 XP earns a card pack, which you can open from any set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards. XP also raises your account level: every level has a surprise reward to claim on the Rewards screen.</p>
-      </div>
-    </div>
-
-    <!-- ACCOUNT -->
-    <div class="view" id="view-account" data-view="account" hidden>
-      <h2 class="view-title">Account</h2>
-      <div class="panel" id="account-guest">
-        <p>You're playing as a guest. Sign in to keep a collection, earn XP, shards and packs, and play with your own cards.</p>
-        <label class="field" id="name-field">Name shown to opponents <input id="name" maxlength="16" placeholder="Player"></label>
-        <div class="row"><button type="button" class="primary" data-open-auth>Sign in</button><button type="button" data-open-auth="register">Create account</button></div>
-      </div>
-      <div class="panel" id="account-user" hidden>
-        <p class="acct-line">Signed in as <b id="acct-name"></b></p>
-        <p class="acct-line"><span class="shards shard-balance">0</span> shards</p>
-        <div class="row"><button type="button" id="btn-collection">Collection</button><button type="button" id="btn-signout">Sign out</button></div>
-      </div>
-      <div class="panel tilt-panel" id="tilt-panel">
-        <h3>Card tilt <small class="muted">phones &amp; tablets</small></h3>
-        <p class="muted">Tilt your device and the cards turn with it, with the shine sliding across them.</p>
-        <p class="tilt-status"><span id="tilt-dot" class="tilt-dot wait"></span> <span id="tilt-text">Checking…</span></p>
-        <div class="tilt-meter" id="tilt-meter" hidden><span id="tilt-ball"></span></div>
-        <div class="row"><button type="button" id="btn-tilt">Turn on</button></div>
-      </div>
-    </div>
   </section>
 
   <!-- LOBBY -->

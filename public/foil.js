@@ -42,8 +42,7 @@
   const TILT_RANGE = 22;        // degrees of device tilt that map to a full card tilt
   const hasSensorApi = 'DeviceOrientationEvent' in window || 'DeviceMotionEvent' in window;
   const needsPermission = typeof window.DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
-  let userPref = null;          // true / false once the player chooses on the Account page
-  try { const v = localStorage.getItem('triad-tilt'); if (v === 'on' || v === 'off') userPref = v === 'on'; } catch (e) { /* ignore */ }
+  let userPref = null;          // tilt is on by default (there's no setting for it now); setEnabled() can still change it for this visit
   const wanted = () => (userPref !== null ? userPref : !reduceMotion);
 
   function feed(fb, lr, source) {
@@ -136,7 +135,6 @@
     enabled: wanted,
     setEnabled(on) {
       userPref = !!on;
-      try { localStorage.setItem('triad-tilt', on ? 'on' : 'off'); } catch (e) { /* ignore */ }
       if (on) return requestAccess();
       stopTilt();
       return Promise.resolve('off');

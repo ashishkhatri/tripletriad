@@ -1524,7 +1524,7 @@ body:has(#history.show) .music-ctl { opacity: 0; pointer-events: none; }
 @media (hover: none), (pointer: coarse) { .fs-btn { display: grid; } }
 /* leave room for the icons */
 @media (min-width: 900px) {
-  #nav { padding-right: 112px; }
+  #nav { padding-right: 172px; }   /* room for the sound icons fixed in the top-right corner */
   #game .hud { padding-right: 104px; }
 }
 
@@ -1543,7 +1543,7 @@ body:has(#history.show) .music-ctl { opacity: 0; pointer-events: none; }
   .set-bar { margin-left: 16px; }
   .set-bar select { max-width: 210px; }
 }
-@media (min-width: 900px) and (max-width: 1420px) {
+@media (min-width: 900px) and (max-width: 1640px) {
   #nav .nav-item span { display: none; }       /* icons only on narrower desktops, to fit the picker */
   #nav .nav-item { padding: 9px 11px; }
 }
@@ -1790,3 +1790,33 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 /* no scrollbar on the rewards track: the arrow buttons move it (and phones swipe) */
 .rw-track { scrollbar-width: none; }
 .rw-track::-webkit-scrollbar { display: none; }
+/* account level badge in the top bar */
+.level-pill { display: inline-flex; align-items: baseline; gap: 3px; padding: 3px 12px 4px !important; border-radius: 999px !important; cursor: pointer;
+  background: radial-gradient(circle at 40% 25%, var(--metal-1), var(--metal-3) 60%, var(--metal-4)) !important; color: var(--metal-5) !important;
+  border: 1px solid var(--metal-5) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--metal-2) 50%, transparent), 0 0 14px color-mix(in srgb, var(--metal-3) 55%, transparent) !important;
+  text-shadow: none !important; clip-path: none !important; font-family: var(--title); line-height: 1; }
+.level-pill span { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.level-pill b { font: 900 18px/1 var(--display); }
+.level-pill.level-up { animation: levelPop 1s cubic-bezier(.3,1.6,.5,1); }
+@keyframes levelPop { 30% { transform: scale(1.35); box-shadow: 0 0 0 3px #fff, 0 0 30px var(--metal-2); } }
+@media (max-width: 899px) { .level-pill { padding: 3px 9px 4px !important; } .level-pill b { font-size: 16px; } .level-pill span { font-size: 9px; } }
+@media (min-width: 900px) and (max-width: 1180px) {
+  .set-bar select { max-width: 150px; }
+  .level-pill span { display: none; }
+  .set-bar { margin-left: 8px; gap: 6px; }
+}
+@media (max-width: 400px) { .level-pill span { display: none; } .level-pill { padding: 3px 8px 4px !important; } #mtop .set-bar { gap: 4px; } }
+@media (min-width: 900px) and (max-width: 1010px) {
+  #nav .nav-item { padding: 9px 7px; }
+  .set-bar select { max-width: 118px; }
+  .nav-logo { font-size: 24px; letter-spacing: .1em; }
+}
+@media (max-width: 380px) { .set-bar .pack-pill { padding: 4px 6px !important; } #mtop .set-bar { gap: 2px; } .level-pill { padding: 3px 7px 4px !important; } }
+/* How to play: folded away at the bottom of the Play screen */
+.howto-fold { width: 100%; max-width: 640px; gap: 10px; }
+.howto-fold > summary { cursor: pointer; list-style: none; font: 700 16px var(--title); color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.howto-fold > summary::-webkit-details-marker { display: none; }
+.howto-fold > summary::before { content: "▸"; color: var(--accent-ink); transition: transform .2s; }
+.howto-fold[open] > summary::before { transform: rotate(90deg); }
+.howto-fold:not([open]) { gap: 0; }
+.set-bar .level-pill { margin: 0 2px; }

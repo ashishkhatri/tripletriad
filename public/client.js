@@ -126,13 +126,13 @@
 
   // ---------- navigation ----------
   let currentView = 'play';
-  try { const v = sessionStorage.getItem('triad-view'); if (v && v !== 'collection') currentView = v; } catch (e) { /* ignore */ }
+  try { const v = sessionStorage.getItem('triad-view'); if (v && ['play', 'challenges', 'rewards'].includes(v)) currentView = v; } catch (e) { /* ignore */ }
   function markNav(view) {
     document.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('on', b.dataset.view === view));
   }
   function setView(view) {
     if (view === 'collection') {
-      if (!account) { currentView = 'account'; setView('account'); toast('Sign in to start a collection.'); return; }
+      if (!account) { openAuth(); toast('Sign in to start a collection.'); return; }
       openCollection($('#deck').value);
       return;
     }
@@ -860,6 +860,7 @@
       sfx('unlock', { delay: 1.7 });
     }
     if (r && typeof r.rewardsReady === 'number') setRewardsDot(r.rewardsReady);
+    if (r && r.level) setLevel(r.level);
     // completed a challenge this match: a "Quest complete!" stamp drops in above the list
     const oldBanner = document.querySelector('#result .quest-banner:not(.level-banner)'); if (oldBanner) oldBanner.remove();
     dl.classList.remove('fresh');
@@ -1085,8 +1086,8 @@
     renderAccount();
   }
   function renderAccount() {
-    $('#account-guest').hidden = !!account;
-    $('#account-user').hidden = !account;
+    $('#user-note').hidden = !account;
+    $('#name-field').hidden = !!account;
     $('#guest-note').hidden = !!account;
     document.querySelectorAll('.nav-shards, .mobile-head .shard-balance').forEach((el) => { el.hidden = !account; });
     if (account) { $('#acct-name').textContent = account.name; setShards(account.shards || 0); }
@@ -1094,12 +1095,20 @@
     refreshProgress();
     refreshDailies();
     setRewardsDot(account ? account.rewardsReady || 0 : 0);
+    setLevel(account ? account.level : 0);
   }
   function setShards(n) {
     if (account) account.shards = n;
     document.querySelectorAll('.shard-balance').forEach((el) => { el.textContent = n.toLocaleString(); });
   }
   // ---------- rewards: account levels ----------
+  // account level badge in the top bar (opens Rewards); pops when it goes up
+  function setLevel(n) {
+    const b = $('#btn-level'); b.hidden = !n; if (!n) return;
+    const el = $('#level-num'), old = Number(el.textContent);
+    el.textContent = n; if (account) account.level = n;
+    if (old && n > old) { b.classList.remove('level-up'); void b.offsetWidth; b.classList.add('level-up'); }
+  }
   function setRewardsDot(n) {
     const dot = document.querySelector('.nav-item[data-view="rewards"] .nav-dot');
     if (dot) { dot.hidden = !n; dot.textContent = n; }
@@ -1144,9 +1153,7 @@
   }
   function renderRewards(scrollMode, freshLevels) {
     const d = rwData; if (!d) return;
-    $('#rw-level').textContent = d.level;
-    $('#rw-note').textContent = d.ready ? `${d.ready} reward${d.ready > 1 ? 's' : ''} ready to claim!` : 'Keep playing to reach the next level.';
-    const cb = $('#btn-claim'); cb.hidden = !d.ready; cb.textContent = d.ready > 1 ? `Claim (${d.ready} ready)` : 'Claim';
+    setLevel(d.level);
     setRewardsDot(d.ready); if (account) account.rewardsReady = d.ready;
     const track = $('#rw-track'); const keep = track.scrollLeft; track.innerHTML = '';
     for (const t of d.track) track.appendChild(rwTile(t, freshLevels && freshLevels.has(t.level)));
@@ -1170,8 +1177,9 @@
     }
     $('#reward-pick').classList.add('show');
   }
+  let claiming = false;
   async function claimReward(deckId) {
-    const btn = $('#btn-claim'); btn.disabled = true;
+    if (claiming) return; claiming = true;
     try {
       const r = await api('POST', '/api/levels/claim', deckId ? { deck: deckId } : {});
       setShards(r.shards); rwData = r.view;
@@ -1183,7 +1191,7 @@
       else if (c.packs) { sfx('craft'); refreshProgress(); openPackPicker(); }   // a pack: straight into the usual pick-a-set-and-open flow
       else { sfx('craft'); toast(`Level ${c.level}: +${c.shards} shards`); }
     } catch (e) { toast(e.message); sfx('error'); }
-    btn.disabled = false;
+    claiming = false;
   }
   // card rewards open on the pack screen: the cards fly in face down and you tap each one to reveal it
   function showRewardCards(deckId, c) {
@@ -1196,7 +1204,7 @@
     revealPackCards(deckId, { cards: c.cards, summary: { packs: 0 } }, origin);
     $('#pack-hint').textContent = c.cards.length > 1 ? 'Click each card to reveal it' : 'Click the card to reveal it';
   }
-  $('#btn-claim').onclick = () => openRewardPick();
+  $('#btn-level').onclick = () => setView('rewards');
   $('#reward-pick-close').onclick = () => $('#reward-pick').classList.remove('show');
   $('#reward-pick').addEventListener('click', (e) => { if (e.target.id === 'reward-pick') $('#reward-pick').classList.remove('show'); });
   for (const [sel, dir] of [['.rw-prev', -1], ['.rw-next', 1]]) {
@@ -1661,34 +1669,6 @@
   $('#btn-concede-yes').onclick = () => { $('#concede').classList.remove('show'); toMenu(); };
   $('#btn-concede-no').onclick = () => $('#concede').classList.remove('show');
   $('#concede').addEventListener('click', (e) => { if (e.target.id === 'concede') $('#concede').classList.remove('show'); });
-  // ---------- card tilt settings (Account page) ----------
-  function renderTilt() {
-    const T = window.CardTilt;
-    if (!T) {
-      const err = (window.__errs || []).find((x) => /foil/.test(x));
-      $('#tilt-text').textContent = err ? `The tilt code hit an error: ${err}` : 'The tilt code didn’t load (an old cached copy?). Close the app fully and reopen it.';
-      $('#tilt-dot').className = 'tilt-dot bad'; return;
-    }
-    const st = T.status();
-    $('#tilt-text').textContent = st.text;
-    $('#tilt-dot').className = 'tilt-dot ' + ({ on: 'ok', idle: 'ok', waiting: 'wait', permission: 'wait' }[st.code] || (st.code === 'mouse' || st.code === 'off' ? 'off' : 'bad'));
-    const b = $('#btn-tilt');
-    b.hidden = st.code === 'mouse' || st.code === 'unsupported';
-    b.textContent = T.enabled() && st.code !== 'permission' && st.code !== 'denied' ? 'Turn off' : 'Turn on';
-    const r = T.reading();
-    $('#tilt-meter').hidden = !(st.code === 'on' || st.code === 'idle');
-    $('#tilt-ball').style.transform = `translate(${(r.x * 40).toFixed(1)}px, ${(r.y * 40).toFixed(1)}px)`;
-  }
-  $('#btn-tilt').onclick = () => {
-    const T = window.CardTilt; if (!T) return;
-    const st = T.status();
-    const turnOn = !T.enabled() || st.code === 'permission' || st.code === 'denied';
-    T.setEnabled(turnOn).then(renderTilt);
-    renderTilt();
-  };
-  setInterval(() => { if (!$('#view-account').hidden) renderTilt(); }, 300);
-  renderTilt();
-  if (window.CardTilt) window.CardTilt.onChange(renderTilt);
   $('#btn-history').onclick = () => setHistory(!historyOpen);
   $('#btn-history-close').onclick = () => setHistory(false);
   $('#btn-result-history').onclick = () => setHistory(true);
@@ -1719,7 +1699,6 @@
   $('#btn-auth-register').onclick = () => { if ($('#auth-form').reportValidity()) doAuth('register'); };
   $('#btn-auth-cancel').onclick = () => $('#auth').classList.remove('show');
   $('#btn-signout').onclick = async () => { try { await api('POST', '/api/logout', {}); } catch (e) { /* ignore */ } account = null; renderAccount(); toast('Signed out.'); };
-  $('#btn-collection').onclick = () => openCollection($('#deck').value);
   $('#btn-packs').onclick = () => openPackPicker();
   $('#btn-col-back').onclick = () => setView(currentView === 'collection' ? 'play' : currentView);
   $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };

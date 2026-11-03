@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.3 — 2026-11-02
+
+- **Account level badge** in the top bar (gold "Lv 12" pill next to the set picker); tap it to open Rewards. It pops when you level up.
+- Tidier menu: **How to play** moved onto the Play screen as a section you click to expand, and the **Account** screen is gone. Sign in / create an account / sign out sit in the line under the play modes; guests set their online name in the Online box.
+- Card tilt is simply on: it starts the first time the game opens (iPhone/iPad ask for motion access on the first tap). The on/off switch went with the Account screen.
+- Rewards screen is just the track now (no level bubble or text); reached levels say "Claim!" and you tap them.
+- Top bar: fixed the version number and packs button sliding under the sound icons at some desktop widths and on small phones.
+
 ## v0.6.2 — 2026-11-02
 
 - The shard icon is a drawn, faceted blue gem with a dark rim, so it reads on light panels (Wilds parchment, Tidebound, Bloomwild) as well as dark ones.
