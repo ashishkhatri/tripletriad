@@ -155,8 +155,10 @@
     await sleep(750); b.classList.remove('show'); await sleep(200);
   }
   // Combo: "C-C-C-COMBO!" stutters in over a ring of fire around the board, with embers, a heat flash and a shake
+  let myRuleMoves = 0;      // your moves this game that set off Same or Plus
+  let comboVoice = null;   // finishes when the "C-C-C-COMBO" line ends
   async function comboFx() {
-    if (window.Sfx && Sfx.voice) Sfx.voice('combo', { fallback: 'C, C, C, COMBO!', rate: 1.05, pitch: 0.35 });
+    comboVoice = window.Sfx && Sfx.voice ? Sfx.voice('combo', { fallback: 'C, C, C, COMBO!', rate: 1.05, pitch: 0.35 }) : null;
     const fx = document.createElement('div'); fx.className = 'combo-fx';
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const board = document.querySelector('#board'), r = board ? board.getBoundingClientRect() : { left: innerWidth / 2 - 150, top: innerHeight / 2 - 150, width: 300, height: 300 };
@@ -845,6 +847,15 @@
         ruleFlips.forEach((_, k) => sfx('flip', { delay: 0.08 * k }));
       }
     }
+    // Unstoppable: your second (and every later) move this game that sets off Same or Plus. If that move also
+    // chains into a Combo, the line waits until "C-C-C-COMBO" has finished.
+    const placed = events.find((e) => e.type === 'place');
+    if (placed && placed.player === me && events.some((e) => e.type === 'rule' && (e.rule === 'same' || e.rule === 'plus'))) {
+      if (++myRuleMoves >= 2 && window.Sfx && Sfx.voice) {
+        const combo = events.some((e) => e.type === 'rule' && e.rule === 'combo') && comboVoice;
+        Promise.resolve(combo || null).then(() => Sfx.voice('unstoppable', { fallback: 'Unstoppable!', delay: combo ? 0.1 : 0.2 }));
+      }
+    }
     if (!state.over && state.turn === me && prevTurn !== null && prevTurn !== me) sfx('turn', { delay: 0.35 });
     if (state.over && !resultShown) showResult();
   }
@@ -1015,7 +1026,7 @@
       case 'state': {
         const fresh = !state || msg.events.some((e) => e.type === 'start');
         me = msg.you; names = msg.names;
-        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); const sb = $('#btn-show-result'); sb.hidden = true; sb.disabled = false; sb.textContent = 'Rematch'; }
+        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; myRuleMoves = 0; $('#result').classList.remove('show'); const sb = $('#btn-show-result'); sb.hidden = true; sb.disabled = false; sb.textContent = 'Rematch'; }
         if (!document.querySelector('#game.active')) show('game');
         busy = false;
         applyResult(msg.state, msg.events).then(() => {

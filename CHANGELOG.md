@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.5 — 2026-11-02
+
+- **Unstoppable!** Your second move in a game that sets off Same or Plus (and every one after it) plays the new `public/sounds/unstoppable.mp3` announcer line. If that move also chains into a Combo, it plays right after "C-C-C-COMBO" finishes.
+
 ## v0.7.4 — 2026-11-02
 
 - The Legendary and Combo voice clips are louder (about +4 dB), with a limiter so the peaks don't distort.

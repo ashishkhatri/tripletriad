@@ -82,6 +82,7 @@ window.Sfx = (() => {
     lim.threshold.value = -4; lim.knee.value = 2; lim.ratio.value = 20; lim.attack.value = 0.002; lim.release.value = 0.15;
     src.connect(g).connect(lim).connect(out);
     src.start(ctx.currentTime + (opts.delay || 0));
+    return new Promise((res) => { src.onended = res; });   // resolves when the line has finished
   }
 
   const unlock = () => { if (ensure() && ctx.state === 'suspended') ctx.resume().catch(() => {}); };
