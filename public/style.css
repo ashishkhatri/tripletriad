@@ -1856,23 +1856,25 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .combo-word { position: absolute; left: 0; right: 0; top: 38%; text-align: center; white-space: nowrap;
   font-family: var(--display); font-weight: 900; font-size: clamp(40px, 10vw, 104px); letter-spacing: .02em; line-height: 1; }
 .combo-word span, .combo-word b {
-  display: inline-block; font-weight: 900;
+  display: inline-block; font-weight: 900; opacity: 0;
   background: linear-gradient(0deg, #ff2a00 0%, #ff7a00 30%, #ffd23a 60%, #fffbe0 85%) 0 0 / 100% 200%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 2px #fff7) drop-shadow(0 0 12px #ff6a00) drop-shadow(0 0 30px #ff2a00) drop-shadow(0 4px 0 #5a1000);
-  animation: comboStutter .22s cubic-bezier(.2,1.8,.4,1) both, comboBurn .5s linear infinite; }
+  filter: drop-shadow(0 0 2px #fff7) drop-shadow(0 0 12px #ff6a00) drop-shadow(0 0 30px #ff2a00) drop-shadow(0 4px 0 #5a1000); }
 .combo-word span { font-size: .7em; }
-.combo-word span:nth-child(1) { animation-delay: 0s, 0s; }
-.combo-word span:nth-child(2) { animation-delay: .2s, 0s; }
-.combo-word span:nth-child(3) { animation-delay: .4s, 0s; }
-.combo-word b { animation: comboSlam .5s cubic-bezier(.2,1.9,.35,1) .62s both, comboBurn .5s linear infinite, comboJitter .09s steps(2) 1.1s infinite; }
+.combo-word span.on { opacity: 1; animation: comboStutter .22s cubic-bezier(.2,1.8,.4,1) both, comboBurn .5s linear infinite; }
+.combo-word b.on { opacity: 1; animation: comboSlam .45s cubic-bezier(.2,1.9,.35,1) both, comboBurn .5s linear infinite, comboJitter .09s steps(2) .45s infinite; }
 @keyframes comboStutter { 0% { opacity: 0; transform: scale(2.6) rotate(-8deg); } 100% { opacity: 1; transform: none; } }
 @keyframes comboSlam { 0% { opacity: 0; transform: scale(4) rotate(6deg); } 60% { opacity: 1; transform: scale(.9); } 100% { opacity: 1; transform: none; } }
 @keyframes comboBurn { to { background-position: 0 -200%; } }
 @keyframes comboJitter { 0% { translate: 0 0; } 50% { translate: 2px -1px; } 100% { translate: -2px 1px; } }
-#game.combo-shake .board { animation: comboShake .5s ease-in-out .62s 2; }
+/* the fire catches on the first "C" */
+.combo-fire { opacity: 0; }
+.combo-fx.lit .combo-fire { opacity: 1; }
+.combo-fx:not(.lit) .flame, .combo-fx:not(.lit) .ember { animation-play-state: paused; }
+.combo-fx:not(.lit) .combo-heat { animation: none; opacity: 0; }
+#game.combo-shake .board { animation: comboShake .45s ease-in-out 2; }
 @keyframes comboShake { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -4px 4px; } 80% { translate: 3px -2px; } }
-@media (prefers-reduced-motion: reduce) { .combo-word span, .combo-word b { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .combo-word span.on, .combo-word b.on { animation: none; } }
 .level-banner { cursor: pointer; transition: filter .15s; }
 .level-banner:hover { filter: brightness(1.12); }
 /* Match rules and How to play: the same accordion — title (and a short summary) on the left, a chevron on the right */
@@ -1891,3 +1893,26 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .hist-play { display: grid !important; place-items: center; padding: 0 !important; letter-spacing: 0 !important; text-indent: 0 !important; line-height: 0 !important; clip-path: none !important; min-width: 0 !important; }
 .hist-play svg { width: 11px; height: 11px; display: block; fill: currentColor; translate: .5px 0; }
 .card.combo-flip { box-shadow: 0 0 0 2px #ffb347, 0 0 22px #ff7a00, 0 0 40px #ff3d0088, var(--edge) !important; }
+
+/* ===================== Unstoppable: violet lightning, syllable by syllable ===================== */
+.unst-fx { position: fixed; inset: 0; z-index: 26; pointer-events: none; overflow: hidden; transition: opacity .4s;
+  background: radial-gradient(ellipse at 50% 50%, #7b2bff22, transparent 70%); }
+.unst-fx.out { opacity: 0; }
+.unst-fx.flash::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, #d9b8ff66, #7b2bff22 40%, transparent 70%); mix-blend-mode: screen; animation: unstFlash .35s ease-out both; }
+@keyframes unstFlash { from { opacity: 1; } to { opacity: 0; } }
+.unst-word { position: absolute; left: 0; right: 0; top: 40%; text-align: center; white-space: nowrap;
+  font-family: var(--display); font-weight: 900; font-size: clamp(34px, 8.6vw, 92px); letter-spacing: .02em; line-height: 1; }
+.unst-word span { display: inline-block; opacity: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #e6d4ff 35%, #a46bff 65%, #6a1fff 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 10px #b88cff) drop-shadow(0 0 26px #7b2bff) drop-shadow(0 4px 0 #24074f); }
+.unst-word span.on { opacity: 1; animation: unstHit .3s cubic-bezier(.2,1.9,.35,1) both, unstBuzz .08s steps(2) .3s infinite; }
+.unst-word span:last-child.on { animation: unstSlam .45s cubic-bezier(.2,1.9,.35,1) both, unstBuzz .08s steps(2) .45s infinite; }
+@keyframes unstHit { 0% { opacity: 0; transform: translateY(-40px) scale(1.6) skewX(-12deg); } 100% { opacity: 1; transform: none; } }
+@keyframes unstSlam { 0% { opacity: 0; transform: scale(3.2); } 60% { opacity: 1; transform: scale(.92); } 100% { opacity: 1; transform: none; } }
+@keyframes unstBuzz { 0% { translate: 0 0; } 50% { translate: 1px -1px; } 100% { translate: -1px 1px; } }
+.unst-bolt { position: absolute; inset: 0; width: 100%; height: 100%; }
+.unst-bolt path { fill: none; stroke: #f3e8ff; stroke-width: 3.5; stroke-linejoin: round; filter: drop-shadow(0 0 6px #b88cff) drop-shadow(0 0 16px #7b2bff); animation: unstBolt .4s ease-out both; }
+@keyframes unstBolt { 0% { opacity: 1; stroke-width: 5; } 100% { opacity: 0; stroke-width: 1; } }
+.unst-ring { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid #d9b8ff; box-shadow: 0 0 20px #7b2bff, inset 0 0 20px #7b2bff; animation: unstRing .7s ease-out both; }
+@keyframes unstRing { from { transform: scale(.3); opacity: 1; } to { transform: scale(14); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .unst-word span.on { animation: none; } }

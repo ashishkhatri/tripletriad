@@ -30,6 +30,7 @@ window.Sfx = (() => {
     out.gain.value = volume;
     out.connect(ctx.destination);
     preload();
+    VOICES.forEach(loadVoice);
     return ctx;
   }
   // Each card set has its own sound kit in sfx/<set>/; the root files are the default (Wilds) kit.
@@ -67,23 +68,33 @@ window.Sfx = (() => {
     src.start(ctx.currentTime + (opts.delay || 0));
   }
 
-  // Recorded announcer lines (sounds/<name>.mp3): played louder than the effects, falling back to the speech engine if missing
+  // Recorded announcer lines (sounds/<name>.mp3): played louder than the effects, falling back to the speech engine if missing.
+  // voiceStart() resolves once the line is scheduled, with t0 = when it will actually be heard (performance.now() ms),
+  // so on-screen effects can be timed to the words. If loading takes longer than opts.maxWait ms it isn't played at all
+  // (better silent than out of sync).
+  const VOICES = ['combo', 'legendary', 'unstoppable'];
   const voices = new Map();
-  async function voice(name, opts = {}) {
-    if (!enabled || !ensure()) return;
-    if (ctx.state === 'suspended') { try { await ctx.resume(); } catch (e) { return; } }
-    if (!voices.has(name)) voices.set(name, fetchBuf(`sounds/${name}.mp3`).catch(() => null));
-    const buf = await voices.get(name);
-    if (!buf) { if (opts.fallback) say(opts.fallback, opts); return; }
+  const loadVoice = (name) => { if (!voices.has(name)) voices.set(name, fetchBuf(`sounds/${name}.mp3`).catch(() => null)); return voices.get(name); };
+  async function voiceStart(name, opts = {}) {
+    if (!enabled || !ensure()) return null;
+    const asked = performance.now();
+    if (ctx.state === 'suspended') { try { await ctx.resume(); } catch (e) { return null; } }
+    const buf = await loadVoice(name);
+    if (!buf) { if (opts.fallback) say(opts.fallback, opts); return null; }
+    if (opts.maxWait && performance.now() - asked > opts.maxWait) return null;
     const src = ctx.createBufferSource(); src.buffer = buf;
     const g = ctx.createGain(); g.gain.value = opts.gain || 2.6;
     // a limiter after the boost, so the louder voice doesn't clip on its peaks
     const lim = ctx.createDynamicsCompressor();
     lim.threshold.value = -4; lim.knee.value = 2; lim.ratio.value = 20; lim.attack.value = 0.002; lim.release.value = 0.15;
     src.connect(g).connect(lim).connect(out);
-    src.start(ctx.currentTime + (opts.delay || 0));
-    return new Promise((res) => { src.onended = res; });   // resolves when the line has finished
+    const lead = 0.03 + (opts.delay || 0), skip = opts.offset || 0;   // offset: start partway in (to skip a silent lead-in)
+    src.start(ctx.currentTime + lead, skip);
+    const latency = (ctx.outputLatency || ctx.baseLatency || 0) * 1000;
+    return { t0: performance.now() + (lead - skip) * 1000 + latency, duration: buf.duration * 1000, ended: new Promise((res) => { src.onended = res; }) };
   }
+  // fire-and-forget version: resolves when the line has finished
+  const voice = (name, opts) => voiceStart(name, opts).then((v) => (v ? v.ended : null));
 
   // A bright chord stab for combo chains: step 0, 1, 2… climbs a progression (I–IV–V–vi, then the same an octave up…)
   const CHORDS = [[0, 4, 7], [5, 9, 12], [7, 11, 14], [9, 12, 16]];
@@ -139,5 +150,5 @@ window.Sfx = (() => {
   }
   if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) { /* ignore */ } }
 
-  return { play, setEnabled, setVolume, say, voice, chord };
+  return { play, setEnabled, setVolume, say, voice, voiceStart, chord };
 })();

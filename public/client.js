@@ -156,8 +156,9 @@
   }
   // Combo: "C-C-C-COMBO!" stutters in over a ring of fire around the board, with embers, a heat flash and a shake
   // Combo captures turn over one at a time; after the first, each plays a higher chord (C, F, G, Am, then up an octave…)
-  async function comboFlips(events) {
+  async function comboFlips(events, span = 1) {
     const cells = events.filter((e) => e.type === 'flip' && e.by === 'combo').map((e) => e.cell);
+    const gap = cells.length > 1 ? Math.min(300, (span * 1000 * 0.8) / (cells.length - 1)) : 0;   // all turned before the line ends
     for (let k = 0; k < cells.length; k++) {
       const i = cells[k]; pendingCombo.delete(i);
       const cell = document.querySelector(`#board .cell[data-cell="${i}"]`), slot = state && state.board[i];
@@ -168,16 +169,38 @@
         old.replaceWith(el);
       }
       if (k === 0) sfx('flip'); else if (window.Sfx && Sfx.chord) Sfx.chord(k - 1);
-      if (k < cells.length - 1) await sleep(300);
+      if (k < cells.length - 1) await sleep(gap);
     }
   }
   let myRuleMoves = 0;      // your moves this game that set off Same or Plus
-  let comboVoice = null;   // finishes when the "C-C-C-COMBO" line ends
+  // ---------- announcer effects, timed to the recorded lines ----------
+  // Word timings (seconds into each recording), measured from the clips in public/sounds.
+  const CUES = {   // skip: the silent lead-in to jump over
+    combo: { skip: 0.72, parts: [0.86, 0.96, 1.08], slam: 1.22, end: 2.45 },        // C- C- C- COM-BO
+    unstoppable: { skip: 0.38, parts: [0.51, 1.31, 1.53, 1.71], end: 2.35 },      // UN- STOP- PA- BLE
+  };
+  const reduceFx = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // starts the line and returns at(s): a promise for "s seconds into the recording" (works without sound too)
+  async function cueClock(name, fallback) {
+    let v = null;
+    const skip = (CUES[name] || {}).skip || 0;
+    if (window.Sfx && Sfx.voiceStart) v = await Sfx.voiceStart(name, { fallback, maxWait: 400, offset: skip });
+    const t0 = v ? v.t0 : performance.now() - skip * 1000;   // no sound: same timing as if it were playing
+    return (sec) => sleep(Math.max(0, t0 + sec * 1000 - performance.now()));
+  }
+  function boardRect() {
+    const board = document.querySelector('#board');
+    return board ? board.getBoundingClientRect() : { left: innerWidth / 2 - 150, top: innerHeight / 2 - 150, width: 300, height: 300, right: innerWidth / 2 + 150, bottom: innerHeight / 2 + 150 };
+  }
+  // Combo: "C- C- C-" appear on each C, COMBO! slams down on "COM", and the captured cards turn over from that moment,
+  // spread across the rest of the line. A ring of fire, embers, a heat glow and a shake go with it.
   async function comboFx(onSlam) {
-    comboVoice = window.Sfx && Sfx.voice ? Sfx.voice('combo', { fallback: 'C, C, C, COMBO!', rate: 1.05, pitch: 0.35 }) : null;
+    const at = await cueClock('combo', 'C, C, C, COMBO!');
+    const T = CUES.combo, reduce = reduceFx();
     const fx = document.createElement('div'); fx.className = 'combo-fx';
-    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const board = document.querySelector('#board'), r = board ? board.getBoundingClientRect() : { left: innerWidth / 2 - 150, top: innerHeight / 2 - 150, width: 300, height: 300 };
+    const r = boardRect();
+    const heat = document.createElement('div'); heat.className = 'combo-heat'; fx.appendChild(heat);
+    const fire = document.createElement('div'); fire.className = 'combo-fire'; fx.appendChild(fire);
     if (!reduce) {
       // flames all the way round the board, pointing outward
       const step = 26, edges = [
@@ -188,31 +211,65 @@
       ];
       for (const ed of edges) for (let k = 0; k <= ed.n; k++) {
         const [x, y] = ed.at(k / ed.n); const f = document.createElement('i'); f.className = 'flame';
-        const h = 50 + Math.random() * 50;
-        f.style.cssText = `left:${x}px;top:${y}px;--h:${h}px;--rot:${ed.rot + (Math.random() * 24 - 12)}deg;animation-delay:${(Math.random() * 0.25).toFixed(2)}s,${(Math.random() * 0.3).toFixed(2)}s`;
-        fx.appendChild(f);
+        f.style.cssText = `left:${x}px;top:${y}px;--h:${50 + Math.random() * 50}px;--rot:${ed.rot + (Math.random() * 24 - 12)}deg;animation-delay:${(Math.random() * 0.2).toFixed(2)}s,${(Math.random() * 0.3).toFixed(2)}s`;
+        fire.appendChild(f);
       }
-      // embers drifting up from the board
       for (let k = 0; k < 46; k++) {
         const em = document.createElement('i'); em.className = 'ember';
-        em.style.cssText = `left:${r.left + Math.random() * r.width}px;top:${r.top + r.height * (0.3 + Math.random() * 0.8)}px;--dx:${(Math.random() * 120 - 60).toFixed(0)}px;--dy:${-(160 + Math.random() * 260).toFixed(0)}px;animation-delay:${(Math.random() * 0.6).toFixed(2)}s`;
-        fx.appendChild(em);
+        em.style.cssText = `left:${r.left + Math.random() * r.width}px;top:${r.top + r.height * (0.3 + Math.random() * 0.8)}px;--dx:${(Math.random() * 120 - 60).toFixed(0)}px;--dy:${-(160 + Math.random() * 260).toFixed(0)}px;animation-delay:${(Math.random() * 0.8).toFixed(2)}s`;
+        fire.appendChild(em);
       }
     }
-    const heat = document.createElement('div'); heat.className = 'combo-heat'; fx.appendChild(heat);
     const word = document.createElement('div'); word.className = 'combo-word';
     word.innerHTML = '<span>C-</span><span>C-</span><span>C-</span><b>COMBO!</b>';
     fx.appendChild(word);
     document.body.appendChild(fx);
-    const game = $('#game'); if (!reduce) { game.classList.remove('combo-shake'); void game.offsetWidth; game.classList.add('combo-shake'); }
-    // the captured cards flip one by one as COMBO! lands
-    const flipping = onSlam ? sleep(620).then(onSlam) : Promise.resolve();
-    await Promise.all([sleep(1700), flipping]);
+    const parts = word.querySelectorAll('span');
+    const game = $('#game');
+    // each "C" lights up on the voice's C; the fire catches on the first one
+    for (let k = 0; k < parts.length; k++) { await at(T.parts[k]); parts[k].classList.add('on'); if (!k) fx.classList.add('lit'); }
+    await at(T.slam);
+    word.querySelector('b').classList.add('on');
+    if (!reduce) { game.classList.remove('combo-shake'); void game.offsetWidth; game.classList.add('combo-shake'); }
+    const flipping = onSlam ? onSlam(T.end - T.slam) : Promise.resolve();
+    await Promise.all([at(T.end), flipping]);
     fx.classList.add('out'); game.classList.remove('combo-shake');
     setTimeout(() => fx.remove(), 450);
     await sleep(150);
   }
-  window.TriadFx = { combo: () => comboFx() };   // lets the effect be previewed from the console
+  // Unstoppable: UN- STOP- PA- BLE! land with the voice in crackling violet, each syllable with a lightning strike across
+  // the board, and a shockwave on the last one.
+  async function unstoppableFx() {
+    const at = await cueClock('unstoppable', 'Unstoppable!');
+    const T = CUES.unstoppable, reduce = reduceFx();
+    const fx = document.createElement('div'); fx.className = 'unst-fx';
+    const r = boardRect();
+    const word = document.createElement('div'); word.className = 'unst-word';
+    word.innerHTML = '<span>UN</span><span>STOP</span><span>PA</span><span>BLE!</span>';
+    fx.appendChild(word);
+    document.body.appendChild(fx);
+    const parts = word.querySelectorAll('span');
+    const bolt = () => {
+      if (reduce) return;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'unst-bolt');
+      svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
+      const x0 = r.left + Math.random() * r.width, x1 = r.left + Math.random() * r.width;
+      let d = `M${x0} ${r.top - 40}`; const n = 7;
+      for (let k = 1; k <= n; k++) d += ` L${x0 + (x1 - x0) * k / n + (Math.random() * 60 - 30)} ${r.top - 40 + (r.height + 80) * k / n}`;
+      svg.innerHTML = `<path d="${d}"/>`; fx.appendChild(svg); setTimeout(() => svg.remove(), 420);
+    };
+    for (let k = 0; k < parts.length; k++) {
+      await at(T.parts[k]);
+      parts[k].classList.add('on'); bolt();
+      fx.classList.remove('flash'); void fx.offsetWidth; fx.classList.add('flash');
+    }
+    if (!reduce) { const ring = document.createElement('i'); ring.className = 'unst-ring'; ring.style.left = (r.left + r.width / 2) + 'px'; ring.style.top = (r.top + r.height / 2) + 'px'; fx.appendChild(ring); bolt(); }
+    await at(T.end);
+    fx.classList.add('out');
+    setTimeout(() => fx.remove(), 450);
+    await sleep(150);
+  }
+  window.TriadFx = { combo: () => comboFx(), unstoppable: () => unstoppableFx() };   // lets the effect be previewed from the console
   function readRules() {
     return {
       open: $('#r-open').checked, same: $('#r-same').checked, plus: $('#r-plus').checked, elemental: $('#r-elemental').checked, storms: $('#r-storms').checked,
@@ -863,22 +920,19 @@
     for (const e of events) {
       if (e.type === 'rule') {
         sfx(e.rule);
-        if (e.rule === 'combo') { await comboFx(() => comboFlips(events)); continue; }
+        if (e.rule === 'combo') { await comboFx((span) => comboFlips(events, span)); continue; }
         await banner({ same: 'Same!', plus: 'Plus!' }[e.rule]);
         const ruleFlips = events.filter((x) => x.type === 'flip' && x.by === e.rule);
         ruleFlips.forEach((_, k) => sfx('flip', { delay: 0.08 * k }));
       }
     }
     // Unstoppable: your second (and every later) move this game that sets off Same or Plus. If that move also
-    // chains into a Combo, the line waits until "C-C-C-COMBO" has finished.
+    // chains into a Combo, it comes after the whole combo effect.
     // Also: any move of yours whose Combo captures two or more cards.
     const placed = events.find((e) => e.type === 'place');
     if (placed && placed.player === me && events.some((e) => e.type === 'rule' && (e.rule === 'same' || e.rule === 'plus'))) {
       const multiCombo = events.filter((e) => e.type === 'flip' && e.by === 'combo').length >= 2;
-      if ((++myRuleMoves >= 2 || multiCombo) && window.Sfx && Sfx.voice) {
-        const combo = events.some((e) => e.type === 'rule' && e.rule === 'combo') && comboVoice;
-        Promise.resolve(combo || null).then(() => Sfx.voice('unstoppable', { fallback: 'Unstoppable!', delay: combo ? 0.1 : 0.2 }));
-      }
+      if (++myRuleMoves >= 2 || multiCombo) await unstoppableFx();   // after the combo effect (which has finished by now)
     }
     if (!state.over && state.turn === me && prevTurn !== null && prevTurn !== me) sfx('turn', { delay: 0.35 });
     if (state.over && !resultShown) showResult();
@@ -1670,7 +1724,8 @@
         sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
         if (pc.foil) sfx('reveal-foil', { delay: c.level >= 3 ? 0.5 : 0.12 });
         if (c.level >= 5) {   // the announcer, timed to the reveal's impact
-          if (typeof Sfx !== 'undefined' && Sfx.voice) Sfx.voice('legendary', { delay: 0.85, fallback: 'Legendary!' });
+          // the recording's first ~0.75s is silence: skip it so "Legendary" starts as the banner slams in (0.8s after the reveal)
+          if (typeof Sfx !== 'undefined' && Sfx.voice) Sfx.voice('legendary', { delay: 0.8, offset: 0.72, fallback: 'Legendary!' });
           const lb = document.createElement('div'); lb.className = 'legend-banner'; lb.textContent = 'LEGENDARY';
           $('#pack').appendChild(lb); setTimeout(() => lb.remove(), 2600);
         }

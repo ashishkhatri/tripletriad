@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.9 — 2026-11-03
+
+- **Unstoppable** has its own effect: UN- STOP- PA- BLE! hits the screen syllable by syllable in crackling violet, each with a lightning strike across the board and a flash, and a shockwave on the last one. It plays after the combo effect and the game waits for it.
+- Announcer effects are timed to the recordings: each "C-" appears on the voice's C, COMBO! slams on "COM", and the combo's captured cards start turning over at that moment (spread over the rest of the line); Unstoppable's syllables land on the spoken syllables. Timing is taken from when the audio actually starts, and the clips' silent lead-ins are skipped so there's no dead pause. With sound off, the effects keep the same rhythm.
+- "Legendary!" now starts as the LEGENDARY banner slams in (it used to come almost a second later).
+- Preview in the browser console: `TriadFx.combo()` and `TriadFx.unstoppable()`.
+
 ## v0.7.8 — 2026-11-02
 
 - A foil card from a pack (or a level reward) only says DUPLICATE if you already have that card in foil; otherwise it's NEW, even if you own the normal version. (Scrap extras already worked this way: it keeps one normal and one foil of every card.)
