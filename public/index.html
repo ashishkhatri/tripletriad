@@ -77,8 +77,8 @@
       <p id="menu-error" class="error"></p>
       <p id="guest-note" class="guest-note">Playing as a guest · <button id="btn-signin" class="link">Sign in</button> or <button type="button" class="link" data-open-auth="register">create an account</button> to collect cards and earn shards</p>
       <p id="user-note" class="guest-note" hidden>Signed in as <b id="acct-name"></b> · <button type="button" id="btn-signout" class="link">Sign out</button></p>
-      <details class="panel match-rules" id="match-rules">
-        <summary><span class="mr-title">Match rules</span><span id="rules-summary" class="mr-sum"></span><span class="mr-edit">Change</span></summary>
+      <details class="panel match-rules fold-acc" id="match-rules">
+        <summary><span class="mr-title">Match rules</span><span id="rules-summary" class="mr-sum"></span></summary>
       <fieldset class="rules">
         <legend>Rules</legend>
         <label class="rule" data-tip="Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands."><input type="checkbox" id="r-open" checked> Open<button type="button" class="rule-info" aria-label="About the Open rule" tabindex="0">i</button><span class="rule-tip" role="tooltip">Both hands are face up, so you can see every card your opponent holds. Turn it off to play with hidden hands.</span></label>
@@ -97,7 +97,7 @@
         <p id="rules-note" class="rules-note"></p>
       </fieldset>
       </details>
-      <details class="panel howto-panel howto-fold">
+      <details class="panel howto-panel howto-fold fold-acc">
         <summary>How to play</summary>
         <h3>The basics</h3>
         <div class="ht-step">
