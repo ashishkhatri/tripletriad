@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.4 — 2026-11-02
+
+- The Legendary and Combo voice clips are louder (about +4 dB), with a limiter so the peaks don't distort.
+
 ## v0.7.3 — 2026-11-02
 
 - Match rules and How to play use the same accordion: bold title on the left (Match rules keeps its short rules summary), a chevron on the right that flips when open, the same size, padding and inner spacing. The "Change" link is gone — tap anywhere on the row.

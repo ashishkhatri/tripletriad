@@ -76,8 +76,11 @@ window.Sfx = (() => {
     const buf = await voices.get(name);
     if (!buf) { if (opts.fallback) say(opts.fallback, opts); return; }
     const src = ctx.createBufferSource(); src.buffer = buf;
-    const g = ctx.createGain(); g.gain.value = opts.gain || 1.6;
-    src.connect(g).connect(out);
+    const g = ctx.createGain(); g.gain.value = opts.gain || 2.6;
+    // a limiter after the boost, so the louder voice doesn't clip on its peaks
+    const lim = ctx.createDynamicsCompressor();
+    lim.threshold.value = -4; lim.knee.value = 2; lim.ratio.value = 20; lim.attack.value = 0.002; lim.release.value = 0.15;
+    src.connect(g).connect(lim).connect(out);
     src.start(ctx.currentTime + (opts.delay || 0));
   }
 
