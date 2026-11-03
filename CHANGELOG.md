@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.8.3 — 2026-11-03
+
+- Collection: the foil count (✦2…) sits in the top-right corner, same place as the ×2 on normal tiles.
+
 ## v0.8.2 — 2026-11-03
 
 - Collection: normal and foil copies are separate tiles. Every card has its normal tile (grayed out with a craft price if you don't own one), and a foil tile right after it when you own the foil. Tapping a tile opens the card view on that version.

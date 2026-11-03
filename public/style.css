@@ -833,7 +833,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .cell .elem.el-fire { --elc: #ff5b2e; } .cell .elem.el-ice { --elc: #9ee9ff; } .cell .elem.el-thunder { --elc: #ffe048; } .cell .elem.el-earth { --elc: #b8854f; }
 .cell .elem.el-poison { --elc: #a35cff; } .cell .elem.el-wind { --elc: #6ee7b7; } .cell .elem.el-water { --elc: #2f7bff; } .cell .elem.el-holy { --elc: #fff4c8; }
 /* collection badges */
-.grid-card .count.foil-count { right: auto; left: -6px; background: linear-gradient(135deg, #ff8ad8, #79d4ff, #9cf5a0); color: #1a1030; }
+.grid-card .count.foil-count { background: linear-gradient(135deg, #ff8ad8, #79d4ff, #9cf5a0); color: #1a1030; }
 .grid-card.unowned .card { filter: grayscale(.9) brightness(.55); }
 .grid-card .craft-tag {
   position: absolute; z-index: 4; left: 50%; bottom: -10px; transform: translateX(-50%); white-space: nowrap;
