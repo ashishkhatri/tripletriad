@@ -1488,19 +1488,24 @@
     xb.hidden = !extraCount;
     xb.innerHTML = `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>`;
     const grid = $('#col-grid'); grid.innerHTML = '';
-    for (const c of deck.cards) {
-      const wrap = document.createElement('div'); wrap.className = 'grid-card'; wrap.dataset.card = c.id;
-      const n = s.cards[c.id] || 0, nf = s.foils[c.id] || 0;
-      wrap.appendChild(cardEl(playCard(c, nf > 0 && !n ? true : nf > 0), 'neutral', deck.elements));
-      if (n + nf === 0) {
+    // normal and foil copies are separate tiles: every card has its normal tile (greyed out with a craft price if you
+    // don't own one), and a foil tile right after it when you own the foil. Counts only show from 2 copies up.
+    const tile = (c, foil, n) => {
+      const wrap = document.createElement('div'); wrap.className = 'grid-card' + (foil ? ' foil-tile' : '');
+      wrap.dataset.card = c.id; wrap.dataset.foil = foil ? '1' : '0';
+      wrap.appendChild(cardEl(playCard(c, foil), 'neutral', deck.elements));
+      if (!n) {
         wrap.classList.add('unowned');
         const t = document.createElement('span'); t.className = 'craft-tag'; t.innerHTML = `Craft <span class="shards">${s.craft[c.level]}</span>`; wrap.appendChild(t);
-      } else {
-        if (n) { const b = document.createElement('span'); b.className = 'count'; b.textContent = `×${n}`; b.title = `${n} normal`; wrap.appendChild(b); }
-        if (nf) { const b = document.createElement('span'); b.className = 'count foil-count'; b.textContent = `✦${nf}`; b.title = `${nf} foil`; wrap.appendChild(b); }
+      } else if (n >= 2) {
+        const b = document.createElement('span'); b.className = 'count' + (foil ? ' foil-count' : ''); b.textContent = `${foil ? '✦' : '×'}${n}`; b.title = `${n} ${foil ? 'foil' : 'normal'} copies`; wrap.appendChild(b);
       }
-      wrap.onclick = () => openCardDetail(deckId, c.id);
+      wrap.onclick = () => openCardDetail(deckId, c.id, foil);
       grid.appendChild(wrap);
+    };
+    for (const c of deck.cards) {
+      tile(c, false, s.cards[c.id] || 0);
+      if (s.foils[c.id]) tile(c, true, s.foils[c.id]);
     }
   }
 
@@ -1536,8 +1541,9 @@
       (have >= 1 && s.copies - 1 < s.minCards ? `You need at least ${s.minCards} cards in a set, so you can\u2019t scrap this one.` : '');
   }
   // A freshly crafted card: a first copy flips in with a burst of light; an extra copy flashes and its count pops.
+  const tileOf = (id, foil) => document.querySelector(`#col-grid .grid-card[data-card="${id}"][data-foil="${foil ? 1 : 0}"]`);
   function craftReveal(id, foil) {
-    const tile = document.querySelector(`#col-grid .grid-card[data-card="${id}"]`);
+    const tile = tileOf(id, foil);
     if (!tile) return;
     tile.scrollIntoView({ block: 'center', behavior: 'smooth' });
     const s = colSummary, copies = (foil ? s.foils : s.cards)[id] || 0;
@@ -1547,11 +1553,11 @@
     const burst = document.createElement('div'); burst.className = 'craft-burst' + (foil ? ' foil' : ''); tile.appendChild(burst);
     setTimeout(() => { burst.remove(); tile.classList.remove('craft-new', 'craft-dupe', 'craft-foil'); }, 2400);
   }
-  function scrapReveal(id, gained) {
-    const tile = document.querySelector(`#col-grid .grid-card[data-card="${id}"]`);
+  function scrapReveal(id, gained, foil) {
+    const tile = tileOf(id, foil);
     if (!tile) return;
     tile.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    const s = colSummary, left = (s.cards[id] || 0) + (s.foils[id] || 0);
+    const s = colSummary, left = (foil ? s.foils : s.cards)[id] || 0;
     tile.classList.remove('scrap-anim', 'scrap-gone'); void tile.offsetWidth;
     tile.classList.add('scrap-anim'); if (!left) tile.classList.add('scrap-gone');
     const fx = [];
@@ -1586,8 +1592,12 @@
       }
       // close the popup and show the card being scrapped in the collection (or its count dropping)
       $('#card-detail').classList.remove('show');
+      if (foil && !(r.summary.foils[id] > 0)) {
+        // the last foil: its tile goes away, so play the scrap on it first, then redraw the collection
+        scrapReveal(id, r.gained, true); await sleep(1300); renderCollection(); return;
+      }
       await renderCollection();
-      scrapReveal(id, r.gained);
+      scrapReveal(id, r.gained, foil);
     } catch (e) { toast(e.message); sfx('error'); }
   }
 
