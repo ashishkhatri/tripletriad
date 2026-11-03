@@ -827,22 +827,37 @@
     const r = msg.rewards;
     if (r) {
       $('#result-xp').hidden = false;
-      const pct = ((100 - r.nextPackIn) / 100) * 100;
-      $('#result-xp-fill').style.width = pct + '%';
-      let t = `+${r.gained} XP`;
-      if (r.newPacks > 0) t += ` · ${r.newPacks === 1 ? 'A pack unlocked!' : r.newPacks + ' packs unlocked!'}`;
-      else t += ` · ${100 - r.nextPackIn} / 100 XP until the next pack reward`;
-      $('#result-xp-text').textContent = t;
+      // the bar shows where you were, then the XP you just earned grows on the end in green with "+N XP" riding its tip
+      const after = 100 - r.nextPackIn, wrapped = r.newPacks > 0, before = wrapped ? 0 : Math.max(0, after - r.gained);
+      const fill = $('#result-xp-fill'), gain = $('#result-xp-gain'), plus = $('#result-xp-plus');
+      fill.style.transition = gain.style.transition = 'none';
+      fill.style.width = before + '%'; gain.style.left = before + '%'; gain.style.width = '0%';
+      plus.textContent = `+${r.gained} XP`; plus.style.left = before + '%'; plus.classList.remove('show');
+      void gain.offsetWidth;
+      fill.style.transition = gain.style.transition = '';
+      setTimeout(() => { gain.style.width = (after - before) + '%'; plus.style.left = after + '%'; plus.style.translate = after < 12 ? '-12% 0' : after > 88 ? '-88% 0' : ''; plus.classList.add('show'); }, 750);
+      $('#result-xp-text').textContent = wrapped
+        ? (r.newPacks === 1 ? 'A pack unlocked!' : r.newPacks + ' packs unlocked!') + ` · ${r.nextPackIn} XP until the next pack reward`
+        : `${r.nextPackIn} XP until the next pack reward`;
       sfx('xp', { delay: 0.6 });
       if (r.newPacks > 0) sfx('unlock', { delay: 1.1 });
       $('#btn-result-packs').hidden = !(r.packs > 0);
       $('#btn-result-packs').textContent = r.packs > 1 ? `Open packs (${r.packs})` : 'Open pack';
     } else if (!account) {
-      $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%';
+      $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%'; $('#result-xp-gain').style.width = '0%'; $('#result-xp-plus').classList.remove('show');
       $('#result-xp-text').textContent = 'Sign in to earn XP and card packs.';
     }
     const dl = $('#result-daily'); dl.innerHTML = ''; dl.hidden = !(msg.daily && msg.daily.length);
-    (msg.daily || []).forEach((d) => { const li = document.createElement('li'); li.innerHTML = `<span>✔ ${d.text}</span><span class="shards">+${d.reward}</span>`; dl.appendChild(li); });
+    (msg.daily || []).forEach((d, i) => { const li = document.createElement('li'); li.innerHTML = `<span>✔ ${d.text}</span><span class="shards">+${d.reward}</span>`; li.style.animationDelay = (1.75 + i * 0.2) + 's'; dl.appendChild(li); });
+    // completed a challenge this match: a "Quest complete!" stamp drops in above the list
+    const oldBanner = document.querySelector('#result .quest-banner'); if (oldBanner) oldBanner.remove();
+    dl.classList.remove('fresh');
+    if (msg.daily && msg.daily.length) {
+      const qb = document.createElement('div'); qb.className = 'quest-banner';
+      qb.textContent = msg.daily.length > 1 ? `${msg.daily.length} Quests complete!` : 'Quest complete!';
+      dl.before(qb); void dl.offsetWidth; dl.classList.add('fresh');
+      sfx('unlock', { delay: 1.3 });
+    }
     if (msg.daily && msg.daily.length) sfx('unlock', { delay: 1.6 });
     if (typeof msg.shards === 'number') setShards(msg.shards);
     if (msg.wager) {
@@ -1139,7 +1154,7 @@
       const s = await api('GET', `/api/collection?deck=${encodeURIComponent($('#deck').value)}`);
       box.hidden = false;
       $('#menu-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
-      const xpText = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP until the next pack reward`;
+      const xpText = `${s.nextPackIn} XP until the next pack reward`;
       $('#menu-xp-text').textContent = xpText; box.title = xpText;
       const b = $('#btn-packs');
       b.hidden = !(s.packs > 0);
@@ -1162,7 +1177,7 @@
     setShards(s.shards);
     $('#col-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
     // the bar is XP toward the next pack
-    $('#col-xp-text').textContent = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack} XP until the next pack reward`;
+    $('#col-xp-text').textContent = `${s.nextPackIn} XP until the next pack reward`;
     const ob = $('#btn-open-pack');
     ob.hidden = s.packs < 1;
     ob.textContent = `Open pack (${s.packs})`;

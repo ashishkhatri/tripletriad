@@ -3,6 +3,12 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.7 — 2026-11-02
+
+- Result screen XP bar: your earlier progress shows first, then the XP from this match grows onto the end in shimmering green, with a "+N XP" tag riding its tip.
+- XP wording everywhere is now "N XP until the next pack reward" (how much is left), on the result screen and in the collection.
+- Completing a daily challenge in a match stamps a gold **Quest complete!** banner onto the result popup (with a shine and the unlock sound), and the finished challenges slide in under it.
+
 ## v0.5.6 — 2026-11-02
 
 Readability pass across all six sets (every screen checked automatically for text contrast):
