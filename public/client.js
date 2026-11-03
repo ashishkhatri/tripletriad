@@ -1101,6 +1101,40 @@
     if (account) account.shards = n;
     document.querySelectorAll('.shard-balance').forEach((el) => { el.textContent = n.toLocaleString(); });
   }
+  // ---------- How to play pictures: drawn with real cards from the chosen set ----------
+  function renderHowto() {
+    const deckId = $('#deck').value, deck = decks.get(deckId); if (!deck) return;
+    const g = glyphsFor(deckId);
+    const pick = (lvl, k = 0) => deck.cards.filter((c) => c.level === lvl)[k] || deck.cards[k];
+    const as = (c, r) => ({ ...playCard(c), r, el: null });
+    const card = (c, r, side) => { const el = cardEl(as(c, r), side, g); el.classList.add('ht-card'); return el; };
+    // 1: one card, its four numbers called out
+    const f1 = $('#ht-fig-sides'); f1.innerHTML = '';
+    const one = card(pick(3), [7, 4, 2, 10], 'mine'); one.classList.add('ht-pulse-nums');
+    f1.appendChild(one);
+    // 2: your 8 beats their 3 → their card turns blue
+    const f2 = $('#ht-fig-flip'); f2.innerHTML = '';
+    const mine = pick(4), theirs = pick(2, 1);
+    const pair = (sideB) => {
+      const p = document.createElement('div'); p.className = 'ht-pair';
+      const a = card(mine, [5, 8, 4, 6], 'mine'), b = card(theirs, [6, 2, 5, 3], sideB);
+      a.querySelector('.ranks .r').classList.add('ht-win'); b.querySelector('.ranks .l').classList.add('ht-lose');
+      p.append(a, b); return p;
+    };
+    const arrow = document.createElement('div'); arrow.className = 'ht-arrow'; arrow.innerHTML = '<span>8 &gt; 3</span>→';
+    const after = pair('mine'); after.classList.add('ht-after');
+    f2.append(pair('theirs'), arrow, after);
+    // 3: a full board, 6 blue (5 on the board + 1 in hand) against 4 red
+    const f3 = $('#ht-fig-win'); f3.innerHTML = '';
+    const board = document.createElement('div'); board.className = 'ht-board';
+    ['m', 't', 'm', 'm', 't', 'm', 't', 'm', 't'].forEach((o) => { const c = document.createElement('i'); c.className = 'ht-cell ' + (o === 'm' ? 'mine' : 'theirs'); board.appendChild(c); });
+    const tally = document.createElement('div'); tally.className = 'ht-tally';
+    tally.innerHTML = '<span class="ht-cell mine"></span> 5 + 1 in hand = <b>6</b><br><span class="ht-cell theirs"></span> 4 → <b>You win!</b>';
+    f3.append(board, tally);
+  }
+  $('.howto-fold').addEventListener('toggle', (e) => { if (e.target.open) renderHowto(); });
+  $('#deck').addEventListener('change', () => { if ($('.howto-fold').open) renderHowto(); });
+
   // ---------- rewards: account levels ----------
   // account level badge in the top bar (opens Rewards); pops when it goes up
   function setLevel(n) {

@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.8 — 2026-11-02
+
+- How to play is just **The basics** now, in three illustrated steps drawn with real cards from the chosen set: a card's four numbers (they pulse one by one), a flip (your 8 beats their 3 and their card turns blue), and a full board being counted (6 of 10 wins). The Reading a card, Rules and Collecting sections are gone.
+
 ## v0.6.7 — 2026-11-02
 
 - Desktop top bar: the level badge moved to the right side, so it reads level · shards · version, then the sound buttons (it shows "Lv" at every desktop width now). On phones it stays in the top strip beside the packs button.

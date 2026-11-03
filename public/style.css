@@ -1823,3 +1823,28 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .howto-fold:not([open]) { padding: 0 !important; }
 .howto-fold:not([open]) > summary { padding: 14px 20px; }
 .howto-fold > summary { min-height: 25px; box-sizing: content-box; }
+/* How to play pictures */
+.ht-step { display: flex; align-items: center; gap: 18px; padding: 6px 0; }
+.ht-step p { margin: 0; flex: 1; }
+.ht-fig { flex: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 236px; }   /* same width for every picture, so the text lines up */
+.ht-card { width: 72px; height: calc(72px * 1.4); font-size: 14.4px; flex: none; }
+.ht-pair { display: flex; gap: 2px; }
+.ht-pair .ht-card { width: 50px; height: calc(50px * 1.4); font-size: 10px; }
+.ht-arrow { display: flex; flex-direction: column; align-items: center; font: 900 22px/1 var(--title); color: var(--accent-ink); }
+.ht-arrow span { font-size: 12px; white-space: nowrap; margin-bottom: 2px; }
+.ht-card .ranks .ht-win { background: radial-gradient(circle, #3ee06e 0 55%, #0000 72%); color: #062a14; text-shadow: none; }
+.ht-card .ranks .ht-lose { background: radial-gradient(circle, #ff6b5e 0 55%, #0000 72%); color: #2a0606; text-shadow: none; }
+.ht-pulse-nums .ranks span { animation: htNum 2.4s ease-in-out infinite; }
+.ht-pulse-nums .ranks .r { animation-delay: .6s; } .ht-pulse-nums .ranks .b { animation-delay: 1.2s; } .ht-pulse-nums .ranks .l { animation-delay: 1.8s; }
+@keyframes htNum { 0%, 30%, 100% { scale: 1; } 12% { scale: 1.45; } }
+.ht-board { display: grid; grid-template-columns: repeat(3, 22px); gap: 3px; padding: 5px; border-radius: 6px; background: color-mix(in srgb, var(--wood-2) 80%, transparent); }
+.ht-cell { display: inline-block; width: 22px; height: 28px; border-radius: 3px; vertical-align: middle; }
+.ht-tally .ht-cell { width: 12px; height: 15px; }
+.ht-cell.mine { background: linear-gradient(180deg, #4a86ff, #1d4fb8); }
+.ht-cell.theirs { background: linear-gradient(180deg, #ff6b62, #b5241f); }
+.ht-tally { font-size: 13px; line-height: 1.6; color: var(--ink); }
+@media (max-width: 640px) {
+  .ht-step { flex-direction: column; align-items: stretch; gap: 8px; }
+  .ht-fig { justify-content: center; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .ht-pulse-nums .ranks span { animation: none; } }
