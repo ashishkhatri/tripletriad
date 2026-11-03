@@ -894,7 +894,11 @@
     const oldLv = document.querySelector('#result .level-banner'); if (oldLv) oldLv.remove();
     if (r && r.levelUp) {
       const lb = document.createElement('div'); lb.className = 'quest-banner level-banner';
-      lb.innerHTML = `Level ${r.level}! <small>Reward ready on the Rewards screen</small>`;
+      lb.innerHTML = `Level ${r.level}! <small>Tap to claim your reward</small>`;
+      lb.setAttribute('role', 'button'); lb.tabIndex = 0;
+      // leaves the match and goes straight to the Rewards track
+      lb.onclick = () => { $('#result').classList.remove('show'); disconnect(); setView('rewards'); };
+      lb.onkeydown = (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); lb.onclick(); } };
       lb.style.setProperty('--qd', '1.6s');
       $('#result-xp').after(lb);
       sfx('unlock', { delay: 1.7 });

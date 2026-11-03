@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.1 — 2026-11-02
+
+- The **Level N!** banner on the result popup is a button now ("Tap to claim your reward"): it leaves the match and takes you straight to the Rewards track.
+
 ## v0.7.0 — 2026-11-02
 
 - **C-C-C-COMBO!** A combo now stutters in "C- C- C-" before "COMBO!" slams down in burning, flickering fire-colored letters, while the announcer voice says it. A ring of flames bursts up all around the board, embers drift up, the screen glows with heat and the board shakes. (It skips the motion if the device asks for reduced motion. `TriadFx.combo()` in the browser console previews it.)

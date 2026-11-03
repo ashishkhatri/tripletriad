@@ -1883,3 +1883,5 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 #game.combo-shake .board { animation: comboShake .5s ease-in-out .62s 2; }
 @keyframes comboShake { 0%, 100% { translate: 0 0; } 20% { translate: -7px 3px; } 40% { translate: 6px -4px; } 60% { translate: -4px 4px; } 80% { translate: 3px -2px; } }
 @media (prefers-reduced-motion: reduce) { .combo-word span, .combo-word b { animation: none; } }
+.level-banner { cursor: pointer; transition: filter .15s; }
+.level-banner:hover { filter: brightness(1.12); }
