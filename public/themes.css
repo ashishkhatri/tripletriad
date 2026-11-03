@@ -89,7 +89,7 @@
   --body: "Didact Gothic", "Josefin Sans", system-ui, sans-serif;
 }
 
-/* --accent-ink: the accent colour when it's used for text (headings, links, shard counts). On light panels it's the
+/* --accent-ink: the accent color when it's used for text (headings, links, shard counts). On light panels it's the
    accent itself; the themes with dark panels use a lighter tint so headings stay readable. */
 :root { --accent-ink: var(--accent); }
 :root[data-theme="arcane"] .panel, :root[data-theme="arcane"] .dailies { --accent-ink: #c8b6ff; }
@@ -378,7 +378,7 @@ input::placeholder { color: var(--ink-soft); opacity: .45; font-style: italic; }
 :root[data-theme="starfall"] button { border-radius: 4px; }
 :root[data-theme="starfall"] .who b { clip-path: none; border-radius: 8px; width: 48px; }
 
-/* buttons without a fill inside panels (✕, Scrap, Menu, Cancel…) take the panel's text colour, whatever the theme's button colour is */
+/* buttons without a fill inside panels (✕, Scrap, Menu, Cancel…) take the panel's text color, whatever the theme's button color is */
 :root .panel button.ghost:not(.primary), :root .panel button.link { color: var(--ink); }
 :root .panel button.link { color: var(--accent-ink); }
 /* Wilds' challenge list sits on dark wood, so its reward numbers use the light metal rather than the dark accent */

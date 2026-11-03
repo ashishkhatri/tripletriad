@@ -14,7 +14,7 @@ or against a friend online. No dependencies beyond Node.js 18+.
 - Accounts, per-set card collections, XP, card packs, normal and foil cards, Shards for scrapping and crafting, and daily challenges (see below)
 - Trading-card-size cards on desktop with 3D tilt, swing, capture flips and a dynamic foil/glare lighting effect
 - Move history panel that explains every capture (which numbers were compared, Same/Plus/Combo) on mini boards
-- A full visual theme per card set (colours and fonts), and sealed foil card packs you tear open
+- A full visual theme per card set (colors and fonts), and sealed foil card packs you tear open
 - A menu with Play, Collection, Challenges, How to play and Account sections (top bar on desktop, tab bar on phones)
 - Works on phones
 
@@ -129,7 +129,7 @@ A set file:
 - `ranks` are `[top, right, bottom, left]`, 1–10 (10 shows as A).
 - Each hand gets one card per level, so give every level at least 2 cards (8 per level across levels 1–5 works well).
   Rough rank totals per level that keep things balanced: L1 ≈ 12–14, L2 ≈ 16–18, L3 ≈ 19–21, L4 ≈ 23–25, L5 ≈ 27–30.
-- `element` and `image` are optional. Images go under `public/art/`; without one, the card gets a coloured emblem with its initials.
+- `element` and `image` are optional. Images go under `public/art/`; without one, the card gets a colored emblem with its initials.
 - `form` tells the art generator what to draw (see below).
 - Restart the server after adding or editing a set (the server deals online hands from its own copy).
 
@@ -239,7 +239,7 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 - **Foil lighting** (`public/foil.js`): the pointer is treated as a point light above the screen.
   Each card's surface normal comes from its tilt; Blinn-Phong shading places a specular glare at the
   reflection point, and a Fresnel term drives a holographic foil layer (spectrum + grain) that is
-  colour-dodged over the art, so it works on any picture.
+  color-dodged over the art, so it works on any picture.
 - **Phones and tablets:** the motion sensor (gyroscope) takes the pointer's place. Tilting the device tilts the cards
   with it while the light stays fixed in the room, so glare and foil sweep across the cards as you move. The neutral
   angle follows however you hold the device. iPhones and iPads ask for motion access on your first tap (needs HTTPS,
@@ -249,7 +249,7 @@ To give a set different music, put any MP3 in `public/music/` and point the set'
 - **Normal vs foil:** normal cards only get the gloss and glare. Foils get a loud holographic finish: rainbow bands
   across the whole card that sweep slowly on their own and swing with the pointer, glitter, a prismatic frame and a glow.
 - **Themes** (`public/themes.css`): each set restyles the whole site with its own materials and shapes, not just
-  colours — Wilds: wood and parchment; Arcane Order: frosted astral glass and rune rings; Starfall: a cut-corner
+  colors — Wilds: wood and parchment; Arcane Order: frosted astral glass and rune rings; Starfall: a cut-corner
   starship HUD with grid lines and corner brackets; Tidebound: rounded sea glass, bubble buttons and tide-pool slots;
   Bloomwild: a stitched storybook garden with leaf-shaped buttons and a hedge-framed board; Hollow Lanterns:
   lantern-lit night paper with glowing lines and a lacquered paper-screen board. Each has its own fonts and card back. The theme follows the set
@@ -268,11 +268,11 @@ of time gets a sensible pick).
 | Storm | Effect |
 |---|---|
 | 🔥 Wildfire | Scorches a card: −1 to every side for the rest of the match |
-| 🌊 Tidal Surge | Pushes a row or column along; moved cards attack their new neighbours |
+| 🌊 Tidal Surge | Pushes a row or column along; moved cards attack their new neighbors |
 | 🌪️ Cyclone | Spins a card a quarter turn; it attacks with its new sides |
 | ⚡ Thunderbolt | Flips a card to the other side |
 | ❄️ Blizzard | Freezes a square for two turns: no placing there, and a card on it can't be flipped |
-| ⛰️ Earthquake | Swaps two neighbouring cards; both attack their new neighbours |
+| ⛰️ Earthquake | Swaps two neighboring cards; both attack their new neighbors |
 | 🐉 Dragon Flight | A dragon sweeps across a row, column or diagonal, flipping every card beneath it |
 
 Cards of the storm's element are immune to the card-targeting storms (fire cards to Wildfire and the dragon, and so on).

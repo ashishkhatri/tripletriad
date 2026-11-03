@@ -12,8 +12,8 @@
  *       across the card as you move the light or tilt the card, like a real reflection.
  *     - Foil (holographic spectrum + grain) strength grows with how far the card turns from the
  *       viewer plus a Schlick Fresnel term and a little specular, and is masked to a soft region
- *       around the reflection point, so colour sweeps across the art instead of covering it.
- *     - The spectrum's offset follows the half-vector too, so colours sweep as the angle changes.
+ *       around the reflection point, so color sweeps across the art instead of covering it.
+ *     - The spectrum's offset follows the half-vector too, so colors sweep as the angle changes.
  *  3. Results are written as CSS variables that the stylesheet uses for the transform, the glare
  *     and foil layers (blended over the art, so it works on any picture) and the drop shadow.
  * On phones and tablets the device's motion sensors drive it instead: tilting the device tilts the cards

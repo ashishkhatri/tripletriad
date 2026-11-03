@@ -210,7 +210,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 @media (hover: hover) { .hand.mine .card.playable:hover { --tx: -8px; } }
 .hand.mine .card.selected { --tx: -18px; box-shadow: 0 0 0 2px var(--gold-hi), 0 0 18px color-mix(in srgb, var(--metal-2) 67%, transparent), 0 6px 18px #000a, var(--edge); z-index: 5; }
 
-/* gilt card frame; inner rim colour shows the owner */
+/* gilt card frame; inner rim color shows the owner */
 .card {
   position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden;
   user-select: none; transition: transform .15s, box-shadow .15s;
@@ -561,7 +561,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   background: linear-gradient(115deg, var(--metal-4) 0%, var(--metal-3) calc(var(--mx, 50%) - 34%), var(--metal-1) var(--mx, 50%), var(--metal-3) calc(var(--mx, 50%) + 22%), var(--metal-4) 100%);
 }
 .card .art { overflow: hidden; isolation: isolate; }
-/* holographic foil over the art: rainbow spectrum + fine grain, colour-dodged so it lights any picture */
+/* holographic foil over the art: rainbow spectrum + fine grain, color-dodged so it lights any picture */
 .foil-layer {
   position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
   background-image:
@@ -580,7 +580,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
   -webkit-mask-image: radial-gradient(farthest-corner circle at var(--mx, 50%) var(--my, 30%), #000 0%, #000d 30%, #0006 65%, #0003 100%);
           mask-image: radial-gradient(farthest-corner circle at var(--mx, 50%) var(--my, 30%), #000 0%, #000d 30%, #0006 65%, #0003 100%);
 }
-/* broad sheen (overlay) + tight specular hotspot (screen), both centred on the reflection point */
+/* broad sheen (overlay) + tight specular hotspot (screen), both centered on the reflection point */
 .glare-spot {
   position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit;
   background: radial-gradient(farthest-corner circle at var(--mx, 50%) var(--my, 30%),
@@ -795,7 +795,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 @keyframes comet { to { --comet: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .card.rar-5 > .comets { animation-duration: 12s; } }
 .card.mine::before, .card.theirs::before, .card::before {
-  /* thin dark bevel between the rarity frame and the art (no element colour) */
+  /* thin dark bevel between the rarity frame and the art (no element color) */
   box-shadow: inset 0 0 0 2px #0009, inset 0 0 0 3px #ffffff26;
 }
 .card.mine .art, .card.theirs .art, .card .art { background-color: #11141a; }
@@ -823,7 +823,7 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 .card.back::before { box-shadow: none; }
 .card.back::after, .flip-face::after { content: none; }
 .flip-face { box-shadow: none; }
-/* element squares on the board use the same colours */
+/* element squares on the board use the same colors */
 .cell .elem {
   width: 62%; aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   font-size: calc(var(--cell) * .3); opacity: .75; filter: none;
@@ -903,7 +903,7 @@ button .shards, .panel button .shards { color: inherit; }
 .pack-card.revealed .foil-badge { opacity: 1; }
 .pack-card .scrap-btn { position: absolute; left: 50%; bottom: -46px; transform: translateX(-50%); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .3s .6s; }
 .pack-card.revealed .scrap-btn { opacity: 1; pointer-events: auto; }
-/* scrapped from the reveal: the card stays visible, greyed out with a red slash and a stamp.
+/* scrapped from the reveal: the card stays visible, grayed out with a red slash and a stamp.
    (The filter goes on the card face, not the 3D flipper: a filter there flattened the flip and hid the card.) */
 .pack-card.scrapped .face-front { filter: grayscale(1) brightness(.7); transition: filter .4s; }
 .pack-card.scrapped::after {
@@ -1340,7 +1340,7 @@ body:has(#history.show) .music-ctl { opacity: 0; pointer-events: none; }
 }
 @keyframes cardSweep { from { background-position: 130% 0; opacity: 1; } to { background-position: -40% 0; opacity: .2; } }
 @keyframes cardPulse { 0% { transform: scale(1); } 30% { transform: scale(1.09); box-shadow: 0 0 0 2px #fff, 0 0 16px 4px #fff6c0; } 100% { transform: scale(1); } }
-/* a captured card turns from its old colour to its new one */
+/* a captured card turns from its old color to its new one */
 .mini-cell.cell-turn::before { content: ''; position: absolute; inset: 0; border-radius: 5px; z-index: 0;
   background: linear-gradient(160deg, color-mix(in srgb, var(--was) 60%, #fff), var(--was) 60%); animation: turnFade 1s ease-in both; }
 @keyframes turnFade { 0%, 25% { opacity: 1; } 100% { opacity: 0; } }
@@ -1349,7 +1349,7 @@ body:has(#history.show) .music-ctl { opacity: 0; pointer-events: none; }
 /* the card being placed drops in at the start of a replay */
 .mini-cell.cell-drop .mini-card { animation: miniDrop .5s cubic-bezier(.2,1.4,.4,1) both; }
 @keyframes miniDrop { from { transform: translateY(-14px) scale(1.25); opacity: 0; box-shadow: 0 14px 18px #000a; } }
-/* storm-coloured light for storm lines */
+/* storm-colored light for storm lines */
 .mini-cell.fx-scorch .mini-card::before, .mini-cell.fx-burn .mini-card::before { background: radial-gradient(circle at 50% 70%, #fff3b0, #ff8a1ecc 40%, transparent 70%); background-size: 100% 100%; animation: miniBurst .8s ease-out both; }
 .mini-cell.fx-bolt .mini-card::before { background: linear-gradient(100deg, transparent 42%, #fff 48%, #fff6a0 52%, transparent 58%); background-size: 100% 100%; animation: miniBolt .8s steps(1) both; }
 .mini-cell.fx-freeze::after { animation: miniBurst .8s ease-out; }
@@ -1468,7 +1468,7 @@ body:has(#history.show) .music-ctl { opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) {
   .sealed.charging, .pack-card.fly, .pack-card.revealed, .pack-rays, .spark { animation: none !important; }
 }
-/* the sealed pack is a single item: centre it (the six-card grid only applies once the cards are out) */
+/* the sealed pack is a single item: center it (the six-card grid only applies once the cards are out) */
 .pack-cards:has(> .sealed-float) { display: flex; justify-content: center; }
 .pack-cards.sealed-stage { display: flex; justify-content: center; }
 .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -1654,7 +1654,7 @@ select option { color: #1a1a1a !important; background: #ffffff !important; }
   .mobile-head { padding-right: 230px; }
 }
 
-/* phones: top bar = logo left · set picker (+ packs) centred · sound / full-screen icons right */
+/* phones: top bar = logo left · set picker (+ packs) centered · sound / full-screen icons right */
 @media (max-width: 899px) {
   .set-bar { left: 50%; right: auto; top: 0; height: 54px; translate: -50% 0; gap: 6px; }
   .set-bar select { width: 58px; height: 34px; border-radius: 17px !important; }

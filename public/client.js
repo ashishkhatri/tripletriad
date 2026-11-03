@@ -577,7 +577,7 @@
       let afterTimer = null;
       const lit = lines.map((ln, lineNo) => {
         const sli = document.createElement('li'); sli.className = ln.cls || ''; sli.innerHTML = ln.html;
-        // light up this line: its numbers glow, its cards flash, captured cards change colour.
+        // light up this line: its numbers glow, its cards flash, captured cards change color.
         // For storms the affected squares first show how they were before the strike, then change to the result.
         const on = (v) => {
           if (hasBefore) {
@@ -645,7 +645,7 @@
   }
   let replayToken = null, autoPlayed = -1;
   const stopReplay = () => { replayToken = null; };
-  const SIDE_CELL = ['top left', 'top', 'top right', 'left', 'centre', 'right', 'bottom left', 'bottom', 'bottom right'];
+  const SIDE_CELL = ['top left', 'top', 'top right', 'left', 'center', 'right', 'bottom left', 'bottom', 'bottom right'];
 
   // ---------- drag & drop (mouse and touch); a plain click still selects ----------
   function markDrops(on) {

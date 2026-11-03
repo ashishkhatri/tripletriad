@@ -200,7 +200,7 @@
       if (won) flip(x.n, 'basic');
       steps.push({ k: 'basic', from: cell, n: x.n, d: x.d, a, b, am: mod(cell) + (s.board[cell].mod || 0), bm: mod(x.n) + (s.board[x.n].mod || 0), flip: won && !ice, ice });
     }
-    // Combo: cards flipped by Same/Plus capture neighbours with basic rules, cascading.
+    // Combo: cards flipped by Same/Plus capture neighbors with basic rules, cascading.
     let comboAnnounced = false;
     while (comboQueue.length) {
       const c = comboQueue.shift();
@@ -243,11 +243,11 @@
   // cards and picks how to face it. Everything here is deterministic given storm.seed.
   const STORMS = {
     fire:      { name: 'Wildfire',     el: 'fire',    weight: 3, text: 'Scorches a card: −1 to every side for the rest of the match.' },
-    tide:      { name: 'Tidal Surge',  el: 'water',   weight: 2, text: 'Pushes a row or column along; moved cards attack their new neighbours.' },
+    tide:      { name: 'Tidal Surge',  el: 'water',   weight: 2, text: 'Pushes a row or column along; moved cards attack their new neighbors.' },
     wind:      { name: 'Cyclone',      el: 'wind',    weight: 2, text: 'Spins a card a quarter turn clockwise (its top number moves to the right side, and so on); it then attacks with its new sides.' },
     lightning: { name: 'Thunderbolt',  el: 'thunder', weight: 2, text: 'Strikes a card and flips it to the other side.' },
     frost:     { name: 'Blizzard',     el: 'ice',     weight: 2, text: 'Freezes a square for two turns: no placing there, and a card on it can’t be flipped.' },
-    quake:     { name: 'Earthquake',   el: 'earth',   weight: 2, text: 'Swaps two neighbouring cards; both attack their new neighbours.' },
+    quake:     { name: 'Earthquake',   el: 'earth',   weight: 2, text: 'Swaps two neighboring cards; both attack their new neighbors.' },
     dragon:    { name: 'Dragon Flight', el: 'fire',   weight: 1, text: 'A dragon sweeps across a line of the board, flipping every card beneath it.' },
   };
   const RESPONSES = {
@@ -352,7 +352,7 @@
       if (why) steps.push(why);
       return true;
     };
-    // a card that moved or spun attacks its neighbours with the basic rule
+    // a card that moved or spun attacks its neighbors with the basic rule
     const attack = (c) => {
       const o = s.board[c].owner;
       for (let d = 0; d < 4; d++) {
