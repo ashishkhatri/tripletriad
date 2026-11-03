@@ -76,7 +76,7 @@
       else setView(loc);
     } finally { navFromPop = false; }
   }
-  const OVERLAYS = ['concede', 'card-zoom', 'card-detail', 'auth', 'pack-pick', 'pack', 'history'];
+  const OVERLAYS = ['concede', 'reward-pick', 'card-zoom', 'card-detail', 'auth', 'pack-pick', 'pack', 'history'];
   const overlayOpen = () => OVERLAYS.find((id) => { const el = document.getElementById(id); return el && el.classList.contains('show'); });
   function closeOverlay(id) {
     if (id === 'history') { setHistory(false); return; }
@@ -142,6 +142,7 @@
     if (!document.querySelector('#menu.active')) show('menu'); else { document.body.classList.add('with-nav'); markNav(view); navRecord(view); }
     window.scrollTo(0, 0);
     if (view === 'challenges') refreshDailies();
+    if (view === 'rewards') refreshRewards(true);
   }
   let toastTimer;
   function toast(msg) {
@@ -849,8 +850,18 @@
     }
     const dl = $('#result-daily'); dl.innerHTML = ''; dl.hidden = !(msg.daily && msg.daily.length);
     (msg.daily || []).forEach((d, i) => { const li = document.createElement('li'); li.innerHTML = `<span>✔ ${d.text}</span><span class="shards">+${d.reward}</span>`; li.style.animationDelay = (1.75 + i * 0.2) + 's'; dl.appendChild(li); });
+    // went up an account level this match: a "Level N!" stamp, pointing to the Rewards screen
+    const oldLv = document.querySelector('#result .level-banner'); if (oldLv) oldLv.remove();
+    if (r && r.levelUp) {
+      const lb = document.createElement('div'); lb.className = 'quest-banner level-banner';
+      lb.innerHTML = `Level ${r.level}! <small>Reward ready on the Rewards screen</small>`;
+      lb.style.setProperty('--qd', '1.6s');
+      $('#result-xp').after(lb);
+      sfx('unlock', { delay: 1.7 });
+    }
+    if (r && typeof r.rewardsReady === 'number') setRewardsDot(r.rewardsReady);
     // completed a challenge this match: a "Quest complete!" stamp drops in above the list
-    const oldBanner = document.querySelector('#result .quest-banner'); if (oldBanner) oldBanner.remove();
+    const oldBanner = document.querySelector('#result .quest-banner:not(.level-banner)'); if (oldBanner) oldBanner.remove();
     dl.classList.remove('fresh');
     if (msg.daily && msg.daily.length) {
       const qb = document.createElement('div'); qb.className = 'quest-banner';
@@ -1082,11 +1093,108 @@
     syncRuleOptions();
     refreshProgress();
     refreshDailies();
+    setRewardsDot(account ? account.rewardsReady || 0 : 0);
   }
   function setShards(n) {
     if (account) account.shards = n;
     document.querySelectorAll('.shard-balance').forEach((el) => { el.textContent = n.toLocaleString(); });
   }
+  // ---------- rewards: account levels ----------
+  function setRewardsDot(n) {
+    const dot = document.querySelector('.nav-item[data-view="rewards"] .nav-dot');
+    if (dot) { dot.hidden = !n; dot.textContent = n; }
+  }
+  let rwData = null;
+  async function refreshRewards(scroll) {
+    $('#rewards-guest').hidden = !!account; $('#rewards-user').hidden = !account;
+    if (!account) return;
+    try { rwData = await api('GET', '/api/levels'); } catch (e) { return; }
+    renderRewards(scroll ? 'auto' : null);
+  }
+  function rwTile(t, fresh) {
+    const tile = document.createElement('div');
+    const big = t.state !== 'claimed' ? '' : t.level % 50 === 0 ? 'm50' : t.level % 20 === 0 ? 'm20' : t.level % 10 === 0 ? 'm10' : t.level % 5 === 0 ? 'm5' : '';   // milestones only show once claimed
+    tile.className = `rw-tile st-${t.state} kind-${t.kind} ${big}${fresh ? ' fresh' : ''}`;
+    tile.dataset.level = t.level;
+    const art = document.createElement('div'); art.className = 'rw-art';
+    if (t.state !== 'claimed') {
+      art.innerHTML = '<span class="rw-mystery">?</span>';   // what's inside stays a surprise until it's claimed
+    } else {
+      (t.cards || []).forEach((c, k) => {
+        if (!decks.get(t.deck)) return;
+        const el = cardEl(playCard(deckCard(t.deck, c.id), c.foil), 'neutral', glyphsFor(t.deck));
+        el.classList.add('rw-card'); if (fresh) el.style.animationDelay = (k * 0.18) + 's';
+        el.onclick = () => zoomCard(playCard(deckCard(t.deck, c.id), c.foil), glyphsFor(t.deck), t.deck, c.id);
+        art.appendChild(el);
+      });
+      if (t.packs) {
+        const pk = document.createElement('div'); pk.className = 'rw-pack';
+        pk.innerHTML = `<img src="packs/${encodeURIComponent(t.deck || $('#deck').value)}.svg?v=${ASSET_V}" alt="Card pack">${t.packs > 1 ? `<b>×${t.packs}</b>` : ''}`;
+        pk.title = 'A card pack: open it from the packs button at the top';
+        art.appendChild(pk);
+      }
+      if (t.shards) art.insertAdjacentHTML('beforeend', `<span class="rw-shards"><span class="rw-gem">◆</span><b class="rw-amt">${t.shards}</b></span>`);
+    }
+    tile.appendChild(art);
+    const lv = document.createElement('div'); lv.className = 'rw-lv'; lv.textContent = t.state === 'ready' ? `Level ${t.level} · Claim!` : `Level ${t.level}`;
+    tile.appendChild(lv);
+    if (t.state === 'claimed') { const ck = document.createElement('i'); ck.className = 'rw-check'; ck.textContent = '✓'; tile.appendChild(ck); }
+    if (t.state === 'ready') { tile.tabIndex = 0; tile.setAttribute('role', 'button'); tile.onclick = () => openRewardPick(); }
+    return tile;
+  }
+  function renderRewards(scrollMode, freshLevels) {
+    const d = rwData; if (!d) return;
+    $('#rw-level').textContent = d.level;
+    $('#rw-note').textContent = d.ready ? `${d.ready} reward${d.ready > 1 ? 's' : ''} ready to claim!` : 'Keep playing to reach the next level.';
+    const cb = $('#btn-claim'); cb.hidden = !d.ready; cb.textContent = d.ready > 1 ? `Claim (${d.ready} ready)` : 'Claim';
+    setRewardsDot(d.ready); if (account) account.rewardsReady = d.ready;
+    const track = $('#rw-track'); const keep = track.scrollLeft; track.innerHTML = '';
+    for (const t of d.track) track.appendChild(rwTile(t, freshLevels && freshLevels.has(t.level)));
+    if (scrollMode) {
+      const target = track.querySelector('.st-ready') || track.querySelector(`[data-level="${d.level + 1}"]`) || track.lastElementChild;
+      requestAnimationFrame(() => { track.scrollLeft = Math.max(0, target.offsetLeft - track.clientWidth / 2 + target.offsetWidth / 2); });
+    } else track.scrollLeft = keep;
+  }
+  // claiming: rewards are claimed one level at a time, and each one asks which set it should come from
+  function openRewardPick() {
+    const d = rwData; if (!d || !d.ready) return;
+    const next = d.track.find((t) => t.state === 'ready');
+    $('#reward-pick-title').textContent = `Level ${next.level} reward`;
+    const grid = $('#reward-pick-grid'); grid.innerHTML = '';
+    for (const [id, dk] of decks) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'pick-pack';
+      b.innerHTML = `<img src="packs/${encodeURIComponent(id)}.svg?v=${ASSET_V}" alt=""><span>${SET_ICON[id] || ''} ${dk.name}</span>`;
+      b.onclick = () => { $('#reward-pick').classList.remove('show'); claimReward(id); };
+      grid.appendChild(b);
+    }
+    $('#reward-pick').classList.add('show');
+  }
+  async function claimReward(deckId) {
+    const btn = $('#btn-claim'); btn.disabled = true;
+    try {
+      const r = await api('POST', '/api/levels/claim', { deck: deckId });
+      setShards(r.shards); rwData = r.view;
+      const c = r.claimed;
+      renderRewards(null, new Set([c.level]));
+      const tile = $('#rw-track').querySelector('.fresh');
+      if (tile) tile.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+      const top = c.cards.reduce((m, x) => Math.max(m, deckCard(deckId, x.id).level), 0), foil = c.cards.some((x) => x.foil);
+      sfx(top >= 5 ? 'reveal-5' : top >= 4 ? 'reveal-4' : c.cards.length ? 'reveal-3' : 'craft');
+      if (foil) sfx('reveal-foil', { delay: 0.4 });
+      if (top >= 5 && window.Sfx && Sfx.say) Sfx.say('Legendary!', { delay: 0.6 });
+      if (c.packs) { refreshProgress(); toast(`Level ${c.level}: a card pack! Open it from the packs button.`); }
+      else if (c.shards) toast(`Level ${c.level}: +${c.shards} shards`);
+      else toast(`Level ${c.level}: ${c.cards.length > 1 ? `${c.cards.length} cards` : 'a card'} for ${(decks.get(deckId) || {}).name}`);
+    } catch (e) { toast(e.message); sfx('error'); }
+    btn.disabled = false;
+  }
+  $('#btn-claim').onclick = () => openRewardPick();
+  $('#reward-pick-close').onclick = () => $('#reward-pick').classList.remove('show');
+  $('#reward-pick').addEventListener('click', (e) => { if (e.target.id === 'reward-pick') $('#reward-pick').classList.remove('show'); });
+  for (const [sel, dir] of [['.rw-prev', -1], ['.rw-next', 1]]) {
+    document.querySelector(sel).onclick = () => { const t = $('#rw-track'); t.scrollBy({ left: dir * t.clientWidth * 0.8, behavior: 'smooth' }); };
+  }
+
   async function refreshDailies() {
     const box = $('#dailies');
     $('#dailies-guest').hidden = !!account;

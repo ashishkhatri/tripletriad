@@ -3,6 +3,16 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.0 — 2026-11-02
+
+- **Account levels:** your lifetime XP now also gives you an account level that never caps; each level takes a bit more XP than the last. Packs still come every 100 XP, and the XP bar still tracks the next pack.
+- **Rewards screen** (new menu item): a left-to-right track with one reward per level. Rewards are a surprise until claimed: reached levels glow with a "?", future ones are dimmed "?" cards. Claim one at a time; each claim asks which set the reward comes from. Claimed levels show what you got (tap a card for the big view).
+  - Every 50th level: a foil Legendary · every 20th: a Legendary · every 10th: a foil Rare-or-better · every 5th: two Rare-or-better cards · Fibonacci levels (2, 3, 8, 13, 21, 34…): a card pack · every other level: shards.
+  - A badge on the menu item shows how many rewards are waiting; the result screen shows a **Level N!** banner when a match levels you up.
+  - Existing accounts start at the level their XP already earned, with those rewards ready to claim.
+- **Card numbers** now sit on the portrait at the four sides they fight with (top, right, bottom, left) instead of clustered in the corner.
+- Phones: hand cards no longer overlap, so every number stays visible.
+
 ## v0.5.9 — 2026-11-02
 
 - Fix: the Same! / Plus! / Combo! (and storm and "You start") callouts could draw behind the cards on the board; they're always on top now.

@@ -25,6 +25,7 @@
     <button type="button" class="nav-item" data-view="play"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="9" height="13" rx="1.5" transform="rotate(-10 7.5 11.5)"/><rect x="11" y="4" width="9" height="13" rx="1.5" transform="rotate(8 15.5 10.5)"/></svg><span>Play</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="collection"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.2"/></svg><span>Collection</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="challenges"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" /></svg><span>Challenges</span><i class="nav-dot" hidden></i></button>
+    <button type="button" class="nav-item" data-view="rewards"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5c0 3 1.3 4.5 3.4 4.8M16.5 6h3c0 3-1.3 4.5-3.4 4.8"/><path d="M12 13.5V17M8.5 20h7M9.5 17h5v3h-5z"/></svg><span>Rewards</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="howto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3-1.5 5.5-1.5 8 0v14c-2.5-1.5-5-1.5-8 0z"/><path d="M20 5.5c-3-1.5-5.5-1.5-8 0v14c2.5-1.5 5-1.5 8 0z"/></svg><span>How to play</span><i class="nav-dot" hidden></i></button>
     <button type="button" class="nav-item" data-view="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.2-4 4.2-5.8 7.5-5.8s6.3 1.8 7.5 5.8"/></svg><span>Account</span><i class="nav-dot" hidden></i></button>
     <!-- card set picker: always at the top outside matches (icons only on phones until opened) -->
@@ -97,6 +98,28 @@
       </details>
     </div>
 
+    <!-- REWARDS: account levels, one reward per level, scrolling left to right -->
+    <div class="view" id="view-rewards" data-view="rewards" hidden>
+      <h2 class="view-title">Rewards</h2>
+      <section id="rewards-user" class="rewards">
+        <div class="rw-head">
+          <div class="rw-level"><span>Level</span><b id="rw-level">1</b></div>
+          <div class="rw-info"><p id="rw-note"></p></div>
+          <button type="button" id="btn-claim" class="primary" hidden>Claim</button>
+        </div>
+        <div class="rw-track-wrap">
+          <button type="button" class="rw-nav rw-prev" aria-label="Scroll back">‹</button>
+          <div id="rw-track" class="rw-track"></div>
+          <button type="button" class="rw-nav rw-next" aria-label="Scroll ahead">›</button>
+        </div>
+        <p class="muted rw-legend">Every level has a surprise reward. Level up by playing matches.</p>
+      </section>
+      <div id="rewards-guest" class="panel center" hidden>
+        <p>Sign in to earn account levels. Every level has a reward, from shards to Legendary cards.</p>
+        <button type="button" class="primary" data-open-auth>Sign in</button>
+      </div>
+    </div>
+
     <!-- CHALLENGES -->
     <div class="view" id="view-challenges" data-view="challenges" hidden>
       <h2 class="view-title">Daily challenges</h2>
@@ -121,7 +144,7 @@
         <h3>Rules</h3>
         <p>Pick extra rules under <b>Match rules</b> on the Play screen — rest your pointer on (or tap) each <b>i</b> to see what it does.</p>
         <h3>Collecting</h3>
-        <p>Signed-in players earn XP from every game: 10 for playing, 25 more for a win. Every 100 XP earns a card pack, which you can open from any set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards.</p>
+        <p>Signed-in players earn XP from every game: 10 for playing, 25 more for a win. Every 100 XP earns a card pack, which you can open from any set. Scrap cards you don't need for shards, and spend shards to craft the ones you want. Three daily challenges pay extra shards. XP also raises your account level: every level has a surprise reward to claim on the Rewards screen.</p>
       </div>
     </div>
 
@@ -267,6 +290,16 @@
   </div>
 
   <!-- PACK PICKER: choose which set's pack to open -->
+  <!-- choosing which set a level reward comes from -->
+  <div id="reward-pick" class="overlay">
+    <div class="panel center pick-panel">
+      <button type="button" class="overlay-x" id="reward-pick-close" aria-label="Close">✕</button>
+      <h2 id="reward-pick-title">Level reward</h2>
+      <p class="muted">Choose a set for this reward.</p>
+      <div id="reward-pick-grid" class="pick-grid"></div>
+    </div>
+  </div>
+
   <div id="pack-pick" class="overlay">
     <div class="panel center pick-panel">
       <button type="button" class="overlay-x" id="pick-close" aria-label="Close">✕</button>

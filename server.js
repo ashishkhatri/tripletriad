@@ -9,6 +9,7 @@ const db = require('./lib/db');
 const auth = require('./lib/auth');
 const col = require('./lib/collection');
 const daily = require('./lib/daily');
+const levels = require('./lib/levels');
 
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -49,7 +50,14 @@ function readBody(req) {
     req.on('error', reject);
   });
 }
-const me = (a) => ({ name: a.user.name, shards: col.shardsOf(a.user) });
+const me = (a) => ({ name: a.user.name, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready });
+// XP for a match, plus whether it took the account up a level (so the result screen can say so)
+function awardXp(u, deck, result) {
+  const before = levels.levelOf(u.xp || 0);
+  const r = col.award(u, deck, result);
+  const after = levels.levelOf(u.xp || 0);
+  return { ...r, level: after, levelUp: after > before ? after - before : 0, rewardsReady: levels.view(u).ready };
+}
 
 async function api(req, res, url) {
   const route = `${req.method} ${url.pathname}`;
@@ -88,6 +96,13 @@ async function api(req, res, url) {
       return json(res, 200, { cards, summary: col.summary(a.user, deck), daily: completed });
     }
     if (route === 'GET /api/daily') return json(res, 200, daily.view(a.user, a.key));
+    if (route === 'GET /api/levels') return json(res, 200, levels.view(a.user));
+    if (route === 'POST /api/levels/claim') {
+      const body = await readBody(req);
+      const deck = DECKS.get(body.deck);
+      if (!deck) return json(res, 404, { error: 'Unknown set.' });
+      return json(res, 200, { ...levels.claim(a.user, deck), view: levels.view(a.user) });
+    }
     if (route === 'POST /api/scrap' || route === 'POST /api/scrap/extras' || route === 'POST /api/craft') {
       const body = await readBody(req);
       const deck = DECKS.get(body.deck);
@@ -298,7 +313,7 @@ function finish(room) {
       result, rules: room.rules, deck: room.deck, vsAI: !!(other && other.ai), aiLevel: other && other.ai ? other.level : null,
       online: !!(other && !other.ai), margin: score[seat] - score[1 - seat], ...(room.stats ? room.stats[seat] : {}),
     };
-    room.results[seat] = { rewards: col.award(u, deck, result), daily: daily.record(u, p.user, 'match', report) };
+    room.results[seat] = { rewards: awardXp(u, deck, result), daily: daily.record(u, p.user, 'match', report) };
   });
   if (room.rules.wager && w !== 'draw') {
     const loser = 1 - w;
@@ -447,7 +462,7 @@ function handle(ws, msg) {
       const live = !room.finished && (room.phase === 'playing' || room.phase === 'storm');
       if (other && !other.ai) {
         const u = live ? userOf(other) : null;
-        const rewards = u ? col.award(u, DECKS.get(room.deck), 'win') : null;
+        const rewards = u ? awardXp(u, DECKS.get(room.deck), 'win') : null;
         if (live) room.finished = true;
         send(other.ws, { t: 'opponent_left', conceded: live, rewards });
       }

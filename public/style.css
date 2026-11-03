@@ -227,14 +227,19 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .card.theirs .art { background-color: var(--theirs-lo); }
 .card .art .sigil { font-family: var(--display); font-weight: 900; font-size: 1.5em; color: #ffffff66; text-shadow: 0 2px 6px #0006; }
 .card .ranks {
-  position: absolute; top: 5%; left: 6%; z-index: 2;
-  display: grid; grid-template-columns: repeat(3, 0.85em); grid-template-rows: repeat(3, 0.85em); font-size: .82em;
-  font-family: var(--title); font-weight: 900; color: var(--metal-1); text-align: center; line-height: .85em;
-  text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 5px #000;
-  padding: 3px 3px 5px; background: radial-gradient(ellipse at 50% 40%, #000b, #0007 70%, transparent);
-  border-radius: 40% 40% 50% 50%;
+  /* the four numbers sit on the portrait at the side they fight with: top, right, bottom, left */
+  position: absolute; inset: 5% 5% 19% 5%; z-index: 2; pointer-events: none;
+  font-family: var(--title); font-weight: 900; color: var(--metal-1); font-size: .9em; line-height: 1;
 }
-.card .ranks .t { grid-area: 1 / 2; } .card .ranks .l { grid-area: 2 / 1; } .card .ranks .r { grid-area: 2 / 3; } .card .ranks .b { grid-area: 3 / 2; }
+.card .ranks span {
+  position: absolute; display: grid; place-items: center; width: 1.25em; height: 1.25em; border-radius: 50%;
+  background: radial-gradient(circle, #000d 0%, #000a 55%, #0000 72%);
+  text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 5px #000;
+}
+.card .ranks .t { top: 1%; left: 50%; translate: -50% 0; }
+.card .ranks .b { bottom: 1%; left: 50%; translate: -50% 0; }
+.card .ranks .l { left: 1%; top: 50%; translate: 0 -50%; }
+.card .ranks .r { right: 1%; top: 50%; translate: 0 -50%; }
 .card .el { position: absolute; top: 5%; right: 7%; z-index: 2; font-size: .95em; filter: drop-shadow(0 1px 2px #000); }
 .card .nm {
   position: absolute; bottom: 4%; left: 6%; right: 6%; z-index: 2;
@@ -289,7 +294,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   :root { --cell: min(28vw, 110px); --hcard: min(18vw, 70px); }
   .table { grid-template-columns: auto; justify-items: center; gap: 10px; }
   .hand { flex-direction: row; }
-  .hand .card { margin-top: 0; margin-left: calc(var(--hcard) * -0.2); }
+  .hand .card { margin-top: 0; margin-left: calc(var(--hcard) * -0.03); }
   .hand .card:first-child { margin-left: 0; }
   .hand.mine .card.selected { --tx: 0px; --ty: -14px; }
   .banner { font-size: 44px; }
@@ -1702,3 +1707,79 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .xpbar.xp-labelled { position: relative; height: 18px; border-radius: 9px; }
 .xpbar.xp-labelled .xp-num { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none;
   font: 800 12px/1 var(--title); letter-spacing: .04em; color: #fff; text-shadow: 0 0 3px #000, 0 1px 2px #000, 0 0 6px #000a; }
+
+/* ===================== Rewards: account level track (scrolls left to right) ===================== */
+.rewards { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 1100px; }
+.rw-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.rw-level { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; flex: none;
+  background: radial-gradient(circle at 40% 30%, var(--metal-1), var(--metal-3) 55%, var(--metal-4)); color: var(--metal-5);
+  box-shadow: 0 0 0 3px var(--metal-5), 0 0 22px color-mix(in srgb, var(--metal-3) 60%, transparent), 0 6px 16px #000a; text-align: center; line-height: 1; }
+.rw-level span { font: 700 11px var(--title); letter-spacing: .14em; text-transform: uppercase; margin-top: 10px; }
+.rw-level b { font: 900 34px var(--display); margin-top: -14px; }
+.rw-info { flex: 1; min-width: 200px; }
+.rw-info p { margin: 0; }
+#rw-note { font: 700 18px var(--title); color: var(--text); }
+#btn-claim { animation: claimPulse 1.6s ease-in-out infinite; }
+@keyframes claimPulse { 50% { box-shadow: 0 0 0 3px #fff6, 0 0 26px color-mix(in srgb, var(--metal-2) 80%, transparent); } }
+.rw-track-wrap { position: relative; display: flex; align-items: stretch; gap: 6px; }
+.rw-track { flex: 1; display: flex; gap: 14px; overflow-x: auto; overflow-y: hidden; padding: 18px 8px 22px; scroll-snap-type: x proximity; scrollbar-width: thin;
+  -webkit-mask: linear-gradient(90deg, #0000, #000 24px, #000 calc(100% - 24px), #0000); mask: linear-gradient(90deg, #0000, #000 24px, #000 calc(100% - 24px), #0000); }
+.rw-nav { flex: none; width: 36px; padding: 0 !important; font-size: 26px !important; line-height: 1; align-self: center; height: 64px; }
+@media (max-width: 640px) { .rw-nav { display: none; } }
+.rw-tile { position: relative; flex: none; width: 150px; scroll-snap-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 12px 8px 10px; border-radius: 14px; background: color-mix(in srgb, var(--wood-2) 75%, transparent); border: 1px solid color-mix(in srgb, var(--metal-4) 50%, transparent);
+  box-shadow: 0 6px 16px #0007; }
+/* the line that joins the levels, lit up to where you are */
+.rw-tile::before { content: ""; position: absolute; top: 50%; left: -15px; width: 15px; height: 3px; background: color-mix(in srgb, var(--metal-4) 50%, transparent); }
+.rw-tile.st-claimed::before, .rw-tile.st-ready::before { background: var(--metal-2); box-shadow: 0 0 6px var(--metal-3); }
+.rw-tile:first-child::before { display: none; }
+.rw-art { height: 120px; display: flex; align-items: center; justify-content: center; position: relative; }
+.rw-card { font-size: 12px; width: 76px; height: calc(76px * 1.4); flex: none; cursor: pointer; }
+.rw-art .rw-card + .rw-card { margin-left: -38px; transform: rotate(8deg) translateY(4px); }
+.rw-art .rw-card:first-child:not(:last-child) { transform: rotate(-6deg); }
+.rw-gem { font-size: 54px; color: #7fd6ff; text-shadow: 0 0 16px #39b6ff, 0 3px 0 #0b4d78; }
+.rw-amt { position: absolute; bottom: 4px; left: 50%; translate: -50% 0; font: 900 18px var(--title); color: #fff; text-shadow: 0 1px 3px #000, 0 0 8px #000; }
+.rw-lv { font: 800 13px var(--title); letter-spacing: .1em; text-transform: uppercase; color: var(--metal-2); }
+.rw-label { font-size: 13px; color: var(--text); text-align: center; min-height: 2.4em; line-height: 1.2; }
+.rw-check { position: absolute; top: 6px; right: 8px; font-style: normal; font-weight: 900; color: #3ee06e; text-shadow: 0 0 6px #000; }
+/* milestone levels stand out */
+.rw-tile.m5 { border-color: #0070dd; box-shadow: 0 0 16px #0070dd66, 0 6px 16px #0007; }
+.rw-tile.m10 { border-color: #a335ee; box-shadow: 0 0 18px #a335ee77, 0 6px 16px #0007; }
+.rw-tile.m20, .rw-tile.m50 { border-color: #ff8000; box-shadow: 0 0 22px #ff8000aa, 0 6px 16px #0007; }
+.rw-tile.m50 { background: linear-gradient(160deg, #ff800033, color-mix(in srgb, var(--wood-2) 80%, transparent) 60%), linear-gradient(118deg, #ff6b9a22, #6bc8ff22, #9cf5a022); }
+.rw-sil { cursor: default; }
+.kind-foil-rare .rw-sil, .kind-foil-legendary .rw-sil { box-shadow: 0 0 0 2px #fff, 0 0 16px #c58cff, 0 0 26px #6bc8ff99 !important; }
+.kind-legendary .rw-sil, .kind-foil-legendary .rw-sil { outline: 2px solid #ff8000; outline-offset: 1px; }
+/* reached but not claimed: glows and bobs */
+.rw-tile.st-ready { border-color: var(--metal-2); animation: rwReady 1.4s ease-in-out infinite; }
+.rw-tile.st-ready .rw-label { font-weight: 800; color: var(--metal-1); }
+@keyframes rwReady { 50% { transform: translateY(-4px); box-shadow: 0 0 0 2px var(--metal-2), 0 0 26px color-mix(in srgb, var(--metal-2) 70%, transparent), 0 10px 18px #0008; } }
+/* future rewards: a blurred silhouette and a question mark — something to look forward to */
+.rw-tile.st-locked .rw-art { filter: blur(3px) brightness(.55) saturate(.6); }
+.rw-tile.st-locked .rw-label { color: var(--muted); }
+/* just claimed: cards flip in */
+.rw-tile.fresh .rw-card { animation: rwFlip .8s cubic-bezier(.3,1.3,.5,1) both; }
+.rw-tile.fresh .rw-gem { animation: rwGem .7s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes rwFlip { 0% { transform: perspective(500px) rotateY(-180deg) scale(.5); opacity: 0; } 60% { opacity: 1; } }
+@keyframes rwGem { 0% { transform: scale(0) rotate(-90deg); } }
+@media (prefers-reduced-motion: reduce) { .rw-tile.st-ready, #btn-claim { animation: none; } }
+.rw-legend { font-size: 13px; text-align: center; margin: 0; color: var(--muted); }
+.level-banner { background: linear-gradient(180deg, #d9f6ff, #6cc8ff 55%, #2a8fe0); color: #04243f; display: flex; flex-direction: column; align-items: center; }
+.level-banner small { font: 700 11px var(--title); letter-spacing: .04em; text-transform: none; }
+#menu #view-rewards { max-width: 1180px; }
+@media (max-width: 640px) { .rw-tile { width: 128px; } .rw-card { width: 66px; height: calc(66px * 1.4); font-size: 10.5px; } .rw-art .rw-card + .rw-card { margin-left: -34px; } .rw-level { width: 70px; height: 70px; } .rw-level b { font-size: 28px; } }
+.rw-mystery { display: grid; place-items: center; width: 76px; height: 106px; border-radius: 10px; font: 900 48px var(--display); color: var(--metal-1);
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--metal-3) 45%, transparent), color-mix(in srgb, var(--wood-3) 90%, transparent) 70%);
+  border: 2px solid color-mix(in srgb, var(--metal-3) 60%, transparent); text-shadow: 0 0 14px var(--metal-3), 0 2px 4px #000; box-shadow: inset 0 0 20px #0008; }
+.rw-tile.st-locked .rw-art { filter: brightness(.6) saturate(.6); }
+.rw-tile.st-ready .rw-mystery { animation: rwShake 1.4s ease-in-out infinite; border-color: var(--metal-2); }
+@keyframes rwShake { 0%, 70%, 100% { rotate: 0deg; } 76% { rotate: -6deg; } 84% { rotate: 6deg; } 92% { rotate: -3deg; } }
+@media (max-width: 640px) { .rw-mystery { width: 66px; height: 92px; font-size: 40px; } }
+.rw-pack { position: relative; width: 74px; flex: none; filter: drop-shadow(0 6px 10px #000a); }
+.rw-pack img { width: 100%; display: block; }
+.rw-pack b { position: absolute; right: -6px; bottom: 4px; padding: 0 6px; border-radius: 9px; background: var(--accent); color: #fff; font: 800 13px/20px var(--title); }
+.rw-art .rw-card + .rw-pack { margin-left: -20px; transform: rotate(8deg); }
+.rw-shards { position: relative; display: grid; place-items: center; }
+.rw-tile.fresh .rw-pack { animation: rwFlip .8s cubic-bezier(.3,1.3,.5,1) both; }
+.rw-art .rw-card + .rw-pack { width: 56px; margin-left: -26px; }
+.rw-tile.st-ready { cursor: pointer; }
