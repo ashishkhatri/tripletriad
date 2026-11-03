@@ -154,6 +154,45 @@
     const b = $('#banner'); b.textContent = text; b.classList.add('show');
     await sleep(750); b.classList.remove('show'); await sleep(200);
   }
+  // Combo: "C-C-C-COMBO!" stutters in over a ring of fire around the board, with embers, a heat flash and a shake
+  async function comboFx() {
+    if (window.Sfx && Sfx.say) Sfx.say('C, C, C, COMBO!', { rate: 1.05, pitch: 0.35 });
+    const fx = document.createElement('div'); fx.className = 'combo-fx';
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const board = document.querySelector('#board'), r = board ? board.getBoundingClientRect() : { left: innerWidth / 2 - 150, top: innerHeight / 2 - 150, width: 300, height: 300 };
+    if (!reduce) {
+      // flames all the way round the board, pointing outward
+      const step = 26, edges = [
+        { n: Math.round(r.width / step), at: (t) => [r.left + t * r.width, r.bottom], rot: 0 },
+        { n: Math.round(r.width / step), at: (t) => [r.left + t * r.width, r.top], rot: 180 },
+        { n: Math.round(r.height / step), at: (t) => [r.left, r.top + t * r.height], rot: 90 },
+        { n: Math.round(r.height / step), at: (t) => [r.right, r.top + t * r.height], rot: -90 },
+      ];
+      for (const ed of edges) for (let k = 0; k <= ed.n; k++) {
+        const [x, y] = ed.at(k / ed.n); const f = document.createElement('i'); f.className = 'flame';
+        const h = 50 + Math.random() * 50;
+        f.style.cssText = `left:${x}px;top:${y}px;--h:${h}px;--rot:${ed.rot + (Math.random() * 24 - 12)}deg;animation-delay:${(Math.random() * 0.25).toFixed(2)}s,${(Math.random() * 0.3).toFixed(2)}s`;
+        fx.appendChild(f);
+      }
+      // embers drifting up from the board
+      for (let k = 0; k < 46; k++) {
+        const em = document.createElement('i'); em.className = 'ember';
+        em.style.cssText = `left:${r.left + Math.random() * r.width}px;top:${r.top + r.height * (0.3 + Math.random() * 0.8)}px;--dx:${(Math.random() * 120 - 60).toFixed(0)}px;--dy:${-(160 + Math.random() * 260).toFixed(0)}px;animation-delay:${(Math.random() * 0.6).toFixed(2)}s`;
+        fx.appendChild(em);
+      }
+    }
+    const heat = document.createElement('div'); heat.className = 'combo-heat'; fx.appendChild(heat);
+    const word = document.createElement('div'); word.className = 'combo-word';
+    word.innerHTML = '<span>C-</span><span>C-</span><span>C-</span><b>COMBO!</b>';
+    fx.appendChild(word);
+    document.body.appendChild(fx);
+    const game = $('#game'); if (!reduce) { game.classList.remove('combo-shake'); void game.offsetWidth; game.classList.add('combo-shake'); }
+    await sleep(1700);
+    fx.classList.add('out'); game.classList.remove('combo-shake');
+    setTimeout(() => fx.remove(), 450);
+    await sleep(150);
+  }
+  window.TriadFx = { combo: () => comboFx() };   // lets the effect be previewed from the console
   function readRules() {
     return {
       open: $('#r-open').checked, same: $('#r-same').checked, plus: $('#r-plus').checked, elemental: $('#r-elemental').checked, storms: $('#r-storms').checked,
@@ -800,7 +839,8 @@
     for (const e of events) {
       if (e.type === 'rule') {
         sfx(e.rule);
-        await banner({ same: 'Same!', plus: 'Plus!', combo: 'Combo!' }[e.rule]);
+        if (e.rule === 'combo') await comboFx();
+        else await banner({ same: 'Same!', plus: 'Plus!' }[e.rule]);
         const ruleFlips = events.filter((x) => x.type === 'flip' && x.by === e.rule);
         ruleFlips.forEach((_, k) => sfx('flip', { delay: 0.08 * k }));
       }
