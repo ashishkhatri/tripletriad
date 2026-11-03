@@ -832,7 +832,7 @@
       const fill = $('#result-xp-fill'), gain = $('#result-xp-gain'), plus = $('#result-xp-plus');
       fill.style.transition = gain.style.transition = 'none';
       fill.style.width = before + '%'; gain.style.left = before + '%'; gain.style.width = '0%';
-      plus.textContent = `+${r.gained} XP`; plus.style.left = before + '%'; plus.classList.remove('show');
+      plus.textContent = `+${r.gained} XP`; $('#result-xp-num').textContent = `${after} / 100`; plus.style.left = before + '%'; plus.classList.remove('show');
       void gain.offsetWidth;
       fill.style.transition = gain.style.transition = '';
       setTimeout(() => { gain.style.width = (after - before) + '%'; plus.style.left = after + '%'; plus.style.translate = after < 12 ? '-12% 0' : after > 88 ? '-88% 0' : ''; plus.classList.add('show'); }, 750);
@@ -844,7 +844,7 @@
       $('#btn-result-packs').hidden = !(r.packs > 0);
       $('#btn-result-packs').textContent = r.packs > 1 ? `Open packs (${r.packs})` : 'Open pack';
     } else if (!account) {
-      $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%'; $('#result-xp-gain').style.width = '0%'; $('#result-xp-plus').classList.remove('show');
+      $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%'; $('#result-xp-gain').style.width = '0%'; $('#result-xp-plus').classList.remove('show'); $('#result-xp-num').textContent = '';
       $('#result-xp-text').textContent = 'Sign in to earn XP and card packs.';
     }
     const dl = $('#result-daily'); dl.innerHTML = ''; dl.hidden = !(msg.daily && msg.daily.length);
@@ -1178,6 +1178,7 @@
     $('#col-xp-fill').style.width = `${((s.xpPerPack - s.nextPackIn) / s.xpPerPack) * 100}%`;
     // the bar is XP toward the next pack
     $('#col-xp-text').textContent = `${s.nextPackIn} XP until the next pack reward`;
+    $('#col-xp-num').textContent = `${s.xpPerPack - s.nextPackIn} / ${s.xpPerPack}`;
     const ob = $('#btn-open-pack');
     ob.hidden = s.packs < 1;
     ob.textContent = `Open pack (${s.packs})`;

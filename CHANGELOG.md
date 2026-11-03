@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.8 — 2026-11-02
+
+- The XP bars on the result screen and in the collection show "x / 100" inside the bar (white with a dark outline so it reads over any fill), with "N XP until the next pack reward" underneath.
+
 ## v0.5.7 — 2026-11-02
 
 - Result screen XP bar: your earlier progress shows first, then the XP from this match grows onto the end in shimmering green, with a "+N XP" tag riding its tip.

@@ -1697,3 +1697,8 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .packs-ico { width: 1.35em; height: 1.35em; vertical-align: -.3em; margin-right: 1px; overflow: visible; }
 .packs-ico .pk-body { fill: var(--accent); stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; }
 .packs-ico .pk-line { fill: none; stroke: currentColor; stroke-width: 1; stroke-linejoin: round; opacity: .8; }
+
+/* "x / 100" written inside the XP bars (collection and result) */
+.xpbar.xp-labelled { position: relative; height: 18px; border-radius: 9px; }
+.xpbar.xp-labelled .xp-num { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none;
+  font: 800 12px/1 var(--title); letter-spacing: .04em; color: #fff; text-shadow: 0 0 3px #000, 0 1px 2px #000, 0 0 6px #000a; }
