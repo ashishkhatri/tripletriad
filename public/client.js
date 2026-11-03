@@ -974,8 +974,7 @@
         : `${r.nextPackIn} XP until the next pack reward`;
       sfx('xp', { delay: 0.6 });
       if (r.newPacks > 0) sfx('unlock', { delay: 1.1 });
-      $('#btn-result-packs').hidden = !(r.packs > 0);
-      $('#btn-result-packs').textContent = r.packs > 1 ? `Open packs (${r.packs})` : 'Open pack';
+      setResultPacks(r.packs);
     } else if (!account) {
       $('#result-xp').hidden = false; $('#result-xp-fill').style.width = '0%'; $('#result-xp-gain').style.width = '0%'; $('#result-xp-plus').classList.remove('show'); $('#result-xp-num').textContent = '';
       $('#result-xp-text').textContent = 'Sign in to earn XP and card packs.';
@@ -1458,6 +1457,7 @@
       b.innerHTML = `${PACKS_ICON} ${s.packs}`;
       b.title = s.packs > 1 ? `You have ${s.packs} packs to open` : 'You have a pack to open';
       packsLeft = s.packs;
+      if (state && state.over) setResultPacks(s.packs);   // keep the result popup's button in step
     } catch (e) { box.hidden = true; $('#btn-packs').hidden = true; }
   }
   let colSummary = null;
@@ -1855,6 +1855,12 @@
   };
   $('#btn-build-auto').onclick = autoPick;
   $('#btn-build-ready').onclick = () => { if (builder.picked.length === 5) { builder.locked = true; renderBuilder(); send({ t: 'hand', cards: builder.picked }); } };
+  // the result popup's packs button shows how many are left, and only goes away when none are
+  function setResultPacks(n) {
+    const b = $('#btn-result-packs');
+    b.hidden = !(n > 0);
+    b.textContent = n > 1 ? `Open packs (${n})` : 'Open pack';
+  }
   $('#btn-result-packs').onclick = () => openPackPicker();
   $('#name').addEventListener('change', () => { try { localStorage.setItem('triad-name', $('#name').value); } catch (e) { /* ignore */ } });
 
@@ -1970,7 +1976,6 @@
     $('#pack').classList.remove('show');
     if (document.querySelector('#collection.active')) renderCollection();
     refreshProgress();
-    if (state && state.over) $('#btn-result-packs').hidden = true;
     if (!$('#view-rewards').hidden && document.querySelector('#menu.active')) { applyTheme($('#deck').value); refreshRewards(); }
   };
 

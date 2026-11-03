@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.8.1 — 2026-11-03
+
+- Fix: the result popup's "Open packs" button disappeared after opening one pack, even with more left. It now counts down ("Open packs (27)", "(26)"…) and only goes away when you're out of packs.
+
 ## v0.8.0 — 2026-11-03
 
 - Fix: the result popup could open without its XP bar and buttons after a long final move (Same/Plus, a combo, Unstoppable…). The XP and buttons arrived while the last move was still playing out and were then cleared when the popup opened. Rewards and wager prompts now wait until every board update has finished and the popup is up.
