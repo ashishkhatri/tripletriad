@@ -180,8 +180,8 @@ progress follows a player to any device. Guests can still play with the **Balanc
   | Rare | 25 | 200 |
   | Epic | 60 | 500 |
   | Legendary | 150 | 1200 |
-  Foil copies are worth 4× either way. Scrap from the pack reveal or the Collection screen (click a card),
-  or use **Scrap extras** to keep one normal and one foil of each card. You can't scrap below 5 cards in a set.
+  Foil copies are worth 4× either way. Scrap from the pack reveal or the Collection screen (click a card).
+  You can't scrap below 5 cards in a set.
 - **Collection:** every card in a set is shown, owned or not, with its crafting cost.
 - **Daily challenges:** three a day (e.g. "Win 2 games", "Trigger a Combo", "Beat the computer on Hard"),
   worth 30–100 shards each, paid automatically when completed. They reset at midnight in the server's time zone

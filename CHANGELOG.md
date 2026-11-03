@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.8.4 — 2026-11-03
+
+- Removed the **Scrap extras** button from the collection. Scrap cards one at a time from the card view or the pack reveal.
+
 ## v0.8.3 — 2026-11-03
 
 - Collection: the foil count (✦2…) sits in the top-right corner, same place as the ×2 on normal tiles.

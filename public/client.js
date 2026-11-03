@@ -1479,14 +1479,6 @@
     const ob = $('#btn-open-pack');
     ob.hidden = s.packs < 1;
     ob.textContent = `Open pack (${s.packs})`;
-    // extras: everything beyond one normal and one foil copy of each card
-    let extraValue = 0, extraCount = 0;
-    for (const foil of [false, true]) for (const [id, n] of Object.entries(foil ? s.foils : s.cards)) if (n > 1) {
-      extraCount += n - 1; extraValue += (n - 1) * s.scrap[deckCard(deckId, id).level] * (foil ? s.foilMult : 1);
-    }
-    const xb = $('#btn-scrap-extras');
-    xb.hidden = !extraCount;
-    xb.innerHTML = `Scrap ${extraCount} extra${extraCount > 1 ? 's' : ''} <span class="shards">+${extraValue}</span>`;
     const grid = $('#col-grid'); grid.innerHTML = '';
     // normal and foil copies are separate tiles: every card has its normal tile (greyed out with a craft price if you
     // don't own one), and a foil tile right after it when you own the foil. Counts only show from 2 copies up.
@@ -1893,12 +1885,6 @@
   $('#btn-col-back').onclick = () => setView(currentView === 'collection' ? 'play' : currentView);
   $('#col-deck').onchange = () => { chooseSet($('#col-deck').value); Music.play(musicFor($('#col-deck').value)); renderCollection(); refreshProgress(); };
   $('#btn-open-pack').onclick = () => openPackPicker();
-  $('#btn-scrap-extras').onclick = async () => {
-    try {
-      const r = await api('POST', '/api/scrap/extras', { deck: $('#col-deck').value });
-      setShards(r.shards); sfx('cancel'); toast(`Scrapped ${r.count} extra${r.count === 1 ? '' : 's'} for ${r.gained} shards.`); renderCollection();
-    } catch (e) { toast(e.message); sfx('error'); }
-  };
   $('#cd-normal').onclick = () => { detail.foil = false; renderCardDetail(); };
   $('#cd-foil').onclick = () => { detail.foil = true; renderCardDetail(); };
   $('#cd-craft').onclick = () => detailAction('craft');
