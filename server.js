@@ -99,8 +99,8 @@ async function api(req, res, url) {
     if (route === 'GET /api/levels') return json(res, 200, levels.view(a.user));
     if (route === 'POST /api/levels/claim') {
       const body = await readBody(req);
-      const deck = DECKS.get(body.deck);
-      if (!deck) return json(res, 404, { error: 'Unknown set.' });
+      const deck = body.deck ? DECKS.get(body.deck) : null;   // only card rewards need a set
+      if (body.deck && !deck) return json(res, 404, { error: 'Unknown set.' });
       return json(res, 200, { ...levels.claim(a.user, deck), view: levels.view(a.user) });
     }
     if (route === 'POST /api/scrap' || route === 'POST /api/scrap/extras' || route === 'POST /api/craft') {

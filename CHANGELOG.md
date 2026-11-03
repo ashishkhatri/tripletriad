@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.1 — 2026-11-02
+
+- Rewards: shard rewards are claimed straight away (no set to pick).
+- Pack rewards go straight into the normal pack flow: pick a set, tear it open, reveal the cards.
+- Card rewards ask which set they come from, then open on the pack screen: the cards fly in face down and you tap each one to reveal it (rarity bursts, Legendary call-out, scrap buttons, big view), even if it's a single card.
+- Rewards track: no scrollbar on desktop (move it with the arrow buttons; phones still swipe), and the arrows are drawn chevrons, exactly centred.
+
 ## v0.6.0 — 2026-11-02
 
 - **Account levels:** your lifetime XP now also gives you an account level that never caps; each level takes a bit more XP than the last. Packs still come every 100 XP, and the XP bar still tracks the next pack.

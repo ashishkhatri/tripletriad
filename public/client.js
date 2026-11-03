@@ -1158,6 +1158,7 @@
   // claiming: rewards are claimed one level at a time, and each one asks which set it should come from
   function openRewardPick() {
     const d = rwData; if (!d || !d.ready) return;
+    if (!d.nextNeedsSet) { claimReward(null); return; }   // shards and packs don't belong to a set: claim straight away
     const next = d.track.find((t) => t.state === 'ready');
     $('#reward-pick-title').textContent = `Level ${next.level} reward`;
     const grid = $('#reward-pick-grid'); grid.innerHTML = '';
@@ -1172,21 +1173,28 @@
   async function claimReward(deckId) {
     const btn = $('#btn-claim'); btn.disabled = true;
     try {
-      const r = await api('POST', '/api/levels/claim', { deck: deckId });
+      const r = await api('POST', '/api/levels/claim', deckId ? { deck: deckId } : {});
       setShards(r.shards); rwData = r.view;
       const c = r.claimed;
       renderRewards(null, new Set([c.level]));
       const tile = $('#rw-track').querySelector('.fresh');
       if (tile) tile.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-      const top = c.cards.reduce((m, x) => Math.max(m, deckCard(deckId, x.id).level), 0), foil = c.cards.some((x) => x.foil);
-      sfx(top >= 5 ? 'reveal-5' : top >= 4 ? 'reveal-4' : c.cards.length ? 'reveal-3' : 'craft');
-      if (foil) sfx('reveal-foil', { delay: 0.4 });
-      if (top >= 5 && window.Sfx && Sfx.say) Sfx.say('Legendary!', { delay: 0.6 });
-      if (c.packs) { refreshProgress(); toast(`Level ${c.level}: a card pack! Open it from the packs button.`); }
-      else if (c.shards) toast(`Level ${c.level}: +${c.shards} shards`);
-      else toast(`Level ${c.level}: ${c.cards.length > 1 ? `${c.cards.length} cards` : 'a card'} for ${(decks.get(deckId) || {}).name}`);
+      if (c.cards.length) showRewardCards(deckId, c);   // cards: the pack screen, face down, tap each to reveal
+      else if (c.packs) { sfx('craft'); refreshProgress(); openPackPicker(); }   // a pack: straight into the usual pick-a-set-and-open flow
+      else { sfx('craft'); toast(`Level ${c.level}: +${c.shards} shards`); }
     } catch (e) { toast(e.message); sfx('error'); }
     btn.disabled = false;
+  }
+  // card rewards open on the pack screen: the cards fly in face down and you tap each one to reveal it
+  function showRewardCards(deckId, c) {
+    applyTheme(deckId);
+    $('#pack-title').textContent = `Level ${c.level} reward`;
+    const w = 120, h = 168, origin = { left: innerWidth / 2 - w / 2, top: innerHeight / 2 - h / 2, width: w, height: h };
+    $('#btn-pack-again').hidden = true;
+    $('#btn-pack-done').textContent = 'Later';
+    $('#pack').classList.add('show');
+    revealPackCards(deckId, { cards: c.cards, summary: { packs: 0 } }, origin);
+    $('#pack-hint').textContent = c.cards.length > 1 ? 'Click each card to reveal it' : 'Click the card to reveal it';
   }
   $('#btn-claim').onclick = () => openRewardPick();
   $('#reward-pick-close').onclick = () => $('#reward-pick').classList.remove('show');
@@ -1808,6 +1816,7 @@
     if (document.querySelector('#collection.active')) renderCollection();
     refreshProgress();
     if (state && state.over) $('#btn-result-packs').hidden = true;
+    if (!$('#view-rewards').hidden && document.querySelector('#menu.active')) { applyTheme($('#deck').value); refreshRewards(); }
   };
 
   // ---------- boot ----------
