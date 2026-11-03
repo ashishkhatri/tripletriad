@@ -155,9 +155,25 @@
     await sleep(750); b.classList.remove('show'); await sleep(200);
   }
   // Combo: "C-C-C-COMBO!" stutters in over a ring of fire around the board, with embers, a heat flash and a shake
+  // Combo captures turn over one at a time; after the first, each plays a higher chord (C, F, G, Am, then up an octave…)
+  async function comboFlips(events) {
+    const cells = events.filter((e) => e.type === 'flip' && e.by === 'combo').map((e) => e.cell);
+    for (let k = 0; k < cells.length; k++) {
+      const i = cells[k]; pendingCombo.delete(i);
+      const cell = document.querySelector(`#board .cell[data-cell="${i}"]`), slot = state && state.board[i];
+      const old = cell && cell.querySelector('.card');
+      if (old && slot) {
+        const el = cardEl(slot.card, slot.owner === me ? 'mine' : 'theirs');
+        el.classList.add('flip', 'flip-y', 'combo-flip'); el.style.setProperty('--fd', 1);
+        old.replaceWith(el);
+      }
+      if (k === 0) sfx('flip'); else if (window.Sfx && Sfx.chord) Sfx.chord(k - 1);
+      if (k < cells.length - 1) await sleep(300);
+    }
+  }
   let myRuleMoves = 0;      // your moves this game that set off Same or Plus
   let comboVoice = null;   // finishes when the "C-C-C-COMBO" line ends
-  async function comboFx() {
+  async function comboFx(onSlam) {
     comboVoice = window.Sfx && Sfx.voice ? Sfx.voice('combo', { fallback: 'C, C, C, COMBO!', rate: 1.05, pitch: 0.35 }) : null;
     const fx = document.createElement('div'); fx.className = 'combo-fx';
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -189,7 +205,9 @@
     fx.appendChild(word);
     document.body.appendChild(fx);
     const game = $('#game'); if (!reduce) { game.classList.remove('combo-shake'); void game.offsetWidth; game.classList.add('combo-shake'); }
-    await sleep(1700);
+    // the captured cards flip one by one as COMBO! lands
+    const flipping = onSlam ? sleep(620).then(onSlam) : Promise.resolve();
+    await Promise.all([sleep(1700), flipping]);
     fx.classList.add('out'); game.classList.remove('combo-shake');
     setTimeout(() => fx.remove(), 450);
     await sleep(150);
@@ -298,12 +316,13 @@
       const elKey = state.elements[i];
       if (elKey && !slot) { const e = document.createElement('div'); e.className = `elem el-${elKey}`; e.textContent = glyph(elKey) || '?'; e.title = `${cap(elKey)} square`; cell.appendChild(e); }
       if (slot) {
-        const el = cardEl(slot.card, slot.owner === me ? 'mine' : 'theirs');
+        const holding = pendingCombo.has(i);   // captured by a Combo: keeps its old color until its turn in the combo effect
+        const el = cardEl(slot.card, (holding ? 1 - slot.owner : slot.owner) === me ? 'mine' : 'theirs');
         const moved = shiftedFrom[i];
         const prev = moved !== undefined ? prevBoard[moved] : prevBoard[i];
         if (moved !== undefined) { el.classList.add('shifted'); el.dataset.from = moved; if (prev && prev.owner !== slot.owner) el.classList.add('owner-changed'); }
         else if (!prev) el.classList.add('placed');
-        else if (prev.owner !== slot.owner) {
+        else if (prev.owner !== slot.owner && !holding) {
           const from = prevBoard.findIndex((p, k) => !p && state.board[k]);   // the card just played
           const src = from >= 0 ? from : i;
           const sameRow = Math.floor(src / 3) === Math.floor(i / 3);
@@ -339,6 +358,7 @@
 
   // ---------- storms ----------
   let shiftedFrom = {};
+  const pendingCombo = new Map();   // cell -> order, for Combo captures that flip one by one during the combo effect
   const STORM_ICON = { fire: '🔥', tide: '🌊', wind: '🌪️', lightning: '⚡', frost: '❄️', quake: '⛰️', dragon: '🐉' };
   const RESP_ICON = { ward: '🛡️', deflect: '↪️', brace: '🪨', harness: '✨', weather: '⛈️', defy: '🎲' };
   let stormTick = null, stormShownFor = null;
@@ -818,6 +838,8 @@
     for (const e of events) if (e.type === 'shift') shiftedFrom[e.to] = e.from;
     state = newState;
     selected = null;
+    pendingCombo.clear();
+    events.filter((e) => e.type === 'flip' && e.by === 'combo').forEach((e, k) => pendingCombo.set(e.cell, k));
     render();
     if (Object.keys(shiftedFrom).length || events.some((e) => e.type === 'shift')) animateShifts();
     for (const e of events) {
@@ -841,8 +863,8 @@
     for (const e of events) {
       if (e.type === 'rule') {
         sfx(e.rule);
-        if (e.rule === 'combo') await comboFx();
-        else await banner({ same: 'Same!', plus: 'Plus!' }[e.rule]);
+        if (e.rule === 'combo') { await comboFx(() => comboFlips(events)); continue; }
+        await banner({ same: 'Same!', plus: 'Plus!' }[e.rule]);
         const ruleFlips = events.filter((x) => x.type === 'flip' && x.by === e.rule);
         ruleFlips.forEach((_, k) => sfx('flip', { delay: 0.08 * k }));
       }

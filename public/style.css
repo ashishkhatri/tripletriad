@@ -1890,3 +1890,4 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 /* replay button in the move history: a drawn triangle, optically centered (a play symbol looks centered when nudged right) */
 .hist-play { display: grid !important; place-items: center; padding: 0 !important; letter-spacing: 0 !important; text-indent: 0 !important; line-height: 0 !important; clip-path: none !important; min-width: 0 !important; }
 .hist-play svg { width: 11px; height: 11px; display: block; fill: currentColor; translate: .5px 0; }
+.card.combo-flip { box-shadow: 0 0 0 2px #ffb347, 0 0 22px #ff7a00, 0 0 40px #ff3d0088, var(--edge) !important; }

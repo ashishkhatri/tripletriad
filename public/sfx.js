@@ -85,6 +85,23 @@ window.Sfx = (() => {
     return new Promise((res) => { src.onended = res; });   // resolves when the line has finished
   }
 
+  // A bright chord stab for combo chains: step 0, 1, 2… climbs a progression (I–IV–V–vi, then the same an octave up…)
+  const CHORDS = [[0, 4, 7], [5, 9, 12], [7, 11, 14], [9, 12, 16]];
+  function chord(step) {
+    if (!enabled || !ensure()) return;
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const base = 392 * Math.pow(2, Math.floor(step / CHORDS.length));   // starts around G4, up an octave every 4 chords
+    const t = ctx.currentTime + 0.01;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.32, t + 0.012); g.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+    g.connect(out);
+    for (const semi of CHORDS[step % CHORDS.length]) {
+      for (const [type, mult, lvl] of [['triangle', 1, 0.5], ['sine', 2, 0.18]]) {   // body + a soft octave shimmer
+        const o = ctx.createOscillator(); o.type = type; o.frequency.value = base * Math.pow(2, semi / 12) * mult;
+        const og = ctx.createGain(); og.gain.value = lvl; o.connect(og).connect(g); o.start(t); o.stop(t + 0.95);
+      }
+    }
+  }
+
   const unlock = () => { if (ensure() && ctx.state === 'suspended') ctx.resume().catch(() => {}); };
   ['pointerdown', 'keydown', 'touchend'].forEach((ev) => window.addEventListener(ev, unlock, { passive: true }));
 
@@ -122,5 +139,5 @@ window.Sfx = (() => {
   }
   if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) { /* ignore */ } }
 
-  return { play, setEnabled, setVolume, say, voice };
+  return { play, setEnabled, setVolume, say, voice, chord };
 })();

@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.7 — 2026-11-02
+
+- Combo captures flip during the combo effect instead of all at once: each captured card keeps its old color until "COMBO!" lands, then they turn over one at a time (with a fiery glow). The combo sound and voice play once; every further card in the chain plays a brighter chord climbing a progression (I, IV, V, vi, then up an octave).
+
 ## v0.7.6 — 2026-11-02
 
 - "Unstoppable!" also plays when a single move's Combo captures two or more cards (still after the "C-C-C-COMBO" line).
