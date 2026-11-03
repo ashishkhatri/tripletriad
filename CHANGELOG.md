@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.6 — 2026-11-02
+
+- Play screen tiles are centred: equal padding above and below the content (it was 26 / 22), the Vs Computer and Online titles are centred, the closed Match rules row no longer has extra space under its text, and the closed How to play row is the same height as Match rules.
+
 ## v0.6.5 — 2026-11-02
 
 - Big wins pay more XP: winning 7–3 gives ×1.2, 8–2 gives ×1.5, and 9–1 (or 10–0) gives ×2 (e.g. a normal 35 XP win becomes 42, 53 or 70). The result screen's "+N XP" tag says "×1.5 big win" etc.

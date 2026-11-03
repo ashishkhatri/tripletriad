@@ -117,7 +117,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 
 /* parchment panel with gilt frame and corner flourishes */
 .panel {
-  position: relative; width: 100%; max-width: 400px; padding: 26px 24px 22px;
+  position: relative; width: 100%; max-width: 400px; padding: 24px;
   display: flex; flex-direction: column; gap: 12px; color: var(--ink);
   background:
     radial-gradient(ellipse at 30% 20%, #fff8 0%, transparent 45%),
@@ -991,7 +991,7 @@ body.with-nav #nav { display: flex; }
 /* play: two mode cards */
 .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; max-width: 560px; }
 .mode { gap: 14px !important; justify-content: space-between; }
-.mode h2 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 22px; color: var(--accent-ink); letter-spacing: .03em; }
+.mode h2 { margin: 0; font-family: var(--display); font-weight: 900; font-size: 22px; line-height: 1.1; color: var(--accent-ink); letter-spacing: .03em; text-align: center; }
 button.big { padding: 14px 18px; font-size: 17px; }
 #menu .seg { display: flex; border: 1px solid var(--field-line); border-radius: 8px; overflow: hidden; }
 #menu .seg button {
@@ -1004,6 +1004,7 @@ button.big { padding: 14px 18px; font-size: 17px; }
 
 /* match rules: a one-line summary that opens into the rules box */
 .match-rules { padding: 0 !important; overflow: visible; }
+.match-rules:not([open]) { gap: 0; }   /* closed: no gap left over below the one-line summary */
 .match-rules summary {
   list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 20px;
   color: var(--ink); font-family: var(--title); font-weight: 700;
@@ -1820,3 +1821,6 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 .howto-fold[open] > summary::before { transform: rotate(90deg); }
 .howto-fold:not([open]) { gap: 0; }
 .set-bar .level-pill { margin: 0 2px; }
+.howto-fold:not([open]) { padding: 0 !important; }
+.howto-fold:not([open]) > summary { padding: 14px 20px; }
+.howto-fold > summary { min-height: 25px; box-sizing: content-box; }
