@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.2 — 2026-11-02
+
+- The "Legendary!" and "C-C-C-COMBO!" call-outs use recorded voice clips (`public/sounds/legendary.mp3` and `combo.mp3`) instead of the browser's speech engine, so they sound the same on every device. They follow the sound-effects toggle and volume, play a bit louder than the effects, and fall back to the speech engine only if a clip can't load.
+
 ## v0.7.1 — 2026-11-02
 
 - The **Level N!** banner on the result popup is a button now ("Tap to claim your reward"): it leaves the match and takes you straight to the Rewards track.

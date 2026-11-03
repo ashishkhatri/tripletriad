@@ -67,6 +67,20 @@ window.Sfx = (() => {
     src.start(ctx.currentTime + (opts.delay || 0));
   }
 
+  // Recorded announcer lines (sounds/<name>.mp3): played louder than the effects, falling back to the speech engine if missing
+  const voices = new Map();
+  async function voice(name, opts = {}) {
+    if (!enabled || !ensure()) return;
+    if (ctx.state === 'suspended') { try { await ctx.resume(); } catch (e) { return; } }
+    if (!voices.has(name)) voices.set(name, fetchBuf(`sounds/${name}.mp3`).catch(() => null));
+    const buf = await voices.get(name);
+    if (!buf) { if (opts.fallback) say(opts.fallback, opts); return; }
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const g = ctx.createGain(); g.gain.value = opts.gain || 1.6;
+    src.connect(g).connect(out);
+    src.start(ctx.currentTime + (opts.delay || 0));
+  }
+
   const unlock = () => { if (ensure() && ctx.state === 'suspended') ctx.resume().catch(() => {}); };
   ['pointerdown', 'keydown', 'touchend'].forEach((ev) => window.addEventListener(ev, unlock, { passive: true }));
 
@@ -104,5 +118,5 @@ window.Sfx = (() => {
   }
   if ('speechSynthesis' in window) { try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch (e) { /* ignore */ } }
 
-  return { play, setEnabled, setVolume, say };
+  return { play, setEnabled, setVolume, say, voice };
 })();

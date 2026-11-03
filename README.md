@@ -310,6 +310,9 @@ The 🔔 button and slider next to the music control mute them and set their vol
 They're synthesized by `tools/gensfx.py` (`python3 tools/gensfx.py [kit] [effect]`). Any file can be swapped for
 your own MP3 with the same name; a custom set without its own folder uses the root files.
 
+The announcer lines are recordings in `public/sounds/`: `legendary.mp3` (a Legendary card is revealed) and `combo.mp3`
+(a Combo). Replace either file to change the voice; if one is missing, the browser's speech engine says the line instead.
+
 ## Versions and releases
 
 The running version is shown in the top bar on desktop, next to the logo on phones, and at `/version`.

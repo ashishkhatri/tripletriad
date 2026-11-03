@@ -156,7 +156,7 @@
   }
   // Combo: "C-C-C-COMBO!" stutters in over a ring of fire around the board, with embers, a heat flash and a shake
   async function comboFx() {
-    if (window.Sfx && Sfx.say) Sfx.say('C, C, C, COMBO!', { rate: 1.05, pitch: 0.35 });
+    if (window.Sfx && Sfx.voice) Sfx.voice('combo', { fallback: 'C, C, C, COMBO!', rate: 1.05, pitch: 0.35 });
     const fx = document.createElement('div'); fx.className = 'combo-fx';
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const board = document.querySelector('#board'), r = board ? board.getBoundingClientRect() : { left: innerWidth / 2 - 150, top: innerHeight / 2 - 150, width: 300, height: 300 };
@@ -1635,7 +1635,7 @@
         sfx(`reveal-${Math.min(5, Math.max(1, c.level))}`);
         if (pc.foil) sfx('reveal-foil', { delay: c.level >= 3 ? 0.5 : 0.12 });
         if (c.level >= 5) {   // the announcer, timed to the reveal's impact
-          if (typeof Sfx !== 'undefined' && Sfx.say) Sfx.say('Legendary!', { delay: 0.85 });
+          if (typeof Sfx !== 'undefined' && Sfx.voice) Sfx.voice('legendary', { delay: 0.85, fallback: 'Legendary!' });
           const lb = document.createElement('div'); lb.className = 'legend-banner'; lb.textContent = 'LEGENDARY';
           $('#pack').appendChild(lb); setTimeout(() => lb.remove(), 2600);
         }
