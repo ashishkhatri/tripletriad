@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.8.0 — 2026-11-03
+
+- Fix: the result popup could open without its XP bar and buttons after a long final move (Same/Plus, a combo, Unstoppable…). The XP and buttons arrived while the last move was still playing out and were then cleared when the popup opened. Rewards and wager prompts now wait until every board update has finished and the popup is up.
+- Fix: "Unstoppable!" could play on your first Same/Plus of a game. If you started a rematch while the previous game's last Same/Plus was still playing out, that move was counted into the new game. The count now resets in step with the moves. (Your opponent's Same/Plus/Combo never counted.)
+
 ## v0.7.9 — 2026-11-03
 
 - **Unstoppable** has its own effect: UN- STOP- PA- BLE! hits the screen syllable by syllable in crackling violet, each with a lightning strike across the board and a flash, and a shockwave on the last one. It plays after the combo effect and the game waits for it.

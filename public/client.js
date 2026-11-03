@@ -882,6 +882,9 @@
     return run;
   }
   async function applyResultNow(newState, events) {
+    // a new game starts its Unstoppable count here, in turn order: resetting when the message arrives could happen while
+    // the last game's final move was still playing out, and that move would then be counted into the new game
+    if (events.some((e) => e.type === 'start')) myRuleMoves = 0;
     const prevTurn = state ? state.turn : null;
     const strikeEv = events.find((e) => e.type === 'strike');
     const stormEv = events.find((e) => e.type === 'storm');
@@ -1104,7 +1107,7 @@
       case 'state': {
         const fresh = !state || msg.events.some((e) => e.type === 'start');
         me = msg.you; names = msg.names;
-        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; myRuleMoves = 0; $('#result').classList.remove('show'); const sb = $('#btn-show-result'); sb.hidden = true; sb.disabled = false; sb.textContent = 'Rematch'; }
+        if (fresh) { prevBoard = Array(9).fill(null); resultShown = false; $('#result').classList.remove('show'); const sb = $('#btn-show-result'); sb.hidden = true; sb.disabled = false; sb.textContent = 'Rematch'; }
         if (!document.querySelector('#game.active')) show('game');
         busy = false;
         applyResult(msg.state, msg.events).then(() => {
@@ -1141,12 +1144,15 @@
     }
   }
   // the result overlay appears shortly after the last move; reward messages wait for it
+  // Rewards, wager prompts etc. go onto the result popup only once it's up. The final move's effects (Same/Plus, a combo,
+  // Unstoppable…) can take several seconds, so first wait for every queued board update to finish playing, then for the
+  // popup itself. (A fixed time limit here let the XP bar arrive early and then get wiped when the popup opened.)
   function waitForResult() {
-    return new Promise((res) => {
+    return applyQueue.then(() => new Promise((res) => {
       const t0 = Date.now();
-      const tick = () => (resultShown && $('#result').classList.contains('show')) || Date.now() - t0 > 4000 ? res() : setTimeout(tick, 100);
+      const tick = () => (resultShown && $('#result').classList.contains('show')) || Date.now() - t0 > 15000 ? res() : setTimeout(tick, 100);
       tick();
-    });
+    }));
   }
 
   // ---------- hand builder ----------
