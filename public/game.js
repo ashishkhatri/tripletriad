@@ -165,11 +165,11 @@
     for (let d = 0; d < 4; d++) {
       const n = neighbor(cell, d);
       if (n >= 0 && s.board[n]) {
-        nb.push({ d, n, mine: card.r[d], theirs: s.board[n].card.r[opposite(d)] });
+        nb.push({ d, n, mine: value(s, cell, d), theirs: value(s, n, opposite(d)) });   // Same/Plus use the numbers shown (element and boost changes included)
       }
     }
 
-    // Same: 2+ adjacent sides equal (printed values). Flips opponent cards among them.
+    // Same: 2+ adjacent sides equal (as shown, with modifiers). Flips opponent cards among them.
     if (s.rules.same) {
       const m = nb.filter((x) => x.mine === x.theirs);
       if (m.length >= 2 && m.some((x) => s.board[x.n].owner !== p)) {

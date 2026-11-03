@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.9.5 — 2026-11-03
+
+- Same and Plus now compare the numbers shown on the cards, including Elemental and storm modifiers (before, they used the printed numbers, so a red 5 didn't match a 5).
+
 ## v0.9.2 — 2026-11-03
 
 - Elemental (and storm Scorch/Harness) modifiers change the card's numbers directly instead of showing a "+1"/"−1" tag: each number shows its real value, in green when raised and red when lowered. Hovering the numbers says why.
