@@ -1803,7 +1803,6 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 @media (max-width: 899px) { .level-pill { padding: 3px 9px 4px !important; } .level-pill b { font-size: 16px; } .level-pill span { font-size: 9px; } }
 @media (min-width: 900px) and (max-width: 1180px) {
   .set-bar select { max-width: 150px; }
-  .level-pill span { display: none; }
   .set-bar { margin-left: 8px; gap: 6px; }
 }
 @media (max-width: 400px) { .level-pill span { display: none; } .level-pill { padding: 3px 8px 4px !important; } #mtop .set-bar { gap: 4px; } }
@@ -1812,7 +1811,7 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
   .set-bar select { max-width: 118px; }
   .nav-logo { font-size: 24px; letter-spacing: .1em; }
 }
-@media (max-width: 380px) { .set-bar .pack-pill { padding: 4px 6px !important; } #mtop .set-bar { gap: 2px; } .level-pill { padding: 3px 7px 4px !important; } }
+@media (max-width: 380px) { .set-bar .pack-pill { padding: 4px 5px !important; font-size: 12px !important; } #mtop .set-bar { gap: 2px; } .level-pill { padding: 3px 7px 4px !important; } }
 /* How to play: folded away at the bottom of the Play screen */
 .howto-fold { width: 100%; max-width: 640px; gap: 10px; }
 .howto-fold > summary { cursor: pointer; list-style: none; font: 700 16px var(--title); color: var(--ink); display: flex; align-items: center; gap: 8px; }

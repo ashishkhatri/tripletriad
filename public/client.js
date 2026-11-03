@@ -1720,7 +1720,9 @@
     const bar = document.querySelector('.set-bar'), foot = document.querySelector('#nav .nav-foot');
     const strip = document.createElement('div'); strip.id = 'mtop'; document.body.prepend(strip);
     const mq = matchMedia('(max-width: 899px)');
-    const place = () => { if (mq.matches) strip.appendChild(bar); else foot.before(bar); };
+    const lvl = document.querySelector('#btn-level'), packs = document.querySelector('#btn-packs');
+    // desktop: level badge on the right with shards and version; phones: in the top strip beside the packs button
+    const place = () => { if (mq.matches) { strip.appendChild(bar); bar.insertBefore(lvl, packs); } else { foot.before(bar); foot.prepend(lvl); } };
     mq.addEventListener('change', place); place();
   })();
 

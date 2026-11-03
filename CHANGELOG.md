@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.7 — 2026-11-02
+
+- Desktop top bar: the level badge moved to the right side, so it reads level · shards · version, then the sound buttons (it shows "Lv" at every desktop width now). On phones it stays in the top strip beside the packs button.
+
 ## v0.6.6 — 2026-11-02
 
 - Play screen tiles are centred: equal padding above and below the content (it was 26 / 22), the Vs Computer and Online titles are centred, the closed Match rules row no longer has extra space under its text, and the closed How to play row is the same height as Match rules.
