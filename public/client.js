@@ -1242,7 +1242,7 @@
     if (!collectionHands) $('#r-wager').checked = false;
     $('#r-wager').closest('label').classList.toggle('disabled', !collectionHands);
     $('#rules-note').textContent = !account ? 'Sign in to play with your collection and earn packs.' : (!collectionHands ? 'Balanced hands don’t use your collection, but you still earn XP.' : '');
-    try { localStorage.setItem('triad-rules', JSON.stringify(readRules())); } catch (e) { /* ignore */ }
+    try { localStorage.setItem('triad-rules-2', JSON.stringify(readRules())); } catch (e) { /* ignore */ }
     const r = readRules();
     const bits = ['open', 'same', 'plus', 'elemental', 'wager'].filter((k) => r[k]).map((k) => RULE_NAMES[k]);
     const hands = { balanced: 'Balanced hands', random: 'Random hands', build: 'Built hands', budget: 'Budget hands' }[r.handMode];
@@ -1835,7 +1835,7 @@
   loadDecks().then(async () => {
     try { $('#name').value = localStorage.getItem('triad-name') || ''; } catch (e) { /* ignore */ }
     try {
-      const r = JSON.parse(localStorage.getItem('triad-rules') || 'null');
+      const r = JSON.parse(localStorage.getItem('triad-rules-2') || 'null');
       if (r) { ['open', 'same', 'plus', 'elemental', 'storms', 'wager'].forEach((k) => { $('#r-' + k).checked = !!r[k]; }); if (r.handMode) $('#r-hands').value = r.handMode; }
     } catch (e) { /* ignore */ }
     await loadAccount();

@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.4 — 2026-11-02
+
+- Default match rules are now **Open + Same + Plus**. Everyone starts on the new default once; after that, your own rule choices are remembered as before.
+
 ## v0.6.3 — 2026-11-02
 
 - **Account level badge** in the top bar (gold "Lv 12" pill next to the set picker); tap it to open Rewards. It pops when you level up.
