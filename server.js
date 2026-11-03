@@ -52,9 +52,9 @@ function readBody(req) {
 }
 const me = (a) => ({ name: a.user.name, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready });
 // XP for a match, plus whether it took the account up a level (so the result screen can say so)
-function awardXp(u, deck, result) {
+function awardXp(u, deck, result, myScore) {
   const before = levels.levelOf(u.xp || 0);
-  const r = col.award(u, deck, result);
+  const r = col.award(u, deck, result, myScore);
   const after = levels.levelOf(u.xp || 0);
   return { ...r, level: after, levelUp: after > before ? after - before : 0, rewardsReady: levels.view(u).ready };
 }
@@ -313,7 +313,7 @@ function finish(room) {
       result, rules: room.rules, deck: room.deck, vsAI: !!(other && other.ai), aiLevel: other && other.ai ? other.level : null,
       online: !!(other && !other.ai), margin: score[seat] - score[1 - seat], ...(room.stats ? room.stats[seat] : {}),
     };
-    room.results[seat] = { rewards: awardXp(u, deck, result), daily: daily.record(u, p.user, 'match', report) };
+    room.results[seat] = { rewards: awardXp(u, deck, result, score[seat]), daily: daily.record(u, p.user, 'match', report) };
   });
   if (room.rules.wager && w !== 'draw') {
     const loser = 1 - w;

@@ -833,7 +833,7 @@
       const fill = $('#result-xp-fill'), gain = $('#result-xp-gain'), plus = $('#result-xp-plus');
       fill.style.transition = gain.style.transition = 'none';
       fill.style.width = before + '%'; gain.style.left = before + '%'; gain.style.width = '0%';
-      plus.textContent = `+${r.gained} XP`; $('#result-xp-num').textContent = `${after} / 100`; plus.style.left = before + '%'; plus.classList.remove('show');
+      plus.textContent = r.mult > 1 ? `+${r.gained} XP · ×${r.mult} big win` : `+${r.gained} XP`; $('#result-xp-num').textContent = `${after} / 100`; plus.style.left = before + '%'; plus.classList.remove('show');
       void gain.offsetWidth;
       fill.style.transition = gain.style.transition = '';
       setTimeout(() => { gain.style.width = (after - before) + '%'; plus.style.left = after + '%'; plus.style.translate = after < 12 ? '-12% 0' : after > 88 ? '-88% 0' : ''; plus.classList.add('show'); }, 750);

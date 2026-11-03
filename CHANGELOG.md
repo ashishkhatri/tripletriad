@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.5 — 2026-11-02
+
+- Big wins pay more XP: winning 7–3 gives ×1.2, 8–2 gives ×1.5, and 9–1 (or 10–0) gives ×2 (e.g. a normal 35 XP win becomes 42, 53 or 70). The result screen's "+N XP" tag says "×1.5 big win" etc.
+
 ## v0.6.4 — 2026-11-02
 
 - Default match rules are now **Open + Same + Plus**. Everyone starts on the new default once; after that, your own rule choices are remembered as before.
