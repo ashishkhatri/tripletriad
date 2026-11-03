@@ -264,7 +264,7 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
 .footer button.ghost { color: var(--muted); }
 
 .banner {
-  position: fixed; left: 0; right: 0; top: 40%; text-align: center; pointer-events: none;
+  position: fixed; left: 0; right: 0; top: 40%; z-index: 25; text-align: center; pointer-events: none;
   font-family: var(--display); font-weight: 900; font-size: 68px; letter-spacing: .08em;
   background: linear-gradient(180deg, var(--metal-1) 0%, var(--metal-2) 40%, var(--metal-3) 65%, var(--metal-2) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;

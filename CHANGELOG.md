@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.5.9 — 2026-11-02
+
+- Fix: the Same! / Plus! / Combo! (and storm and "You start") callouts could draw behind the cards on the board; they're always on top now.
+
 ## v0.5.8 — 2026-11-02
 
 - The XP bars on the result screen and in the collection show "x / 100" inside the bar (white with a dark outline so it reads over any fill), with "N XP until the next pack reward" underneath.
