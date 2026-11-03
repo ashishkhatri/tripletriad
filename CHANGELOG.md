@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.6.2 — 2026-11-02
+
+- The shard icon is a drawn, faceted blue gem with a dark rim, so it reads on light panels (Wilds parchment, Tidebound, Bloomwild) as well as dark ones.
+- Wilds: challenge reward amounts are light on the dark challenge list (they were dark brown).
+
 ## v0.6.1 — 2026-11-02
 
 - Rewards: shard rewards are claimed straight away (no set to pick).

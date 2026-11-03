@@ -842,7 +842,11 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 }
 .grid-card { cursor: pointer; }
 .shards { font-family: var(--title); font-weight: 700; color: var(--metal-2); white-space: nowrap; }
-.shards::before { content: "\25C6"; margin-right: 4px; color: #9fe8ff; text-shadow: 0 0 6px #79d4ff; }
+/* the shard icon: a cut blue gem with a dark rim, so it reads on light panels and dark backgrounds alike */
+.shards::before {
+  content: ""; display: inline-block; width: .85em; height: .85em; margin-right: 5px; vertical-align: -.1em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 1L19 10L10 19L1 10Z' fill='%232f9be6'/%3E%3Cpath d='M10 1L19 10H10Z' fill='%237fdcff'/%3E%3Cpath d='M10 1L1 10H10Z' fill='%23b8eeff'/%3E%3Cpath d='M1 10L10 19V10Z' fill='%231e7fd0'/%3E%3Cpath d='M19 10L10 19V10Z' fill='%231561b0'/%3E%3Cpath d='M10 1L19 10L10 19L1 10Z' fill='none' stroke='%23062a52' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 1px 1px #0005);
+}
 
 /* daily challenges */
 .dailies {
@@ -888,7 +892,6 @@ button.link:hover { color: var(--gold-hi); filter: none; }
 #card-detail .cd-toggle button.on::before { content: '✓ '; }
 .cd-note { min-height: 1.2em; font-size: 14px; font-style: italic; }
 .panel .shards, .dailies .shards { color: var(--accent-ink); }
-.panel .shards::before { color: #3aa6d6; text-shadow: none; }
 button .shards, .panel button .shards { color: inherit; }
 
 /* pack reveal extras */

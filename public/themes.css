@@ -381,3 +381,5 @@ input::placeholder { color: var(--ink-soft); opacity: .45; font-style: italic; }
 /* buttons without a fill inside panels (✕, Scrap, Menu, Cancel…) take the panel's text colour, whatever the theme's button colour is */
 :root .panel button.ghost:not(.primary), :root .panel button.link { color: var(--ink); }
 :root .panel button.link { color: var(--accent-ink); }
+/* Wilds' challenge list sits on dark wood, so its reward numbers use the light metal rather than the dark accent */
+:root[data-theme="wilds"] .dailies, :root:not([data-theme]) .dailies { --accent-ink: var(--metal-2); }
