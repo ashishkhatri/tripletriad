@@ -3,6 +3,10 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.9.2 — 2026-11-03
+
+- Elemental (and storm Scorch/Harness) modifiers change the card's numbers directly instead of showing a "+1"/"−1" tag: each number shows its real value, in green when raised and red when lowered. Hovering the numbers says why.
+
 ## v0.9.0 — 2026-11-03
 
 - New card set: **Final Fantasy** 🗡️ — the classic *Triple Triad* board from Final Fantasy VIII, as an original homage.
