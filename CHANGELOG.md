@@ -3,6 +3,11 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.7.6 — 2026-11-02
+
+- "Unstoppable!" also plays when a single move's Combo captures two or more cards (still after the "C-C-C-COMBO" line).
+- The replay ▶ button in the move history is a drawn triangle, optically centered in its circle on every set.
+
 ## v0.7.5 — 2026-11-02
 
 - **Unstoppable!** Your second move in a game that sets off Same or Plus (and every one after it) plays the new `public/sounds/unstoppable.mp3` announcer line. If that move also chains into a Combo, it plays right after "C-C-C-COMBO" finishes.

@@ -311,7 +311,7 @@ They're synthesized by `tools/gensfx.py` (`python3 tools/gensfx.py [kit] [effect
 your own MP3 with the same name; a custom set without its own folder uses the root files.
 
 The announcer lines are recordings in `public/sounds/`: `legendary.mp3` (a Legendary card is revealed) and `combo.mp3`
-(a Combo) and `unstoppable.mp3` (your second and later Same/Plus moves in a game, after the Combo line if there is one). Replace any file to change the voice; if one is missing, the browser's speech engine says the line instead.
+(a Combo) and `unstoppable.mp3` (your second and later Same/Plus moves in a game, or a Combo that captures two or more cards; after the Combo line if there is one). Replace any file to change the voice; if one is missing, the browser's speech engine says the line instead.
 
 ## Versions and releases
 

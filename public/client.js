@@ -573,7 +573,7 @@
 
       const head = document.createElement('div'); head.className = 'hist-head';
       if (h.storm) li.classList.add('storm-entry');
-      const playBtn = '<button type="button" class="hist-play" title="Replay this move" aria-label="Replay this move">▶</button>';
+      const playBtn = '<button type="button" class="hist-play" title="Replay this move" aria-label="Replay this move"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.8L8.4 5L3 8.2Z"/></svg></button>';
       head.innerHTML = h.storm
         ? `<span class="hist-no">${STORM_ICON[h.kind]}</span><span><b>${TT.STORMS[h.original || h.kind].name}</b> <small>· ${who(h.p)} chose ${TT.RESPONSES[h.choice].name}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `${flips.size} flipped` : 'no flips'}</span>${playBtn}`
         : `<span class="hist-no">${hist.slice(0, i + 1).filter((x) => !x.storm).length}</span><span><b>${who(h.p)}</b> played <b>${h.card.name}</b> <small>· ${SIDE_CELL[h.cell]}</small></span><span class="hist-res${flips.size ? '' : ' none'}">${flips.size ? `+${flips.size} flip${flips.size > 1 ? 's' : ''}` : 'no flips'}</span>${playBtn}`;
@@ -849,9 +849,11 @@
     }
     // Unstoppable: your second (and every later) move this game that sets off Same or Plus. If that move also
     // chains into a Combo, the line waits until "C-C-C-COMBO" has finished.
+    // Also: any move of yours whose Combo captures two or more cards.
     const placed = events.find((e) => e.type === 'place');
     if (placed && placed.player === me && events.some((e) => e.type === 'rule' && (e.rule === 'same' || e.rule === 'plus'))) {
-      if (++myRuleMoves >= 2 && window.Sfx && Sfx.voice) {
+      const multiCombo = events.filter((e) => e.type === 'flip' && e.by === 'combo').length >= 2;
+      if ((++myRuleMoves >= 2 || multiCombo) && window.Sfx && Sfx.voice) {
         const combo = events.some((e) => e.type === 'rule' && e.rule === 'combo') && comboVoice;
         Promise.resolve(combo || null).then(() => Sfx.voice('unstoppable', { fallback: 'Unstoppable!', delay: combo ? 0.1 : 0.2 }));
       }
