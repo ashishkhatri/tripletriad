@@ -985,7 +985,7 @@ body.with-nav #nav { display: flex; }
 .mobile-head { display: none; }
 #menu .panel { max-width: none; width: 100%; }
 .set-panel, .match-rules, #menu .dailies, .howto-panel, #account-guest, #account-user, #dailies-guest { max-width: 560px !important; }
-.guest-note { margin: 0; font-size: 15px; font-style: italic; color: var(--muted); }
+.guest-note { margin: 0; font-size: 17px; font-style: italic; }
 .guest-note button.link, .guest-note a.link { color: var(--text) !important; }
 a.link { font-style: italic; text-decoration: underline; text-underline-offset: 3px; }
 
