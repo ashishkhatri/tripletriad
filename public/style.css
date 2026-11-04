@@ -986,7 +986,8 @@ body.with-nav #nav { display: flex; }
 #menu .panel { max-width: none; width: 100%; }
 .set-panel, .match-rules, #menu .dailies, .howto-panel, #account-guest, #account-user, #dailies-guest { max-width: 560px !important; }
 .guest-note { margin: 0; font-size: 15px; font-style: italic; color: var(--muted); }
-.guest-note button.link { color: var(--text) !important; }
+.guest-note button.link, .guest-note a.link { color: var(--text) !important; }
+a.link { font-style: italic; text-decoration: underline; text-underline-offset: 3px; }
 
 /* play: two mode cards */
 .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%; max-width: 560px; }

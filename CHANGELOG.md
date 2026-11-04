@@ -3,6 +3,14 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.9.6 — 2026-11-03
+
+- **Player data now lives in a SQLite database** (`triad.db`, using Node's built-in SQLite) with real tables for accounts, sets, cards, level rewards and sign-ins. The old `triad.json` is imported automatically on first start.
+- **Admin page** at `/admin`: browse and search every account, edit XP, shards, packs, level rewards, card counts and the admin flag, reset passwords, sign accounts out, delete accounts, and run SQL queries. `ashishduh` is the first admin. Admins see an *Admin* link next to *Sign out*.
+- Edits made with the `sqlite3` tool while the server runs are picked up automatically.
+- `update` now installs Node.js 24 (needed for SQLite) and the `sqlite3` tool, backs up the database before restarting, and reruns itself when the update script changes.
+- Accounts record when they were last active (shown on the admin page).
+
 ## v0.9.5 — 2026-11-03
 
 - Same and Plus now compare the numbers shown on the cards, including Elemental and storm modifiers (before, they used the printed numbers, so a red 5 didn't match a 5).

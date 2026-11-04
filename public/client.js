@@ -1234,6 +1234,7 @@
     $('#guest-note').hidden = !!account;
     document.querySelectorAll('.nav-shards, .mobile-head .shard-balance').forEach((el) => { el.hidden = !account; });
     if (account) { $('#acct-name').textContent = account.name; setShards(account.shards || 0); }
+    $('#admin-link').hidden = !(account && account.admin);
     syncRuleOptions();
     refreshProgress();
     refreshDailies();

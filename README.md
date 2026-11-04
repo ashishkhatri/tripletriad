@@ -1,7 +1,7 @@
 # Triad — self-hosted four-sided card duel
 
 A browser card game using Triple Triad-style rules: play against the computer
-or against a friend online. No dependencies beyond Node.js 18+.
+or against a friend online. No dependencies beyond Node.js 22.13+ (Node 24 recommended), whose built-in SQLite holds the player data.
 
 ## Features
 
@@ -56,7 +56,8 @@ It pulls the latest code from GitHub and restarts the service.
 ### Manual install (any Debian/Ubuntu box)
 
 ```bash
-apt update && apt install -y nodejs git
+apt update && apt install -y curl git sqlite3
+curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && apt install -y nodejs   # Node 24
 git clone https://github.com/ashishkhatri/tripletriad.git /opt/triad
 useradd --system --home /opt/triad --shell /usr/sbin/nologin triad
 chown -R triad:triad /opt/triad
@@ -195,10 +196,28 @@ can't be edited in the browser.
 
 ### Where the data lives
 
-`/var/lib/triad/triad.json` in the container (set by `DATA_DIR`; Docker uses the `/data` volume).
-It's separate from the code, so `update` never touches it, and `update` keeps the last 10 backups in
-`/var/lib/triad/backups/` before each restart. To back up the whole thing, copy that folder
-(or snapshot the container in Proxmox).
+A SQLite database, `/var/lib/triad/triad.db` in the container (set by `DATA_DIR`; Docker uses the
+`/data` volume; `./data/triad.db` when run locally). It's separate from the code, so `update` never
+touches it, and `update` keeps the last 10 backups in `/var/lib/triad/backups/` before each restart.
+An older `triad.json` is imported automatically the first time and renamed to `triad.json.imported`.
+(On Node older than 22.13 the server falls back to the JSON file and logs a warning.)
+
+| Table | What's in it |
+| --- | --- |
+| `users` | one row per account: `key` (lowercase name), `name`, `is_admin`, `xp`, `shards`, `bonus_packs`, `packs_opened`, `level_claimed`, `created`, `last_seen` (ms timestamps), today's challenges (`daily`, JSON), password hash |
+| `user_sets` | per account and set: `games`, `wins` |
+| `user_cards` | per account, set and card: `normal` and `foil` copy counts |
+| `level_log` | level rewards claimed |
+| `sessions` | sign-ins |
+
+**Admin page:** `/admin` (linked next to *Sign out* on the Play screen for admins). Lists every
+account and lets you edit XP, shards, packs, level rewards, the admin flag, card counts, passwords,
+sign-ins, and delete accounts. Its **SQL** tab runs any query. The account `ashishduh` becomes an admin
+automatically; make others admins there or with
+`UPDATE users SET is_admin = 1 WHERE key = 'name';`.
+
+**From the command line:** `sqlite3 /var/lib/triad/triad.db` (the `update` script installs `sqlite3`).
+Changes made there while the server runs are picked up within a couple of seconds.
 
 ## Music
 

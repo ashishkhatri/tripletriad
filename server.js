@@ -10,6 +10,7 @@ const auth = require('./lib/auth');
 const col = require('./lib/collection');
 const daily = require('./lib/daily');
 const levels = require('./lib/levels');
+const admin = require('./lib/admin');
 
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -18,7 +19,7 @@ const VERSION = require('./package.json').version;
 const AI_LEVELS = ['easy', 'normal', 'hard'];
 
 db.load();
-console.log(`Data: ${db.FILE}`);
+console.log(`Data: ${db.FILE} (${db.mode})`);
 
 // Load every deck listed in public/decks/index.json.
 const DECK_DIR = path.join(PUBLIC, 'decks');
@@ -42,15 +43,15 @@ function json(res, code, obj, headers = {}) {
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers });
   res.end(JSON.stringify(obj));
 }
-function readBody(req) {
+function readBody(req, max = 8192) {
   return new Promise((resolve, reject) => {
     let size = 0; const chunks = [];
-    req.on('data', (c) => { size += c.length; if (size > 8192) { reject(new Error('Too large')); req.destroy(); } else chunks.push(c); });
+    req.on('data', (c) => { size += c.length; if (size > max) { reject(new Error('Too large')); req.destroy(); } else chunks.push(c); });
     req.on('end', () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch { reject(new Error('Bad JSON')); } });
     req.on('error', reject);
   });
 }
-const me = (a) => ({ name: a.user.name, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready });
+const me = (a) => ({ name: a.user.name, admin: !!a.user.admin, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready });
 // XP for a match, plus whether it took the account up a level (so the result screen can say so)
 function awardXp(u, deck, result, myScore) {
   const before = levels.levelOf(u.xp || 0);
@@ -77,6 +78,7 @@ async function api(req, res, url) {
     const a = auth.fromRequest(req);
     if (route === 'GET /api/me') return a ? json(res, 200, me(a)) : json(res, 200, { guest: true });
     if (!a) return json(res, 401, { error: 'Sign in first.' });
+    if (url.pathname.startsWith('/api/admin/')) return await admin.handle(route, req, res, url, a, { json, readBody: (r) => readBody(r, 65536), DECKS });
     if (route === 'GET /api/collection') {
       const deck = DECKS.get(url.searchParams.get('deck'));
       if (!deck) return json(res, 404, { error: 'Unknown set.' });
@@ -127,11 +129,12 @@ const server = http.createServer((req, res) => {
   let p;
   try { p = decodeURIComponent(url.pathname); } catch { res.writeHead(400); return res.end(); }
   if (p === '/') p = '/index.html';
+  if (p === '/admin') p = '/admin.html';
   const file = path.normalize(path.join(PUBLIC, p));
   if (!file.startsWith(PUBLIC + path.sep)) { res.writeHead(403); return res.end(); }
   fs.readFile(file, (err, data) => {
     if (err) { res.writeHead(404); return res.end('Not found'); }
-    if (p === '/index.html') {
+    if (p.endsWith('.html')) {
       // stamp scripts and stylesheets with the version so browsers, installed apps and proxies (Cloudflare)
       // always load the files that match this release instead of an older cached copy
       const html = data.toString('utf8').replace(/(src|href)="([\w./-]+\.(?:js|css))"/g, `$1="$2?v=${VERSION}"`);

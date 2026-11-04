@@ -136,7 +136,9 @@ pct exec "$CTID" -- env LANG=C.UTF-8 LC_ALL=C.UTF-8 LANGUAGE= REPO="$REPO" BRANC
 set -Eeuo pipefail
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq curl ca-certificates git nodejs >/dev/null
+apt-get install -y -qq curl ca-certificates git sqlite3 >/dev/null
+curl -fsSL https://deb.nodesource.com/setup_24.x | bash - >/dev/null   # Node 24: built-in SQLite
+apt-get install -y -qq nodejs >/dev/null
 id triad &>/dev/null || useradd --system --home /opt/triad --shell /usr/sbin/nologin triad
 rm -rf /opt/triad
 git clone -q --depth 1 --branch "$BRANCH" "https://github.com/$REPO.git" /opt/triad

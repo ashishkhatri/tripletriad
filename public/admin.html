@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Triad Admin</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/">TRIAD <span>admin</span></a>
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="users" aria-selected="true">Accounts</button>
+      <button type="button" role="tab" data-tab="sql" aria-selected="false">SQL</button>
+    </nav>
+    <span id="dbinfo" class="muted small"></span>
+  </header>
+
+  <main>
+    <p id="denied" class="denied" hidden>This page is for admins. <a href="/">Back to the game</a></p>
+
+    <section id="tab-users" class="tab">
+      <div class="bar">
+        <input id="search" type="search" placeholder="Search accounts" autocomplete="off">
+        <span id="count" class="muted small"></span>
+      </div>
+      <div class="split">
+        <div class="tablewrap"><table id="users" class="grid">
+          <thead><tr>
+            <th data-k="name">Name</th><th data-k="level" class="n">Level</th><th data-k="xp" class="n">XP</th>
+            <th data-k="shards" class="n">Shards</th><th data-k="packs" class="n">Packs</th><th data-k="cards" class="n">Cards</th>
+            <th data-k="games" class="n">Games</th><th data-k="wins" class="n">Wins</th>
+            <th data-k="lastSeen">Last seen</th><th data-k="created">Joined</th>
+          </tr></thead><tbody></tbody>
+        </table></div>
+
+        <aside id="detail" class="detail" hidden>
+          <div class="dhead">
+            <h2 id="d-name"></h2>
+            <button type="button" id="d-close" class="ghost" aria-label="Close">✕</button>
+          </div>
+          <p id="d-sub" class="muted small"></p>
+
+          <form id="d-form" class="fields">
+            <label>Display name <input name="name"></label>
+            <label>XP <input name="xp" type="number" min="0"></label>
+            <label>Shards <input name="shards" type="number" min="0"></label>
+            <label>Bonus packs <input name="bonusPacks" type="number" min="0"></label>
+            <label>Packs opened <input name="packsOpened" type="number" min="0"></label>
+            <label>Level claimed <input name="levelClaimed" type="number" min="1"></label>
+            <label class="check"><input name="admin" type="checkbox"> Admin</label>
+            <div class="row"><button type="submit">Save changes</button><span id="d-calc" class="muted small"></span></div>
+          </form>
+
+          <h3>Collection</h3>
+          <div class="row">
+            <select id="d-set"></select>
+            <input id="d-cardq" type="search" placeholder="Filter cards" autocomplete="off">
+            <label class="check small"><input id="d-owned" type="checkbox" checked> Owned only</label>
+          </div>
+          <div class="row" id="d-addset-row" hidden>
+            <select id="d-addset"></select><button type="button" id="d-addset-btn" class="ghost">Start this set</button>
+          </div>
+          <div class="tablewrap cards"><table class="grid" id="d-cards">
+            <thead><tr><th class="n">#</th><th>Card</th><th class="n">Lvl</th><th class="n">Normal</th><th class="n">Foil</th></tr></thead><tbody></tbody>
+          </table></div>
+
+          <h3>Account</h3>
+          <div class="row wrap">
+            <input id="d-pass" type="text" placeholder="New password" autocomplete="off">
+            <button type="button" id="d-pass-btn" class="ghost">Set password</button>
+            <button type="button" id="d-signout" class="ghost">Sign out everywhere</button>
+            <button type="button" id="d-delete" class="danger">Delete account</button>
+          </div>
+
+          <details><summary>Level rewards claimed</summary><pre id="d-levels"></pre></details>
+          <details><summary>Today's challenges</summary><pre id="d-daily"></pre></details>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tab-sql" class="tab" hidden>
+      <div class="sqlgrid">
+        <div>
+          <textarea id="sql" spellcheck="false" rows="7">SELECT key, name, xp, shards, last_seen FROM users ORDER BY xp DESC;</textarea>
+          <div class="row wrap">
+            <button type="button" id="sql-run">Run <span class="muted small">Ctrl+Enter</span></button>
+            <select id="sql-presets"><option value="">Examples…</option></select>
+            <span id="sql-msg" class="muted small"></span>
+          </div>
+          <p class="muted small">Changes save straight away and the game picks them up immediately. All statements run in one transaction: if one fails, none apply.</p>
+        </div>
+        <aside><h3>Tables</h3><div id="schema" class="schema"></div></aside>
+      </div>
+      <div class="tablewrap"><table id="sql-out" class="grid"><thead></thead><tbody></tbody></table></div>
+    </section>
+  </main>
+  <div id="toast" class="toast" hidden></div>
+  <script src="admin.js"></script>
+</body>
+</html>
