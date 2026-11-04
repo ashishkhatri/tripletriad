@@ -101,6 +101,62 @@
     renderCards();
     $('#d-levels').textContent = Object.keys(d.levelLog).length ? Object.entries(d.levelLog).map(([l, e]) => `Level ${l}: ${e.kind}${e.shards ? ` (${e.shards} shards)` : ''}${e.packs ? ` (${e.packs} pack)` : ''}${e.cards && e.cards.length ? ` · ${e.deck}: ${e.cards.map((c) => `#${c.id}${c.foil ? ' foil' : ''}`).join(', ')}` : ''}`).join('\n') : 'None yet.';
     $('#d-daily').textContent = d.daily ? JSON.stringify(d.daily, null, 2) : 'None yet.';
+    renderGiftSent();
+    if (!$('#g-set').options.length || $('#g-set').dataset.for !== current) {
+      $('#g-set').innerHTML = d.decks.map((x) => `<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');
+      $('#g-set').dataset.for = current;
+      giftCards = []; renderGiftList(); loadGiftCards();
+    }
+  }
+  // ---------- gifts ----------
+  const deckCache = new Map();
+  let giftCards = [];
+  async function deckOf(id) {
+    if (!deckCache.has(id)) deckCache.set(id, fetch(`/decks/${encodeURIComponent(id)}.json`).then((r) => r.json()));
+    return deckCache.get(id);
+  }
+  async function loadGiftCards() {
+    const id = $('#g-set').value; if (!id) return;
+    try {
+      const deck = await deckOf(id);
+      $('#g-card').innerHTML = deck.cards.slice().sort((a, b) => a.level - b.level || a.name.localeCompare(b.name))
+        .map((c) => `<option value="${c.id}">L${c.level} · ${esc(c.name)}</option>`).join('');
+    } catch (e) { toast('Could not load that set.', true); }
+  }
+  $('#g-set').onchange = loadGiftCards;
+  $('#g-add').onclick = () => {
+    const sel = $('#g-card'); if (!sel.value) return;
+    giftCards.push({ deck: $('#g-set').value, setName: $('#g-set').selectedOptions[0].text, id: Number(sel.value), name: sel.selectedOptions[0].text.replace(/^L\d+ · /, ''),
+      foil: $('#g-foil').checked, count: Math.max(1, Math.min(99, Number($('#g-count').value) || 1)) });
+    renderGiftList();
+  };
+  function renderGiftList() {
+    $('#g-list').innerHTML = giftCards.map((c, i) => `<li>${c.count > 1 ? `${c.count}× ` : ''}${esc(c.name)}${c.foil ? ' ★' : ''} <span class="muted">${esc(c.setName)}</span><button type="button" data-i="${i}" aria-label="Remove">✕</button></li>`).join('');
+  }
+  $('#g-list').onclick = (e) => { const b = e.target.closest('button'); if (b) { giftCards.splice(Number(b.dataset.i), 1); renderGiftList(); } };
+  $('#g-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const body = { key: current, packs: Number(f.elements.packs.value) || 0, shards: Number(f.elements.shards.value) || 0, note: f.elements.note.value, cards: giftCards.map(({ deck, id, foil, count }) => ({ deck, id, foil, count })) };
+    try {
+      detail = await api('POST', '/api/admin/gift', body);
+      f.elements.packs.value = 0; f.elements.shards.value = 0; f.elements.note.value = ''; giftCards = []; renderGiftList();
+      renderDetail(true); loadUsers(); toast(`Gift sent to ${detail.name}.`);
+    } catch (err) { toast(err.message, true); }
+  };
+  function giftText(g) {
+    const parts = [];
+    if (g.packs) parts.push(`${g.packs} pack${g.packs === 1 ? '' : 's'}`);
+    if (g.shards) parts.push(`${g.shards} shards`);
+    const counts = new Map();
+    for (const c of g.cards || []) { const k = `${c.name}${c.foil ? ' ★' : ''} (${c.setName})`; counts.set(k, (counts.get(k) || 0) + 1); }
+    for (const [k, n] of counts) parts.push(`${n > 1 ? `${n}× ` : ''}${k}`);
+    return parts.join(', ') || 'Nothing';
+  }
+  function renderGiftSent() {
+    const list = detail.gifts || [];
+    $('#d-gifts').innerHTML = list.length ? list.map((g) => `<div>${esc(giftText(g))}<span class="tag ${g.seen ? 'seen' : 'new'}">${g.seen ? 'seen' : 'not seen yet'}</span>
+      <br><span class="muted">${g.created ? new Date(g.created).toLocaleString() : ''}${g.note ? ` · “${esc(g.note)}”` : ''}</span></div>`).join('') : '<p class="muted">None yet.</p>';
   }
   function renderCards() {
     const set = detail && detail.sets[$('#d-set').value];
@@ -162,6 +218,10 @@
     ['One account\'s collection', "SELECT deck, card, normal, foil FROM user_cards WHERE user = 'ashishduh' ORDER BY deck, card;"],
     ['Win rates', 'SELECT user, SUM(games) AS games, SUM(wins) AS wins, ROUND(100.0 * SUM(wins) / MAX(SUM(games), 1), 1) AS win_pct FROM user_sets GROUP BY user ORDER BY games DESC;'],
     ['Give everyone 100 shards', 'UPDATE users SET shards = COALESCE(shards, 0) + 100;'],
+    ['Unopened packs', 'SELECT * FROM user_packs ORDER BY unopened_packs DESC;'],
+    ['Gift everyone a pack', "INSERT INTO gifts (user, packs, note) SELECT key, 1, 'A gift for everyone!' FROM users;"],
+    ['Gift one account cards', 'INSERT INTO gifts (user, shards, cards, note) VALUES (\'ashishduh\', 100, \'[{"deck":"wilds","id":1,"foil":true}]\', \'Enjoy!\');'],
+    ['Gifts sent', "SELECT id, user, datetime(created/1000, 'unixepoch') AS sent, packs, shards, cards, note, seen FROM gifts ORDER BY id DESC;"],
     ['Active sign-ins', "SELECT user, COUNT(*) AS devices, datetime(MAX(expires)/1000, 'unixepoch') AS latest_expiry FROM sessions WHERE expires > strftime('%s','now')*1000 GROUP BY user;"],
     ['Level rewards claimed', 'SELECT user, level, kind, deck, shards, packs, cards FROM level_log ORDER BY user, level;'],
   ];
@@ -174,7 +234,7 @@
     try {
       const r = await api('GET', '/api/admin/tables');
       if (r.mode !== 'sqlite') { $('#schema').textContent = 'SQL needs the SQLite database (Node 22.13 or newer).'; return; }
-      $('#schema').innerHTML = r.tables.map((t) => `<div><b data-t="${esc(t.name)}">${esc(t.name)}</b><br>${t.columns.map(esc).join(', ')}</div>`).join('');
+      $('#schema').innerHTML = r.tables.map((t) => `<div><b data-t="${esc(t.name)}">${esc(t.name)}</b>${t.view ? ' <i>(view)</i>' : ''}<br>${t.columns.map(esc).join(', ')}</div>`).join('');
       schemaLoaded = true;
     } catch (e) { toast(e.message, true); }
   }

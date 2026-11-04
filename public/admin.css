@@ -52,7 +52,7 @@ button .small { color: inherit; opacity: .7; font-weight: 500; }
 .detail h3 { margin: 18px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
 .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
 .fields label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
-.fields label:first-child { grid-column: 1 / -1; }
+#d-form label:first-child { grid-column: 1 / -1; }
 .fields .row { grid-column: 1 / -1; margin: 4px 0 0; }
 label.check { white-space: nowrap; display: flex !important; align-items: center; gap: 6px; color: var(--text) !important; font-size: 14px; }
 .cards { max-height: 340px; }
@@ -74,3 +74,15 @@ aside h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-s
 
 .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--panel-2); border: 1px solid var(--line); padding: 9px 16px; border-radius: 10px; box-shadow: 0 6px 24px #0008; z-index: 10; }
 .toast.err { border-color: var(--danger); color: #ffd2cc; }
+
+.fields .wide { grid-column: 1 / -1; }
+.gcard { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.gcard #g-set { flex: 1 1 110px; } .gcard #g-card { flex: 2 1 150px; } .gcard #g-count { width: 60px; }
+.glist { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.glist:empty { display: none; }
+.glist li { background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 6px 3px 10px; font-size: 12px; display: flex; gap: 6px; align-items: center; }
+.glist li button { padding: 0 6px; background: none; color: var(--muted); border: 0; font-size: 13px; }
+.gsent > div { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.gsent .muted { font-size: 12px; }
+.tag { display: inline-block; padding: 0 6px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-left: 6px; }
+.tag.seen { background: #29452e; color: var(--ok); } .tag.new { background: #4a3a1c; color: var(--accent); }

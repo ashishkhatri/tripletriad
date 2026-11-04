@@ -3,6 +3,13 @@
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org/):
 major for breaking changes, minor for new features, patch for fixes.
 
+## v0.9.7 — 2026-11-03
+
+- **Gifts:** admins can send an account packs, shards and/or cards (any set, normal or foil) with an optional note, from the account's panel on the admin page. Players see a "You got a gift!" popup the next time they open the game, with an *Open packs* button when packs were included.
+- Gifts can also be sent with SQL by inserting rows into the new `gifts` table (for example, a pack for every account); the server applies them within seconds.
+- New `user_packs` view shows each account's unopened packs (they're calculated from XP, bonus packs and packs opened rather than stored).
+- The admin page lists each account's gifts and whether they've been seen.
+
 ## v0.9.6 — 2026-11-03
 
 - **Player data now lives in a SQLite database** (`triad.db`, using Node's built-in SQLite) with real tables for accounts, sets, cards, level rewards and sign-ins. The old `triad.json` is imported automatically on first start.

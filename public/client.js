@@ -1227,6 +1227,48 @@
   async function loadAccount() {
     try { const r = await api('GET', '/api/me'); account = r.guest ? null : r; } catch (e) { account = null; }
     renderAccount();
+    if (account && account.gifts && account.gifts.length) showGifts(account.gifts);
+  }
+  // ---------- gifts (sent from the admin page): shown once, the next time the game is opened ----------
+  function showGifts(list) {
+    const box = $('#gift-list'); box.innerHTML = '';
+    let packs = 0;
+    for (const g of list) {
+      const item = document.createElement('div'); item.className = 'gift-item';
+      if (g.note) { const n = document.createElement('p'); n.className = 'gift-note'; n.textContent = `“${g.note}”`; item.appendChild(n); }
+      const art = document.createElement('div'); art.className = 'gift-art';
+      if (g.packs) {
+        packs += g.packs;
+        const pk = document.createElement('div'); pk.className = 'gift-pack';
+        pk.innerHTML = `<img src="packs/${encodeURIComponent($('#deck').value)}.svg?v=${ASSET_V}" alt=""><b>${g.packs} pack${g.packs === 1 ? '' : 's'}</b>`;
+        art.appendChild(pk);
+      }
+      if (g.shards) art.insertAdjacentHTML('beforeend', `<div class="gift-shards"><span class="shards">${g.shards.toLocaleString()}</span><b>shards</b></div>`);
+      (g.cards || []).forEach((c, k) => {
+        if (!decks.get(c.deck)) return;
+        const card = deckCard(c.deck, c.id); if (!card) return;
+        const el = cardEl(playCard(card, c.foil), 'neutral', glyphsFor(c.deck));
+        el.classList.add('gift-card'); el.style.animationDelay = `${0.25 + k * 0.12}s`;
+        el.onclick = () => zoomCard(playCard(card, c.foil), glyphsFor(c.deck), c.deck, c.id);
+        art.appendChild(el);
+      });
+      item.appendChild(art);
+      box.appendChild(item);
+    }
+    $('#gift-title').textContent = list.length > 1 ? `You got ${list.length} gifts!` : 'You got a gift!';
+    $('#gift-open').hidden = !packs;
+    $('#gift-open').textContent = packs > 1 ? 'Open packs' : 'Open pack';
+    const done = (then) => {
+      $('#gift').classList.remove('show');
+      api('POST', '/api/gifts/seen', { ids: list.map((g) => g.id) }).catch(() => {});
+      account.gifts = [];
+      refreshProgress();
+      if (then) then();
+    };
+    $('#gift-ok').onclick = () => done();
+    $('#gift-open').onclick = () => done(openPackPicker);
+    $('#gift').classList.add('show');
+    sfx('craft');
   }
   function renderAccount() {
     $('#user-note').hidden = !account;

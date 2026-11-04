@@ -208,6 +208,8 @@ An older `triad.json` is imported automatically the first time and renamed to `t
 | `user_sets` | per account and set: `games`, `wins` |
 | `user_cards` | per account, set and card: `normal` and `foil` copy counts |
 | `level_log` | level rewards claimed |
+| `gifts` | packs, shards and cards given to an account, with an optional note, and whether the player has seen the popup |
+| `user_packs` (view) | unopened packs per account: these aren't stored but worked out as one per 100 XP + `bonus_packs` − `packs_opened` |
 | `sessions` | sign-ins |
 
 **Admin page:** `/admin` (linked next to *Sign out* on the Play screen for admins). Lists every
@@ -215,6 +217,10 @@ account and lets you edit XP, shards, packs, level rewards, the admin flag, card
 sign-ins, and delete accounts. Its **SQL** tab runs any query. The account `ashishduh` becomes an admin
 automatically; make others admins there or with
 `UPDATE users SET is_admin = 1 WHERE key = 'name';`.
+
+**Gifts:** send packs, shards and/or cards (with a note) from an account on the admin page, or insert a
+row with SQL, e.g. `INSERT INTO gifts (user, packs, note) SELECT key, 1, 'Thanks!' FROM users;` for
+everyone. Gifts go into the account straight away; the player gets a popup the next time they open the game.
 
 **From the command line:** `sqlite3 /var/lib/triad/triad.db` (the `update` script installs `sqlite3`).
 Changes made there while the server runs are picked up within a couple of seconds.

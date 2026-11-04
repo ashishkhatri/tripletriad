@@ -1920,3 +1920,23 @@ body:not(.with-nav) .mobile-head, body.in-game .mobile-head { display: none !imp
 /* Elemental / storm modifiers: the numbers themselves change, tinted green (raised) or red (lowered) */
 .card .ranks span.rk-up { color: #7dff7a; text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 6px #0b4d07; }
 .card .ranks span.rk-down { color: #ff7a6b; text-shadow: 0 0 2px #000, 0 1px 2px #000, 0 0 6px #5a0b04; }
+
+/* gift popup */
+#gift { z-index: 45; }
+.gift-panel { width: min(560px, 94vw); max-width: none; box-sizing: border-box; gap: 10px !important; text-align: center; }
+.gift-panel h2 { margin: 0; font-family: var(--display); color: var(--accent-ink); font-size: 26px; }
+.gift-burst { width: 64px; height: 64px; margin: 0 auto; animation: gift-pop .6s cubic-bezier(.3,1.6,.5,1) both; }
+.gift-burst svg { width: 100%; height: 100%; fill: var(--metal-2, #e3b766); stroke: var(--accent-ink); stroke-width: 2.4; stroke-linejoin: round; }
+.gift-burst path { fill: none; }
+@keyframes gift-pop { from { transform: scale(.2) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.gift-list { display: grid; gap: 12px; width: 100%; max-height: 60vh; overflow: auto; }
+.gift-item + .gift-item { border-top: 1px solid color-mix(in srgb, var(--accent-ink) 25%, transparent); padding-top: 12px; }
+.gift-note { margin: 0 0 8px; font-style: italic; color: var(--ink); font-size: 16px; }
+.gift-art { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
+.gift-pack { display: grid; justify-items: center; gap: 4px; animation: gift-pop .5s .15s cubic-bezier(.3,1.5,.5,1) both; }
+.gift-pack img { width: 76px; filter: drop-shadow(0 4px 8px #0006); }
+.gift-pack b, .gift-shards b { font-family: var(--title); color: var(--ink); font-size: 14px; }
+.gift-shards { display: grid; justify-items: center; gap: 2px; animation: gift-pop .5s .2s cubic-bezier(.3,1.5,.5,1) both; }
+.gift-shards .shards { font-size: 26px; font-weight: 800; color: var(--ink); }
+.gift-card { font-size: 13px; width: 86px; height: calc(86px * 1.4); flex: none; cursor: zoom-in; animation: gift-pop .5s cubic-bezier(.3,1.5,.5,1) both; }
+.gift-panel .row-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }

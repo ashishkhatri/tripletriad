@@ -265,6 +265,18 @@
 
   <!-- PACK PICKER: choose which set's pack to open -->
   <!-- choosing which set a level reward comes from -->
+  <div id="gift" class="overlay" role="dialog" aria-modal="true" aria-labelledby="gift-title">
+    <div class="panel center gift-panel">
+      <div class="gift-burst" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="10" y="26" width="44" height="30" rx="3"/><rect x="6" y="18" width="52" height="11" rx="2.5"/><path d="M32 18v38"/><path d="M32 18c-4-9-15-11-15-4 0 4 8 4 15 4zM32 18c4-9 15-11 15-4 0 4-8 4-15 4z"/></svg></div>
+      <h2 id="gift-title">You got a gift!</h2>
+      <div id="gift-list" class="gift-list"></div>
+      <div class="row-btns">
+        <button type="button" id="gift-open" hidden>Open packs</button>
+        <button type="button" id="gift-ok">Awesome!</button>
+      </div>
+    </div>
+  </div>
+
   <div id="reward-pick" class="overlay">
     <div class="panel center pick-panel">
       <button type="button" class="overlay-x" id="reward-pick-close" aria-label="Close">✕</button>

@@ -11,6 +11,7 @@ const col = require('./lib/collection');
 const daily = require('./lib/daily');
 const levels = require('./lib/levels');
 const admin = require('./lib/admin');
+const gifts = require('./lib/gifts');
 
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -31,6 +32,8 @@ for (const f of JSON.parse(fs.readFileSync(path.join(DECK_DIR, 'index.json'), 'u
 }
 const DEFAULT_DECK = DECKS.keys().next().value;
 console.log(`Loaded decks: ${[...DECKS.keys()].join(', ')}`);
+gifts.applyPending(DECKS);   // gifts inserted into the database while the server was off
+db.onReload(() => gifts.applyPending(DECKS));
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -51,7 +54,7 @@ function readBody(req, max = 8192) {
     req.on('error', reject);
   });
 }
-const me = (a) => ({ name: a.user.name, admin: !!a.user.admin, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready });
+const me = (a) => ({ name: a.user.name, admin: !!a.user.admin, shards: col.shardsOf(a.user), level: levels.levelOf(a.user.xp || 0), rewardsReady: levels.view(a.user).ready, gifts: gifts.unseen(a.user) });
 // XP for a match, plus whether it took the account up a level (so the result screen can say so)
 function awardXp(u, deck, result, myScore) {
   const before = levels.levelOf(u.xp || 0);
@@ -96,6 +99,11 @@ async function api(req, res, url) {
       const cards = col.openPack(a.user, deck);
       const completed = daily.record(a.user, a.key, 'pack');
       return json(res, 200, { cards, summary: col.summary(a.user, deck), daily: completed });
+    }
+    if (route === 'POST /api/gifts/seen') {
+      const body = await readBody(req);
+      gifts.markSeen(a.user, body.ids);
+      return json(res, 200, { ok: true });
     }
     if (route === 'GET /api/daily') return json(res, 200, daily.view(a.user, a.key));
     if (route === 'GET /api/levels') return json(res, 200, levels.view(a.user));

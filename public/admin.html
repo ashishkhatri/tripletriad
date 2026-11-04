@@ -67,6 +67,23 @@
             <thead><tr><th class="n">#</th><th>Card</th><th class="n">Lvl</th><th class="n">Normal</th><th class="n">Foil</th></tr></thead><tbody></tbody>
           </table></div>
 
+          <h3>Send a gift</h3>
+          <form id="g-form" class="fields">
+            <label>Packs <input name="packs" type="number" min="0" value="0"></label>
+            <label>Shards <input name="shards" type="number" min="0" value="0"></label>
+            <div class="wide gcard">
+              <select id="g-set" aria-label="Set"></select>
+              <select id="g-card" aria-label="Card"></select>
+              <input id="g-count" type="number" min="1" max="99" value="1" aria-label="Copies">
+              <label class="check small"><input id="g-foil" type="checkbox"> Foil</label>
+              <button type="button" id="g-add" class="ghost">Add card</button>
+            </div>
+            <ul id="g-list" class="wide glist"></ul>
+            <label class="wide">Note for the player (optional) <input name="note" maxlength="200" placeholder="Thanks for playing!"></label>
+            <div class="row"><button type="submit">Send gift</button><span class="muted small">They'll see it the next time they open the game.</span></div>
+          </form>
+          <details><summary>Gifts sent</summary><div id="d-gifts" class="gsent"></div></details>
+
           <h3>Account</h3>
           <div class="row wrap">
             <input id="d-pass" type="text" placeholder="New password" autocomplete="off">
